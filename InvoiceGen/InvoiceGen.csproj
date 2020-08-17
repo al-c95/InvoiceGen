@@ -56,6 +56,7 @@
     <Compile Include="Model\DataAccessLayer\XmlService.cs" />
     <Compile Include="Model\ObjectModel\Invoice.cs" />
     <Compile Include="Model\ObjectModel\InvoiceItem.cs" />
+    <Compile Include="Model\Repository\InvoiceRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\InvoiceHistoryWindow.cs">
@@ -93,7 +94,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Repository\" />
     <Folder Include="Presenter\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
