@@ -28,6 +28,15 @@ namespace InvoiceGen.Model.DataAccessLayer
         }
 
         /// <summary>
+        /// Inserts appropriate nodes in the XML to represent a new invoice.
+        /// </summary>
+        /// <param name="invoice"></param>
+        public void insertInvoiceInXml(Invoice invoice)
+        {
+            // save the file
+        }
+
+        /// <summary>
         /// Get all the objects represented by the XML file.
         /// </summary>
         /// <returns></returns>
