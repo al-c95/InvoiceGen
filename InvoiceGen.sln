@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceGen", "InvoiceGen\InvoiceGen.csproj", "{B7B0C6C4-434F-44D6-B831-9648FAD7215C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceGen_Tests", "InvoiceGen_Tests\InvoiceGen_Tests.csproj", "{C97490F7-46CA-4515-B570-9A46188A404E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B7B0C6C4-434F-44D6-B831-9648FAD7215C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7B0C6C4-434F-44D6-B831-9648FAD7215C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7B0C6C4-434F-44D6-B831-9648FAD7215C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C97490F7-46CA-4515-B570-9A46188A404E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C97490F7-46CA-4515-B570-9A46188A404E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C97490F7-46CA-4515-B570-9A46188A404E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C97490F7-46CA-4515-B570-9A46188A404E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
