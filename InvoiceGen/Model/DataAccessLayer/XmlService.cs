@@ -4,15 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using InvoiceGen.Model.ObjectModel;
 
 namespace InvoiceGen.Model.DataAccessLayer
 {
     public interface IXmlService
     {
+        void insertInvoiceInXml(Invoice invoice);
+        void updatePaidStatusInXml(int id, bool paid);
+        void deleteInvoiceInXml(int id);
         IEnumerable<Invoice> readXml();
     }
 
+    /// <summary>
+    /// Manipulates the XML with the data.
+    /// </summary>
     public class XmlService : IXmlService
     {
         // dependency injection of external interface (XML file) class
@@ -33,7 +40,63 @@ namespace InvoiceGen.Model.DataAccessLayer
         /// <param name="invoice"></param>
         public void insertInvoiceInXml(Invoice invoice)
         {
-            // save the file
+            if (invoice.items.Count == 0)
+                throw new ArgumentException("No items in invoice.");
+
+            string xml = this._fileHandler.getXML();
+
+            XDocument doc = XDocument.Parse(xml);
+            XElement invoiceElement = new XElement(Invoice.XmlName);
+            invoiceElement.SetAttributeValue("id", invoice.id);
+            invoiceElement.SetAttributeValue("title", invoice.title);
+            invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString());
+            invoiceElement.SetAttributeValue("paid", invoice.paid);
+            XElement itemsElement = new XElement("items");
+            foreach (InvoiceItem item in invoice.items)
+            {
+                XElement invoiceItemElement = new XElement(InvoiceItem.XmlName);
+                invoiceItemElement.SetAttributeValue("desc", item.description);
+                invoiceItemElement.SetAttributeValue("amount", item.amount);
+
+                itemsElement.Add(invoiceItemElement);
+            }
+            invoiceElement.Add(itemsElement);
+            doc.Root.Add(invoiceElement);
+
+            this._fileHandler.saveXMLFile(doc);
+        }
+
+        /// <summary>
+        /// Does what it says.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="paid"></param>
+        public void updatePaidStatusInXml(int id, bool paid)
+        {
+            // TODO: this should work, but test it
+
+            string xml = this._fileHandler.getXML();
+
+            XDocument doc = XDocument.Parse(xml);
+            doc.Root.Elements(Invoice.XmlName).Where(e => int.Parse((e.Attribute("id").Value)) == id).First().SetAttributeValue("paid", paid);
+
+            this._fileHandler.saveXMLFile(doc);
+        }
+
+        /// <summary>
+        /// Does what it says.
+        /// </summary>
+        /// <param name="id"></param>
+        public void deleteInvoiceInXml(int id)
+        {
+            // TODO: this should work, but test it
+
+            string xml = this._fileHandler.getXML();
+
+            XDocument doc = XDocument.Parse(xml);
+            doc.Root.Elements(Invoice.XmlName).Where(e => int.Parse((e.Attribute("id").Value)) == id).Remove();
+
+            this._fileHandler.saveXMLFile(doc);
         }
 
         /// <summary>
@@ -86,8 +149,8 @@ namespace InvoiceGen.Model.DataAccessLayer
                     }
 
                     yield return invoice;
-                }
-            }
-        }
+                }//while
+            }//using
+        }//readXml
     }
 }

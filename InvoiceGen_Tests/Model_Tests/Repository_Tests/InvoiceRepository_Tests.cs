@@ -71,5 +71,53 @@ namespace InvoiceGen_Tests.Model_Tests.Repository_Tests
             // assert
             Assert.AreEqual(expectedTitle, result.title);
         }
+
+        [TestCase("exists", ExpectedResult = true)]
+        [TestCase("does not exist", ExpectedResult = false)]
+        public bool invoiceWithTitleExists_Test(string title)
+        {
+            // arrange
+            var fakeService = A.Fake<IXmlService>();
+            string testTitle = "exists";
+            A.CallTo(() => fakeService.readXml()).Returns(new List<Invoice> { new Invoice { title=testTitle} });
+            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+
+            // act
+            bool result = repo.invoiceWithTitleExists(testTitle);
+
+            // assert
+            return result;
+        }
+
+        [Test]
+        public void updatePaidStatus_Test()
+        {
+            // arrange
+            var fakeService = A.Fake<IXmlService>();
+            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            int id = 1;
+            bool paid = true;
+
+            // act
+            repo.updatePaidStatus(id, paid);
+
+            // assert
+            A.CallTo(() => fakeService.updatePaidStatusInXml(id, paid)).MustHaveHappened();
+        }
+
+        [Test]
+        public void deleteInvoice_Test()
+        {
+            // arrange
+            var fakeService = A.Fake<IXmlService>();
+            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            int id = 1;
+
+            // act
+            repo.deleteInvoice(id);
+
+            // assert
+            A.CallTo(() => fakeService.deleteInvoiceInXml(id)).MustHaveHappened();
+        }
     }
 }
