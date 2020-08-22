@@ -11,30 +11,55 @@ namespace InvoiceGen.Model.DataAccessLayer
     public interface IXmlFileHandler
     {
         string getXML();
+        void saveXMLFile(XDocument doc);
     }
 
-    public class XmlFileHandler
+    /// <summary>
+    /// Loads and saves the XML file.
+    /// </summary>
+    public class XmlFileHandler : IXmlFileHandler
     {
         private string _fileName; // TODO: get from config
+        private XDocument _doc;
 
         /// <summary>
-        /// Constructor with filename dependency injection.
+        /// Constructor with filename dependency injection. Opens the file.
         /// </summary>
         /// <param name="fileName"></param>
         public XmlFileHandler(string fileName)
         {
             this._fileName = fileName;
+
+            load();
         }
 
         /// <summary>
-        /// Load the file and get the XML as a string.
+        /// Save the XML file.
+        /// </summary>
+        public void saveXMLFile(XDocument doc)
+        {
+            // first try saving it
+            doc.Save(_fileName);
+
+            // then reload it
+            load();
+        }
+
+        /// <summary>
+        /// Return the XML as a string.
         /// </summary>
         /// <returns></returns>
         public string getXML()
         {
-            var xDocument = XDocument.Load(this._fileName);
+            return _doc.ToString();
+        }
 
-            return xDocument.ToString();
+        /// <summary>
+        /// Opens the file.
+        /// </summary>
+        private void load()
+        {
+            this._doc = XDocument.Load(_fileName);
         }
     }
 }

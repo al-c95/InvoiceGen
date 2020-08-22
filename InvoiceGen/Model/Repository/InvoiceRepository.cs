@@ -14,6 +14,7 @@ namespace InvoiceGen.Model.Repository
         IEnumerable<Invoice> getAllInvoices();
         void addInvoice(Invoice invoice);
         void updatePaidStatus(int id, bool paid);
+        bool invoiceWithTitleExists(string title);
     }
 
     public class InvoiceRepository : IInvoiceRepository
@@ -31,12 +32,30 @@ namespace InvoiceGen.Model.Repository
         }
 
         /// <summary>
+        /// Check if a record with the given title already exists.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns>boolean</returns>
+        public bool invoiceWithTitleExists(string title)
+        {
+            //return getAllInvoices().Any(i => i.title == title);
+            foreach (Invoice i in getAllInvoices())
+                if (i.title == title)
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Create a new invoice record.
         /// </summary>
         /// <param name="invoice"></param>
         public void addInvoice(Invoice invoice)
         {
-            throw new NotImplementedException();
+            // make sure that we don't add more than one with the same title
+            // should have been prevented by this point, but still check it
+            if (invoiceWithTitleExists(invoice.title))
+                return;
         }
 
         /// <summary>
@@ -59,7 +78,7 @@ namespace InvoiceGen.Model.Repository
 
             // validate that either 0 or 1 record found
             if (result.ToList().Count > 1)
-                throw new ApplicationException("Found more than one record with the same unique id: " + id);
+                throw new ApplicationException("Found more than one record with the same unique id: " + id); // this shouldn't happen
 
             if (result.ToList().Count==1)
             {
@@ -73,9 +92,23 @@ namespace InvoiceGen.Model.Repository
             }
         }
 
+        /// <summary>
+        /// Does what it says.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="paid"></param>
         public void updatePaidStatus(int id, bool paid)
         {
-            throw new NotImplementedException();
+            this.service.updatePaidStatusInXml(id, paid);
+        }
+
+        /// <summary>
+        /// Does what it says.
+        /// </summary>
+        /// <param name="id"></param>
+        public void deleteInvoice(int id)
+        {
+            this.service.deleteInvoiceInXml(id);
         }
     }
 }
