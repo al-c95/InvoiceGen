@@ -16,7 +16,24 @@ namespace InvoiceGen
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new mainWindow());
+
+            var mainWindow = new mainWindow(Configuration.APP_NAME + " v" + Configuration.VERSION);
+            var xmlFileHandler = new InvoiceGen.Model.DataAccessLayer.XmlFileHandler(Configuration.XML_FILE_PATH);
+            var xmlService = new InvoiceGen.Model.DataAccessLayer.XmlService(xmlFileHandler);
+            var repository = new InvoiceGen.Model.Repository.InvoiceRepository(xmlService);
+            var mainPresenter = new InvoiceGen.Presenter.MainPresenter(mainWindow, repository);
+
+            try
+            {
+                // show the main window
+                Application.Run(mainWindow);
+            }
+            catch (Exception ex)
+            {
+                // useful for debugging
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+            }
         }
     }
 }

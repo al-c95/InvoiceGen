@@ -19,7 +19,10 @@ namespace InvoiceGen.Model.ObjectModel
         /// <summary>
         /// Default constructor. Initialises the collection of items.
         /// </summary>
-        public Invoice() { this.items = new List<InvoiceItem>(); }
+        public Invoice()
+        {
+            this.items = new List<InvoiceItem>();
+        }
 
         /// <summary>
         /// Get total of all item amounts.

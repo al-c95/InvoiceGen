@@ -30,6 +30,16 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newInvoiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadInvoiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAndEmailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAndExportXLSXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_newInvoice = new System.Windows.Forms.Button();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -40,6 +50,9 @@
             this.button_removeItem = new System.Windows.Forms.Button();
             this.button_duplicateItem = new System.Windows.Forms.Button();
             this.listView_items = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button_loadInvoice = new System.Windows.Forms.Button();
             this.newItemGroup = new System.Windows.Forms.GroupBox();
             this.button_addItem = new System.Windows.Forms.Button();
@@ -56,18 +69,13 @@
             this.radioButton_titleCustom = new System.Windows.Forms.RadioButton();
             this.radioButton_titleMonthly = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.dataGridView_invoiceHistory = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.menuStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -92,9 +100,80 @@
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newInvoiceToolStripMenuItem,
+            this.loadInvoiceToolStripMenuItem,
+            this.saveAndEmailToolStripMenuItem,
+            this.saveAndExportXLSXToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newInvoiceToolStripMenuItem
+            // 
+            this.newInvoiceToolStripMenuItem.Name = "newInvoiceToolStripMenuItem";
+            this.newInvoiceToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.newInvoiceToolStripMenuItem.Text = "New Invoice";
+            // 
+            // loadInvoiceToolStripMenuItem
+            // 
+            this.loadInvoiceToolStripMenuItem.Name = "loadInvoiceToolStripMenuItem";
+            this.loadInvoiceToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.loadInvoiceToolStripMenuItem.Text = "Load Invoice";
+            // 
+            // saveAndEmailToolStripMenuItem
+            // 
+            this.saveAndEmailToolStripMenuItem.Name = "saveAndEmailToolStripMenuItem";
+            this.saveAndEmailToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.saveAndEmailToolStripMenuItem.Text = "Save and Email";
+            // 
+            // saveAndExportXLSXToolStripMenuItem
+            // 
+            this.saveAndExportXLSXToolStripMenuItem.Name = "saveAndExportXLSXToolStripMenuItem";
+            this.saveAndExportXLSXToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.saveAndExportXLSXToolStripMenuItem.Text = "Save and Export XLSX";
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.configurationToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // configurationToolStripMenuItem
+            // 
+            this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
+            this.configurationToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.configurationToolStripMenuItem.Text = "Configuration";
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewManualToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // viewManualToolStripMenuItem
+            // 
+            this.viewManualToolStripMenuItem.Name = "viewManualToolStripMenuItem";
+            this.viewManualToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.viewManualToolStripMenuItem.Text = "View Manual";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.aboutToolStripMenuItem.Text = "About";
             // 
             // button_newInvoice
             // 
@@ -134,7 +213,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(792, 569);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Generate";
+            this.tabPage1.Text = "View or Generate";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // button_cancel
@@ -150,12 +229,13 @@
             // richTextBox_total
             // 
             this.richTextBox_total.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.richTextBox_total.Font = new System.Drawing.Font("Microsoft Sans Serif", 35F);
             this.richTextBox_total.Location = new System.Drawing.Point(168, 439);
             this.richTextBox_total.Name = "richTextBox_total";
             this.richTextBox_total.ReadOnly = true;
-            this.richTextBox_total.Size = new System.Drawing.Size(362, 96);
+            this.richTextBox_total.Size = new System.Drawing.Size(404, 96);
             this.richTextBox_total.TabIndex = 10;
-            this.richTextBox_total.Text = "";
+            this.richTextBox_total.Text = "0.00";
             // 
             // button_saveExportXL
             // 
@@ -213,6 +293,20 @@
             this.listView_items.TabIndex = 5;
             this.listView_items.UseCompatibleStateImageBehavior = false;
             this.listView_items.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Item/Description";
+            this.columnHeader1.Width = 563;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Amount ($)";
+            this.columnHeader2.Width = 138;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Quantity";
             // 
             // button_loadInvoice
             // 
@@ -291,9 +385,19 @@
             // 
             this.numericUpDown_newEntryQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.numericUpDown_newEntryQ.Location = new System.Drawing.Point(689, 41);
+            this.numericUpDown_newEntryQ.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown_newEntryQ.Name = "numericUpDown_newEntryQ";
             this.numericUpDown_newEntryQ.Size = new System.Drawing.Size(85, 20);
             this.numericUpDown_newEntryQ.TabIndex = 6;
+            this.numericUpDown_newEntryQ.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // textBox_newEntryDesc
             // 
@@ -334,7 +438,7 @@
             this.comboBox_month.Name = "comboBox_month";
             this.comboBox_month.Size = new System.Drawing.Size(69, 21);
             this.comboBox_month.TabIndex = 5;
-            this.comboBox_month.TextChanged += new System.EventHandler(this.comboBox_month_TextChanged);
+            this.comboBox_month.TextUpdate += new System.EventHandler(this.comboBox_month_TextUpdate);
             // 
             // textBox_customTitle
             // 
@@ -356,7 +460,6 @@
             this.radioButton_titleCustom.TabStop = true;
             this.radioButton_titleCustom.Text = "Custom";
             this.radioButton_titleCustom.UseVisualStyleBackColor = true;
-            this.radioButton_titleCustom.CheckedChanged += new System.EventHandler(this.radioButton_titleCustom_CheckedChanged);
             // 
             // radioButton_titleMonthly
             // 
@@ -368,7 +471,6 @@
             this.radioButton_titleMonthly.TabStop = true;
             this.radioButton_titleMonthly.Text = "Monthly";
             this.radioButton_titleMonthly.UseVisualStyleBackColor = true;
-            this.radioButton_titleMonthly.CheckedChanged += new System.EventHandler(this.radioButton_titleMonthly_CheckedChanged);
             // 
             // tabPage2
             // 
@@ -380,28 +482,6 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "History";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 597);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
-            this.statusStrip1.TabIndex = 3;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Item/Description";
-            this.columnHeader1.Width = 563;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Amount";
-            this.columnHeader2.Width = 138;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Quantity";
             // 
             // dataGridView_invoiceHistory
             // 
@@ -449,24 +529,20 @@
             this.Column5.HeaderText = "Paid";
             this.Column5.Name = "Column5";
             // 
-            // settingsToolStripMenuItem
+            // statusStrip
             // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
+            this.statusStrip.Location = new System.Drawing.Point(0, 597);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip.TabIndex = 3;
+            this.statusStrip.Text = "statusStrip1";
             // 
             // mainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 619);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -496,7 +572,7 @@
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.GroupBox titleGroup;
         private System.Windows.Forms.Button button_loadInvoice;
         private System.Windows.Forms.GroupBox newItemGroup;
@@ -530,6 +606,14 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column5;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newInvoiceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadInvoiceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAndEmailToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAndExportXLSXToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem configurationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewManualToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 
