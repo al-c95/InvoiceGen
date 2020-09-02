@@ -53,7 +53,7 @@ namespace InvoiceGen.Model.Repository
         public void addInvoice(Invoice invoice)
         {
             // make sure that we don't add more than one with the same title
-            // should have been prevented by this point, but still check it
+            // should have been prevented by this point with data validation, but still check it
             if (invoiceWithTitleExists(invoice.title))
                 return;
         }
