@@ -56,9 +56,17 @@ namespace InvoiceGen
             this.listView_items.SelectedIndexChanged += ListView_items_SelectedIndexChanged;
             this.button_removeItem.Click += MainWindow_removeSelectedItemButtonClicked;
             this.button_duplicateItem.Click += MainWindow_duplicateSelectedItemButtonClicked;
+
+            this.button_saveExportXL.Click += MainWindow_saveAndExportXLSXButtonClicked;
         }
 
         #region UI event handlers
+        private void MainWindow_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            saveAndExportXLSXButtonClicked?.Invoke(this, e);
+        }
+
         private void MainWindow_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
@@ -77,25 +85,6 @@ namespace InvoiceGen
             itemListSelectedIndexChanged?.Invoke(this, e);
 
             // TODO: put this logic in the presenter
-            /*
-            if (this.selectedInvoiceItems.ToList().Count == 1)
-            {
-                // one item selected
-                displaySelectedAmount();
-            }
-            else if (this.selectedInvoiceItems.ToList().Count==0)
-            {
-                // no items are selected
-                // display the total
-                displayTotal();
-            }
-            else
-            {
-                // multiple items are selected
-                // display the total
-                displayTotal();
-            }
-            */
             switch (this.numberSelectedInvoiceItems)
             {
                 case 1:
@@ -209,6 +198,18 @@ namespace InvoiceGen
             button_saveExportXL.Enabled = false;
 
             button_cancel.Enabled = false;
+        }
+
+        public string getTitle()
+        {
+            if (this.radioButton_titleMonthly.Checked)
+            {
+                return comboBox_month.Text + " " + textBox_year.Text;
+            }
+            else
+            {
+                return this.textBox_customTitle.Text;
+            }
         }
 
         public string windowTitle
@@ -350,7 +351,7 @@ namespace InvoiceGen
         }
 
         /// <summary>
-        /// The full list of invoice items displayed in the "View or Generate" tab.
+        /// The full list of invoice items displayed in the "View or Generate" tab. Quantities not specified.
         /// </summary>
         public IEnumerable<InvoiceItem> invoiceItems
         {
@@ -358,14 +359,11 @@ namespace InvoiceGen
             {
                 foreach (ListViewItem item in this.listView_items.Items)
                 {
-                    for (int i = 1; i <= int.Parse(item.SubItems[2].Text); i++)
+                    yield return new InvoiceItem
                     {
-                        yield return new InvoiceItem
-                        {
-                            description = item.SubItems[0].Text,
-                            amount = decimal.Parse(item.SubItems[1].Text)
-                        };
-                    }
+                        description = item.SubItems[0].Text,
+                        amount = decimal.Parse(item.SubItems[1].Text)
+                    };
                 }
             }
 
@@ -383,7 +381,7 @@ namespace InvoiceGen
         }
 
         /// <summary>
-        /// The list of invoice items displayed in the "View or Generate" tab, that have been selected.
+        /// The list of invoice items displayed in the "View or Generate" tab, that have been selected. Quantities not specified.
         /// </summary>
         public IEnumerable<InvoiceItem> selectedInvoiceItems
         {
@@ -391,14 +389,11 @@ namespace InvoiceGen
             {
                 foreach (ListViewItem selectedItem in this.listView_items.SelectedItems)
                 {
-                    for (int i = 1; i <= int.Parse(selectedItem.SubItems[2].Text); i++)
+                    yield return new InvoiceItem
                     {
-                        yield return new InvoiceItem
-                        {
-                            description = selectedItem.SubItems[0].Text,
-                            amount = decimal.Parse(selectedItem.SubItems[1].Text)
-                        };
-                    }
+                        description = selectedItem.SubItems[0].Text,
+                        amount = decimal.Parse(selectedItem.SubItems[1].Text)
+                    };
                 }
             }
         }
@@ -422,7 +417,7 @@ namespace InvoiceGen
             foreach (ListViewItem existingItem in listView_items.Items)
             {
                 if (existingItem.SubItems[0].Text.Equals(item.description, StringComparison.InvariantCulture) &&
-                    decimal.Parse(existingItem.SubItems[1].Text)==item.amount)
+                    decimal.Parse(existingItem.SubItems[1].Text) == item.amount)
                 {
                     exists = true;
 
@@ -451,7 +446,7 @@ namespace InvoiceGen
         {
             foreach (ListViewItem listItem in listView_items.Items)
             {
-                if (listItem.SubItems[0].Text.Equals(item.description) && decimal.Parse(listItem.SubItems[1].Text)==item.amount)
+                if (listItem.SubItems[0].Text.Equals(item.description) && decimal.Parse(listItem.SubItems[1].Text) == item.amount)
                 {
                     return int.Parse(listItem.SubItems[2].Text);
                 }
@@ -573,10 +568,24 @@ namespace InvoiceGen
             throw new NotImplementedException();
         }
 
+        public string showFolderPickerDialog()
+        {
+            FolderBrowserDialog folderPicker = new FolderBrowserDialog();
+            folderPicker.ShowNewFolderButton = true;
+            if (folderPicker.ShowDialog() == DialogResult.OK)
+            {
+                return folderPicker.SelectedPath;
+            }
+            else
+            {
+                return null; 
+            }
+        }
+
         #region UI events
         // new and load buttons
         public event EventHandler newInvoiceButtonClicked;
-        public event EventHandler loadInvoieButtonClicked;
+        public event EventHandler loadInvoiceButtonClicked;
 
         // title/description radio buttons
         public event EventHandler monthlyTitleRadioButtonClicked;

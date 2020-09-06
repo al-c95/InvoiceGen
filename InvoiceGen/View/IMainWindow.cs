@@ -25,6 +25,7 @@ namespace InvoiceGen.View
         bool customTitleTextBoxEnabled { get; set; }
         string customTitleText { get; set; }
         bool addItemButtonEnabled { get; set; }
+        string getTitle();
 
         bool itemDescriptionTextBoxEnabled { get; set; }
         string itemDescription { get; set; }
@@ -57,10 +58,11 @@ namespace InvoiceGen.View
         void showErrorDialogAbortRetryIgnore(string message);
         void showSuccessDialog(string message);
         void showSaveFileDialog();
+        string showFolderPickerDialog();
 
         #region UI event handlers
         event EventHandler newInvoiceButtonClicked;
-        event EventHandler loadInvoieButtonClicked;
+        event EventHandler loadInvoiceButtonClicked;
 
         event EventHandler monthlyTitleRadioButtonClicked;
         event EventHandler monthComboBoxTextChanged;

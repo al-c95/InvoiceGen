@@ -33,6 +33,8 @@ namespace InvoiceGen
                 // useful for debugging
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+
+                // TODO: show an error dialog/window
             }
         }
     }
