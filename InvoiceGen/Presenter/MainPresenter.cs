@@ -44,9 +44,40 @@ namespace InvoiceGen.Presenter
             this._view.itemListSelectedIndexChanged += _view_itemListSelectedIndexChanged;
             this._view.removeItemButtonClicked += _view_removeItemButtonClicked;
             this._view.duplicateItemButtonClicked += _view_duplicateSelectedItemButtonClicked;
+
+            this._view.saveAndExportXLSXButtonClicked += _view_saveAndExportXLSXButtonClicked;
+        }
+ 
+        #region view event handlers
+        private void _view_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
+        {
+            // TODO: save to history
+
+            // export spreadsheet
+            // get the folder to save it to
+            string dir = this._view.showFolderPickerDialog();
+            // get the data
+            List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
+            foreach (InvoiceItem i in this._view.invoiceItems)
+            {
+                Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
+                items.Add(t);
+            }
+            // save the spreadsheet
+            ExcelWriter excelWriter = new ExcelWriter(dir, this._view.getTitle(), "me", "you"); // TODO: get sender and recipient from config
+            excelWriter.addItems(items);
+            try
+            {
+                excelWriter.close();
+            }
+            catch (System.IO.IOException ex)
+            {
+                // error saving the file
+                this._view.showErrorDialogOk("Error saving the file.");
+                // TODO: log it
+            }
         }
 
-        #region view event handlers
         private void _view_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
         {
             // assume one item is already selected

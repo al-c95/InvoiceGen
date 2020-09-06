@@ -19,3 +19,6 @@ C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.cspro
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.CoreCompileInputs.cache
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.exe
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.pdb
+C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.dll
+C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.xml
+C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.CopyComplete
