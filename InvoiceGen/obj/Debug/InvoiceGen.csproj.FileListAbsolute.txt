@@ -22,3 +22,4 @@ C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.pdb
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.dll
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.xml
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.CopyComplete
+C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.View.ConfigWindow.resources

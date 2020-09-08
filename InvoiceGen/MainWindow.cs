@@ -171,6 +171,7 @@ namespace InvoiceGen
         public void setToReadyState()
         {
             statusBarText = "Ready";
+            statusStrip.BackColor = System.Drawing.Color.LightGray;
 
             // set which controls are currently active
 
@@ -227,8 +228,14 @@ namespace InvoiceGen
 
         public string statusBarText
         {
-            get => this.statusStrip.Text;
-            set => this.statusStrip.Text = value;
+            get => this.toolStripStatusLabel.Text;
+            set => this.toolStripStatusLabel.Text = value;
+        }
+
+        public System.Drawing.Color statusBarColour
+        {
+            get => this.statusStrip.BackColor;
+            set => this.statusStrip.BackColor = value;
         }
 
         public bool radioButtonMonthlyEnabled
@@ -563,7 +570,7 @@ namespace InvoiceGen
 
         public void showErrorDialogOk(string message)
         {
-            throw new NotImplementedException();
+            System.Windows.Forms.MessageBox.Show(message, Configuration.APP_NAME, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public void showErrorDialogAbortRetryIgnore(string message)
