@@ -153,6 +153,8 @@ namespace InvoiceGen.Presenter
             
             // validate and enable the adding of items if valid
             enableNewItemGroup(customDescriptionIsValid());
+
+            enableItemListAndActionControls(customDescriptionIsValid());
         }
 
         private void _view_monthlyTitleRadioButtonClicked(object sender, EventArgs e)
@@ -166,6 +168,8 @@ namespace InvoiceGen.Presenter
 
             // validate and enable the adding of items if valid
             enableNewItemGroup(yearIsValid() && monthIsValid());
+
+            enableItemListAndActionControls(yearIsValid() && monthIsValid());
         }
 
         private void _view_customTitleTextBoxTextChanged(object sender, EventArgs e)

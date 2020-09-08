@@ -89,7 +89,7 @@ namespace InvoiceGen.View
             namedStyle.Style.Numberformat.Format = "$#,##0.00";
 
             // generate the filename from title and directory
-            this._fileName = directory + "\\Invoice " + title + ".xlsx"; // TODO: finish this
+            this._fileName = directory + "\\Invoice " + title + ".xlsx"; 
 
             // write and style headers and metadata
             this._ws.Cells[1, 1].Value = "Invoice: ";

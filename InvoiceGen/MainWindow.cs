@@ -58,9 +58,16 @@ namespace InvoiceGen
             this.button_duplicateItem.Click += MainWindow_duplicateSelectedItemButtonClicked;
 
             this.button_saveExportXL.Click += MainWindow_saveAndExportXLSXButtonClicked;
+
+            this.exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
         }
 
         #region UI event handlers
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
         private void MainWindow_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
@@ -546,6 +553,12 @@ namespace InvoiceGen
         {
             get => this.button_newInvoice.Enabled;
             set => this.button_newInvoice.Enabled = value;
+        }
+
+        public bool exitToolStripMenuItemEnabled
+        {
+            get => this.exitToolStripMenuItem.Enabled;
+            set => this.exitToolStripMenuItem.Enabled = value;
         }
 
         public void showErrorDialogOk(string message)
