@@ -30,10 +30,6 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newInvoiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadInvoiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAndEmailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAndExportXLSXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,43 +97,15 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newInvoiceToolStripMenuItem,
-            this.loadInvoiceToolStripMenuItem,
-            this.saveAndEmailToolStripMenuItem,
-            this.saveAndExportXLSXToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // newInvoiceToolStripMenuItem
-            // 
-            this.newInvoiceToolStripMenuItem.Name = "newInvoiceToolStripMenuItem";
-            this.newInvoiceToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.newInvoiceToolStripMenuItem.Text = "New Invoice";
-            // 
-            // loadInvoiceToolStripMenuItem
-            // 
-            this.loadInvoiceToolStripMenuItem.Name = "loadInvoiceToolStripMenuItem";
-            this.loadInvoiceToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.loadInvoiceToolStripMenuItem.Text = "Load Invoice";
-            // 
-            // saveAndEmailToolStripMenuItem
-            // 
-            this.saveAndEmailToolStripMenuItem.Name = "saveAndEmailToolStripMenuItem";
-            this.saveAndEmailToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.saveAndEmailToolStripMenuItem.Text = "Save and Email";
-            // 
-            // saveAndExportXLSXToolStripMenuItem
-            // 
-            this.saveAndExportXLSXToolStripMenuItem.Name = "saveAndExportXLSXToolStripMenuItem";
-            this.saveAndExportXLSXToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.saveAndExportXLSXToolStripMenuItem.Text = "Save and Export XLSX";
-            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // settingsToolStripMenuItem
@@ -606,10 +574,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column5;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newInvoiceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadInvoiceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAndEmailToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAndExportXLSXToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem configurationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewManualToolStripMenuItem;
