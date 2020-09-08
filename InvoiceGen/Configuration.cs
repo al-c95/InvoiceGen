@@ -20,5 +20,12 @@ namespace InvoiceGen
         // TODO: get from config file upon loading
         public static readonly string recipientEmailAddress;
         public static readonly string senderEmailAddress;
+
+        // status/progress colours
+        public static readonly System.Drawing.Color DEFAULT_COLOUR = System.Drawing.Color.LightGray;
+        public static readonly System.Drawing.Color IN_PROGRESS_COLOUR = System.Drawing.Color.FromArgb(255, 128, 128, 255);
+        public static readonly System.Drawing.Color SUCCESS_COLOUR = System.Drawing.Color.FromArgb(255, 42, 255, 42);
+        public static readonly System.Drawing.Color ERROR_COLOUR = System.Drawing.Color.FromArgb(255, 255, 42, 42);
+        public static readonly System.Drawing.Color WARNING_COLOUR = System.Drawing.Color.FromArgb(255, 255, 212, 42);
     }
 }

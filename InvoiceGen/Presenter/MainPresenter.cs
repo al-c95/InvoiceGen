@@ -49,33 +49,54 @@ namespace InvoiceGen.Presenter
         }
  
         #region view event handlers
-        private void _view_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
+        private async void _view_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
         {
             // TODO: save to history
 
-            // export spreadsheet
-            // get the folder to save it to
-            string dir = this._view.showFolderPickerDialog();
-            // get the data
-            List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
-            foreach (InvoiceItem i in this._view.invoiceItems)
-            {
-                Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
-                items.Add(t);
-            }
-            // save the spreadsheet
-            ExcelWriter excelWriter = new ExcelWriter(dir, this._view.getTitle(), "me", "you"); // TODO: get sender and recipient from config
-            excelWriter.addItems(items);
             try
             {
-                excelWriter.close();
+                // update the status
+                this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+                this._view.statusBarText = "Exporting Spreadsheet In Progress";
+
+                // get the folder to save it to from a folder picker dialog
+                string dir = this._view.showFolderPickerDialog();
+
+                // get the data
+                string title = this._view.getTitle();
+                List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
+                List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
+                foreach (InvoiceItem i in this._view.invoiceItems)
+                {
+                    Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
+                    items.Add(t);
+                }
+
+                await Task.Run(() =>
+                {
+                    // write and save spreadsheet
+                    ExcelWriter excelWriter = new ExcelWriter(dir, title, "me", "you"); // TODO: get sender and recipient from config
+                    excelWriter.addItems(items);
+                    excelWriter.close();
+                });
             }
             catch (System.IO.IOException ex)
             {
                 // error saving the file
+                // inform the user
                 this._view.showErrorDialogOk("Error saving the file.");
+                this._view.statusBarText = "Exporting Spreadsheet Failed";
+                this._view.statusBarColour = Configuration.ERROR_COLOUR;
                 // TODO: log it
+
+                // nothing more we can do
+                return;
             }
+
+            // at this point, it succeeded
+            // inform the user
+            this._view.statusBarText = "Exporting Spreadsheet Completed Successfully";
+            this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
         }
 
         private void _view_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
