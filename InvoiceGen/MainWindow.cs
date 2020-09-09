@@ -60,12 +60,20 @@ namespace InvoiceGen
             this.button_saveExportXL.Click += MainWindow_saveAndExportXLSXButtonClicked;
 
             this.exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
+
+            this.configurationToolStripMenuItem.Click += ConfigurationToolStripMenuItem_Click;
         }
 
         #region UI event handlers
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void ConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            settingsConfigMenuItemClicked?.Invoke(this, e);
         }
 
         private void MainWindow_saveAndExportXLSXButtonClicked(object sender, EventArgs e)

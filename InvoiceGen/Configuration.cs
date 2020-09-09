@@ -18,8 +18,13 @@ namespace InvoiceGen
         public const string DATE_FORMAT = "";
 
         // TODO: get from config file upon loading
-        public static readonly string recipientEmailAddress;
-        public static readonly string senderEmailAddress;
+        public static string senderEmailAddress;
+        public static string senderName;
+        public static string senderPassword;
+        public static string host;
+        public static int port;
+        public static string recipientEmailAddress;
+        public static string recipientName;
 
         // status/progress colours
         public static readonly System.Drawing.Color DEFAULT_COLOUR = System.Drawing.Color.LightGray;
