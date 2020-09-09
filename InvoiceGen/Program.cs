@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace InvoiceGen
 {
@@ -22,6 +23,15 @@ namespace InvoiceGen
             var xmlService = new InvoiceGen.Model.DataAccessLayer.XmlService(xmlFileHandler);
             var repository = new InvoiceGen.Model.Repository.InvoiceRepository(xmlService);
             var mainPresenter = new InvoiceGen.Presenter.MainPresenter(mainWindow, repository);
+
+            // load the configuration
+            Configuration.senderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
+            Configuration.senderName = ConfigurationManager.AppSettings["senderName"];
+            Configuration.senderPassword = ConfigurationManager.AppSettings["senderPassword"];
+            Configuration.host = ConfigurationManager.AppSettings["host"];
+            Configuration.port = int.Parse(ConfigurationManager.AppSettings["port"]);
+            Configuration.recipientEmailAddress = ConfigurationManager.AppSettings["recipientEmail"];
+            Configuration.recipientName = ConfigurationManager.AppSettings["recipientName"];
 
             try
             {

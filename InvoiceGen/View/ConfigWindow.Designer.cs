@@ -97,6 +97,7 @@
             this.button_save.TabIndex = 2;
             this.button_save.Text = "Save";
             this.button_save.UseVisualStyleBackColor = true;
+            this.button_save.Click += new System.EventHandler(this.button_save_Click);
             // 
             // button_cancel
             // 
@@ -107,6 +108,7 @@
             this.button_cancel.TabIndex = 3;
             this.button_cancel.Text = "Cancel";
             this.button_cancel.UseVisualStyleBackColor = true;
+            this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
             // 
             // textBox_recipientAddress
             // 
@@ -207,7 +209,7 @@
             0,
             0});
             this.numericUpDown_port.Name = "numericUpDown_port";
-            this.numericUpDown_port.Size = new System.Drawing.Size(100, 20);
+            this.numericUpDown_port.Size = new System.Drawing.Size(255, 20);
             this.numericUpDown_port.TabIndex = 10;
             // 
             // textBox_host

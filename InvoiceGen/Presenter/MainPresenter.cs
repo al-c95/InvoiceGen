@@ -15,6 +15,9 @@ namespace InvoiceGen.Presenter
         public IMainWindow _view;
         public IInvoiceRepository _repo;
 
+        // action labels for status/progress reporting
+        string spreadsheetExportAction = "Exporting Spreadsheet";
+
         /// <summary>
         /// Constructor with model and view dependency injection.
         /// </summary>
@@ -46,9 +49,18 @@ namespace InvoiceGen.Presenter
             this._view.duplicateItemButtonClicked += _view_duplicateSelectedItemButtonClicked;
 
             this._view.saveAndExportXLSXButtonClicked += _view_saveAndExportXLSXButtonClicked;
+
+            this._view.settingsConfigMenuItemClicked += _view_settingsConfigMenuItemClicked;
         }
- 
+
         #region view event handlers
+        private void _view_settingsConfigMenuItemClicked(object sender, EventArgs e)
+        {
+            // show the config window
+            ConfigWindow configWindow = new ConfigWindow();
+            configWindow.ShowDialog();
+        }
+
         private async void _view_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
         {
             // TODO: save to history
@@ -57,7 +69,7 @@ namespace InvoiceGen.Presenter
             {
                 // update the status
                 this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-                this._view.statusBarText = "Exporting Spreadsheet In Progress";
+                this._view.statusBarText = spreadsheetExportAction = "In Progress";
 
                 // get the folder to save it to from a folder picker dialog
                 string dir = this._view.showFolderPickerDialog();
@@ -85,7 +97,7 @@ namespace InvoiceGen.Presenter
                 // error saving the file
                 // inform the user
                 this._view.showErrorDialogOk("Error saving the file.");
-                this._view.statusBarText = "Exporting Spreadsheet Failed";
+                this._view.statusBarText = "Error Saving File";
                 this._view.statusBarColour = Configuration.ERROR_COLOUR;
                 // TODO: log it
 
@@ -95,7 +107,7 @@ namespace InvoiceGen.Presenter
 
             // at this point, it succeeded
             // inform the user
-            this._view.statusBarText = "Exporting Spreadsheet Completed Successfully";
+            this._view.statusBarText = spreadsheetExportAction + " Completed Successfully";
             this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
         }
 
