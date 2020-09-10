@@ -69,7 +69,7 @@ namespace InvoiceGen.Presenter
             {
                 // update the status
                 this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-                this._view.statusBarText = spreadsheetExportAction = "In Progress";
+                this._view.statusBarText = spreadsheetExportAction + " In Progress";
 
                 // get the folder to save it to from a folder picker dialog
                 string dir = this._view.showFolderPickerDialog();
