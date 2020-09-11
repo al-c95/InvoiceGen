@@ -8,7 +8,7 @@ namespace InvoiceGen
 {
     public static class Configuration
     {
-        public const string VERSION = "0.1.0 (beta)";
+        public const string APP_VERSION = "0.1.0 (beta)";
         public const string APP_NAME = "InvoiceGen";
 
         // TODO: set this

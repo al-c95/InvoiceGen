@@ -18,7 +18,7 @@ namespace InvoiceGen
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var mainWindow = new mainWindow(Configuration.APP_NAME + " v" + Configuration.VERSION);
+            var mainWindow = new mainWindow(Configuration.APP_NAME + " v" + Configuration.APP_VERSION);
             var xmlFileHandler = new InvoiceGen.Model.DataAccessLayer.XmlFileHandler(Configuration.XML_FILE_PATH);
             var xmlService = new InvoiceGen.Model.DataAccessLayer.XmlService(xmlFileHandler);
             var repository = new InvoiceGen.Model.Repository.InvoiceRepository(xmlService);

@@ -58,6 +58,7 @@ namespace InvoiceGen
             this.button_duplicateItem.Click += MainWindow_duplicateSelectedItemButtonClicked;
 
             this.button_saveExportXL.Click += MainWindow_saveAndExportXLSXButtonClicked;
+            this.button_saveEmail.Click += Button_saveEmail_Click;
 
             this.exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
 
@@ -65,6 +66,12 @@ namespace InvoiceGen
         }
 
         #region UI event handlers
+        private void Button_saveEmail_Click(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            saveAndEmailButtonClicked?.Invoke(this, e);
+        }
+
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
