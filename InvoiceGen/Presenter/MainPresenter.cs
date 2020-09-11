@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using InvoiceGen.View;
 using InvoiceGen.Model.Repository;
 using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.EmailService;
 
 namespace InvoiceGen.Presenter
 {
@@ -17,6 +18,9 @@ namespace InvoiceGen.Presenter
 
         // action labels for status/progress reporting
         string spreadsheetExportAction = "Exporting Spreadsheet";
+        string createSpreadsheetAction = "Creating Spreadsheet";
+        string sendEmailAction = "Sending Email";
+        string savingToRecordsAction = "Saving to records";
 
         /// <summary>
         /// Constructor with model and view dependency injection.
@@ -49,11 +53,77 @@ namespace InvoiceGen.Presenter
             this._view.duplicateItemButtonClicked += _view_duplicateSelectedItemButtonClicked;
 
             this._view.saveAndExportXLSXButtonClicked += _view_saveAndExportXLSXButtonClicked;
+            this._view.saveAndEmailButtonClicked += _view_saveAndEmailButtonClicked;
 
             this._view.settingsConfigMenuItemClicked += _view_settingsConfigMenuItemClicked;
         }
 
         #region view event handlers
+        private async void _view_saveAndEmailButtonClicked(object sender, EventArgs e)
+        {
+            // TODO: save to history
+
+            // create the spreadsheet
+            // update the status
+            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.statusBarText = createSpreadsheetAction + " In Progress";
+            // get the data
+            string title = this._view.getTitle();
+            List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
+            List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
+            foreach (InvoiceItem i in this._view.invoiceItems)
+            {
+                Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
+                items.Add(t);
+            }
+            // create it
+            ExcelWriter excelWriter = null;
+            try
+            {
+                await Task.Run(() =>
+                {
+                    // write and save spreadsheet
+                    excelWriter = new ExcelWriter(null, title, Configuration.senderEmailAddress, Configuration.recipientEmailAddress);
+                    excelWriter.addItems(items);
+                });
+            }
+            catch (Exception ex)
+            {
+                // it failed
+                this._view.statusBarText = createSpreadsheetAction + " Failed: " + ex.Message;
+                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+
+                return;
+            }
+
+            // send it an email
+            // update the status
+            this._view.statusBarText = sendEmailAction + " In Progress";
+            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            // send it
+            try
+            {
+                await Task.Run(() =>
+                {
+                    EmailService.EmailService emailService = new InvoiceGen.EmailService.EmailService();
+                    emailService.sendInvoice("Invoice " + title, "", excelWriter.closeAndGetMemoryStream());
+                });
+            }
+            catch(System.Net.Mail.SmtpException ex)
+            {
+                // it failed
+                this._view.statusBarText = sendEmailAction + " Failed: " + ex.Message;
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+
+                return;
+            }
+
+            // at this point, it succeeded
+            this._view.statusBarText = sendEmailAction + " Completed Successfully";
+            this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
+        }
+
         private void _view_settingsConfigMenuItemClicked(object sender, EventArgs e)
         {
             // show the config window
@@ -87,7 +157,7 @@ namespace InvoiceGen.Presenter
                 await Task.Run(() =>
                 {
                     // write and save spreadsheet
-                    ExcelWriter excelWriter = new ExcelWriter(dir, title, "me", "you"); // TODO: get sender and recipient from config
+                    ExcelWriter excelWriter = new ExcelWriter(dir, title, Configuration.senderEmailAddress, Configuration.recipientEmailAddress); 
                     excelWriter.addItems(items);
                     excelWriter.close();
                 });
