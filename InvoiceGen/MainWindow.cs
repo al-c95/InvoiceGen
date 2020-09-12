@@ -36,7 +36,10 @@ namespace InvoiceGen
             comboBox_month.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBox_month.AutoCompleteSource = AutoCompleteSource.ListItems;
 
+            // set to ready state
             setToReadyState();
+            statusBarText = "Ready";
+            statusStrip.BackColor = System.Drawing.Color.LightGray;
 
             // subscribe to UI events
 
@@ -185,9 +188,6 @@ namespace InvoiceGen
 
         public void setToReadyState()
         {
-            statusBarText = "Ready";
-            statusStrip.BackColor = System.Drawing.Color.LightGray;
-
             // set which controls are currently active
 
             button_newInvoice.Enabled = true;
@@ -221,6 +221,8 @@ namespace InvoiceGen
             button_saveExportXL.Enabled = false;
 
             button_cancel.Enabled = false;
+
+            richTextBox_total.Text = "0.00";
         }
 
         public string getTitle()
