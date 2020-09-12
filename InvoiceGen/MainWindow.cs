@@ -63,6 +63,8 @@ namespace InvoiceGen
             this.button_saveExportXL.Click += MainWindow_saveAndExportXLSXButtonClicked;
             this.button_saveEmail.Click += Button_saveEmail_Click;
 
+            this.button_cancel.Click += Button_cancel_Click;
+
             this.exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
 
             this.configurationToolStripMenuItem.Click += ConfigurationToolStripMenuItem_Click;
@@ -71,6 +73,12 @@ namespace InvoiceGen
         }
 
         #region UI event handlers
+        private void Button_cancel_Click(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            cancelClicked?.Invoke(this, e);
+        }
+
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react

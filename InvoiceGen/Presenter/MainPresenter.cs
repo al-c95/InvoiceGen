@@ -55,12 +55,23 @@ namespace InvoiceGen.Presenter
             this._view.saveAndExportXLSXButtonClicked += _view_saveAndExportXLSXButtonClicked;
             this._view.saveAndEmailButtonClicked += _view_saveAndEmailButtonClicked;
 
+            this._view.cancelClicked += _view_cancelClicked;
+
             this._view.settingsConfigMenuItemClicked += _view_settingsConfigMenuItemClicked;
 
             this._view.helpAboutMenuItemClicked += _view_helpAboutMenuItemClicked;
         }
 
         #region view event handlers
+        private void _view_cancelClicked(object sender, EventArgs e)
+        {
+            // at this point, it succeeded
+            this._view.statusBarText = "Ready";
+            this._view.statusBarColour = Configuration.DEFAULT_COLOUR;
+            // reset
+            this._view.setToReadyState();
+        }
+
         private void _view_helpAboutMenuItemClicked(object sender, EventArgs e)
         {
             // show the about box
