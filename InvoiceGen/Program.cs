@@ -24,7 +24,7 @@ namespace InvoiceGen
             var repository = new InvoiceGen.Model.Repository.InvoiceRepository(xmlService);
             var mainPresenter = new InvoiceGen.Presenter.MainPresenter(mainWindow, repository);
 
-            // load the configuration
+            // load the configuration data
             Configuration.senderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
             Configuration.senderName = ConfigurationManager.AppSettings["senderName"];
             Configuration.senderPassword = ConfigurationManager.AppSettings["senderPassword"];

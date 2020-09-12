@@ -61,6 +61,10 @@ namespace InvoiceGen.Presenter
         #region view event handlers
         private async void _view_saveAndEmailButtonClicked(object sender, EventArgs e)
         {
+            this._view.saveAndEmailButtonEnabled = false;
+            this._view.saveAndExportXLButtonEnabled = false;
+            this._view.cancelButtonEnabled = false;
+
             // TODO: save to history
 
             // create the spreadsheet
@@ -122,6 +126,8 @@ namespace InvoiceGen.Presenter
             // at this point, it succeeded
             this._view.statusBarText = sendEmailAction + " Completed Successfully";
             this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
+            // reset
+            this._view.setToReadyState();
         }
 
         private void _view_settingsConfigMenuItemClicked(object sender, EventArgs e)
@@ -133,6 +139,10 @@ namespace InvoiceGen.Presenter
 
         private async void _view_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
         {
+            this._view.saveAndEmailButtonEnabled = false;
+            this._view.saveAndExportXLButtonEnabled = false;
+            this._view.cancelButtonEnabled = false;
+
             // TODO: save to history
 
             try
@@ -179,6 +189,8 @@ namespace InvoiceGen.Presenter
             // inform the user
             this._view.statusBarText = spreadsheetExportAction + " Completed Successfully";
             this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
+            // reset
+            this._view.setToReadyState();
         }
 
         private void _view_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
@@ -321,6 +333,9 @@ namespace InvoiceGen.Presenter
             this._view.yearTextBoxEnabled = true;
 
             this._view.cancelButtonEnabled = true;
+
+            this._view.statusBarColour = Configuration.DEFAULT_COLOUR;
+            this._view.statusBarText = "Ready";
         }
         #endregion
 

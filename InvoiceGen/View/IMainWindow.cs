@@ -14,6 +14,8 @@ namespace InvoiceGen.View
         string statusBarText { get; set; }
         System.Drawing.Color statusBarColour { get; set; }
 
+        void setToReadyState();
+
         bool newInvoiceButtonEnabled { get; set; }
         bool loadInvoiceButtonEnabled { get; set; }
 

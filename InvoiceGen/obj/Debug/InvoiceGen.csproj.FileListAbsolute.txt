@@ -23,3 +23,4 @@ C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.xml
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.CopyComplete
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.View.ConfigWindow.resources
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csprojAssemblyReference.cache
+C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.View.AboutBox.resources
