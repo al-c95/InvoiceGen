@@ -66,9 +66,17 @@ namespace InvoiceGen
             this.exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
 
             this.configurationToolStripMenuItem.Click += ConfigurationToolStripMenuItem_Click;
+
+            this.aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
         }
 
         #region UI event handlers
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            helpAboutMenuItemClicked?.Invoke(this, e);
+        }
+
         private void Button_saveEmail_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
