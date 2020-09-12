@@ -56,9 +56,18 @@ namespace InvoiceGen.Presenter
             this._view.saveAndEmailButtonClicked += _view_saveAndEmailButtonClicked;
 
             this._view.settingsConfigMenuItemClicked += _view_settingsConfigMenuItemClicked;
+
+            this._view.helpAboutMenuItemClicked += _view_helpAboutMenuItemClicked;
         }
 
         #region view event handlers
+        private void _view_helpAboutMenuItemClicked(object sender, EventArgs e)
+        {
+            // show the about box
+            AboutBox aboutBox = new AboutBox();
+            aboutBox.Show();
+        }
+
         private async void _view_saveAndEmailButtonClicked(object sender, EventArgs e)
         {
             this._view.saveAndEmailButtonEnabled = false;
