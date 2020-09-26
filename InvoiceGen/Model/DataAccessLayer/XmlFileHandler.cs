@@ -59,7 +59,7 @@ namespace InvoiceGen.Model.DataAccessLayer
         /// </summary>
         private void load()
         {
-            //this._doc = XDocument.Load(_fileName);
+            this._doc = XDocument.Load(_fileName);
         }
     }
 }

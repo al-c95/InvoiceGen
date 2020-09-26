@@ -11,13 +11,10 @@ namespace InvoiceGen
         public const string APP_VERSION = "0.1.0 (beta)";
         public const string APP_NAME = "InvoiceGen";
 
-        // TODO: set this
-        public const string XML_FILE_PATH = "";
+        public const string XML_FILE_PATH = "invoices.xml";
 
-        // TODO: set this
-        public const string DATE_FORMAT = "";
+        public const string DATE_FORMAT = "dd/MM/yyyy hh:mm:ss tt";
 
-        // TODO: get from config file upon loading
         public static string senderEmailAddress;
         public static string senderName;
         public static string senderPassword;

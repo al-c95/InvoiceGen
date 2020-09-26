@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <invoices>
-    <invoice id="1", title="Aug 2020", timestamp="now", paid="true">
-        <item desc="bla bla bla..."/>
-        <item desc="bla bla bla..."/>
+    <invoice id="1" title="Aug 2020" timestamp="01/08/2020 00:00:00 AM" paid="true">
+        <item desc="yoghurt" amount="2.5"/>
+        <item desc="rent" amount="910"/>
     </invoice>
-    <invoice id="2", title="Sep 2020", timestamp="now", paid="false">
-        <item desc="..."/>
+    <invoice id="2" title="Sep 2020" timestamp="01/09/2020 01:00:00 PM" paid="false">
+        <item desc="rent" amount="910"/>
     </invoice>
 </invoices>
