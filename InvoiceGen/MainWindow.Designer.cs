@@ -49,7 +49,6 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.button_loadInvoice = new System.Windows.Forms.Button();
             this.newItemGroup = new System.Windows.Forms.GroupBox();
             this.button_addItem = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -66,13 +65,15 @@
             this.radioButton_titleMonthly = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView_invoiceHistory = new System.Windows.Forms.DataGridView();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.button_viewSelected = new System.Windows.Forms.Button();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -82,6 +83,7 @@
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_invoiceHistory)).BeginInit();
             this.statusStrip.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -107,7 +109,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // settingsToolStripMenuItem
@@ -149,9 +151,9 @@
             // 
             this.button_newInvoice.Location = new System.Drawing.Point(6, 6);
             this.button_newInvoice.Name = "button_newInvoice";
-            this.button_newInvoice.Size = new System.Drawing.Size(75, 23);
+            this.button_newInvoice.Size = new System.Drawing.Size(116, 23);
             this.button_newInvoice.TabIndex = 1;
-            this.button_newInvoice.Text = "New";
+            this.button_newInvoice.Text = "New Invoice";
             this.button_newInvoice.UseVisualStyleBackColor = true;
             // 
             // tabControl
@@ -174,7 +176,6 @@
             this.tabPage1.Controls.Add(this.button_removeItem);
             this.tabPage1.Controls.Add(this.button_duplicateItem);
             this.tabPage1.Controls.Add(this.listView_items);
-            this.tabPage1.Controls.Add(this.button_loadInvoice);
             this.tabPage1.Controls.Add(this.newItemGroup);
             this.tabPage1.Controls.Add(this.titleGroup);
             this.tabPage1.Controls.Add(this.button_newInvoice);
@@ -277,15 +278,6 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "Quantity";
-            // 
-            // button_loadInvoice
-            // 
-            this.button_loadInvoice.Location = new System.Drawing.Point(87, 6);
-            this.button_loadInvoice.Name = "button_loadInvoice";
-            this.button_loadInvoice.Size = new System.Drawing.Size(75, 23);
-            this.button_loadInvoice.TabIndex = 4;
-            this.button_loadInvoice.Text = "Load";
-            this.button_loadInvoice.UseVisualStyleBackColor = true;
             // 
             // newItemGroup
             // 
@@ -444,6 +436,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.tableLayoutPanel1);
             this.tabPage2.Controls.Add(this.dataGridView_invoiceHistory);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -467,37 +460,9 @@
             this.Column5});
             this.dataGridView_invoiceHistory.Location = new System.Drawing.Point(0, 0);
             this.dataGridView_invoiceHistory.Name = "dataGridView_invoiceHistory";
-            this.dataGridView_invoiceHistory.Size = new System.Drawing.Size(792, 548);
+            this.dataGridView_invoiceHistory.RowHeadersVisible = false;
+            this.dataGridView_invoiceHistory.Size = new System.Drawing.Size(792, 514);
             this.dataGridView_invoiceHistory.TabIndex = 0;
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "ID";
-            this.Column1.Name = "Column1";
-            this.Column1.ReadOnly = true;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Timestamp";
-            this.Column2.Name = "Column2";
-            this.Column2.ReadOnly = true;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Title";
-            this.Column3.Name = "Column3";
-            this.Column3.ReadOnly = true;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Total Amount ($)";
-            this.Column4.Name = "Column4";
-            this.Column4.ReadOnly = true;
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "Paid";
-            this.Column5.Name = "Column5";
             // 
             // statusStrip
             // 
@@ -514,6 +479,58 @@
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(39, 17);
             this.toolStripStatusLabel.Text = "Ready";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.button_viewSelected, 1, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 517);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(792, 30);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // button_viewSelected
+            // 
+            this.button_viewSelected.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.button_viewSelected.Location = new System.Drawing.Point(339, 3);
+            this.button_viewSelected.Name = "button_viewSelected";
+            this.button_viewSelected.Size = new System.Drawing.Size(114, 23);
+            this.button_viewSelected.TabIndex = 0;
+            this.button_viewSelected.Text = "View Selected";
+            this.button_viewSelected.UseVisualStyleBackColor = true;
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "ID";
+            this.Column1.Name = "Column1";
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Timestamp";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 150;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "Title";
+            this.Column3.Name = "Column3";
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Total Amount ($)";
+            this.Column4.Name = "Column4";
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "Paid";
+            this.Column5.Name = "Column5";
             // 
             // mainWindow
             // 
@@ -539,6 +556,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_invoiceHistory)).EndInit();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -554,7 +572,6 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.GroupBox titleGroup;
-        private System.Windows.Forms.Button button_loadInvoice;
         private System.Windows.Forms.GroupBox newItemGroup;
         private System.Windows.Forms.TextBox textBox_customTitle;
         private System.Windows.Forms.RadioButton radioButton_titleCustom;
@@ -579,11 +596,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.DataGridView dataGridView_invoiceHistory;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column5;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -591,6 +603,13 @@
         private System.Windows.Forms.ToolStripMenuItem viewManualToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button button_viewSelected;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column5;
     }
 }
 

@@ -60,6 +60,9 @@ namespace InvoiceGen.Presenter
             this._view.settingsConfigMenuItemClicked += _view_settingsConfigMenuItemClicked;
 
             this._view.helpAboutMenuItemClicked += _view_helpAboutMenuItemClicked;
+
+            // populate the invoice history
+            this._view.invoiceHistory = this._repo.getAllInvoices();
         }
 
         #region view event handlers
@@ -345,7 +348,8 @@ namespace InvoiceGen.Presenter
         private void _view_newInvoiceButtonClicked(object sender, EventArgs e)
         {
             this._view.newInvoiceButtonEnabled = false;
-            this._view.loadInvoiceButtonEnabled = false;
+
+            this._view.viewSelectedInvoiceButtonEnabled = false;
 
             this._view.monthComboboxEnabled = true;
             this._view.radioButtonMonthlyEnabled = true;

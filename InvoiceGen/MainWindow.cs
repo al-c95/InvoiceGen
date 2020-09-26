@@ -207,7 +207,6 @@ namespace InvoiceGen
             // set which controls are currently active
 
             button_newInvoice.Enabled = true;
-            button_loadInvoice.Enabled = true;
 
             radioButton_titleMonthly.Checked = true;
             radioButton_titleMonthly.Enabled = false;
@@ -583,16 +582,16 @@ namespace InvoiceGen
             richTextBox_total.Text = toDisplay;
         }
 
-        public bool loadInvoiceButtonEnabled
-        {
-            get => this.button_loadInvoice.Enabled;
-            set => this.button_loadInvoice.Enabled = value;
-        }
-
         public bool newInvoiceButtonEnabled
         {
             get => this.button_newInvoice.Enabled;
             set => this.button_newInvoice.Enabled = value;
+        }
+
+        public bool viewSelectedInvoiceButtonEnabled
+        {
+            get => this.button_viewSelected.Enabled;
+            set => this.button_viewSelected.Enabled = value;
         }
 
         public bool exitToolStripMenuItemEnabled
@@ -636,9 +635,11 @@ namespace InvoiceGen
         }
 
         #region UI events
-        // new and load buttons
+        // new invoice button
         public event EventHandler newInvoiceButtonClicked;
-        public event EventHandler loadInvoiceButtonClicked;
+
+        // view selected invoice button
+        public event EventHandler viewSelectedInvoiceButtonClicked;
 
         // title/description radio buttons
         public event EventHandler monthlyTitleRadioButtonClicked;

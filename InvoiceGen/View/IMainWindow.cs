@@ -17,7 +17,8 @@ namespace InvoiceGen.View
         void setToReadyState();
 
         bool newInvoiceButtonEnabled { get; set; }
-        bool loadInvoiceButtonEnabled { get; set; }
+
+        bool viewSelectedInvoiceButtonEnabled { get; set; }
 
         bool yearTextBoxEnabled { get; set; }
         bool radioButtonMonthlyEnabled { get; set; }
@@ -65,7 +66,8 @@ namespace InvoiceGen.View
 
         #region UI event handlers
         event EventHandler newInvoiceButtonClicked;
-        event EventHandler loadInvoiceButtonClicked;
+
+        event EventHandler viewSelectedInvoiceButtonClicked;
 
         event EventHandler monthlyTitleRadioButtonClicked;
         event EventHandler monthComboBoxTextChanged;
