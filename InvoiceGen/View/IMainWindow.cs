@@ -13,12 +13,15 @@ namespace InvoiceGen.View
         string windowTitle { get; set; }
         string statusBarText { get; set; }
         System.Drawing.Color statusBarColour { get; set; }
+        string saveAndEmailButtonText { get; set; }
+        string saveAndExportXLSXButtonText { get; set; }
 
         void setToReadyState();
 
         bool newInvoiceButtonEnabled { get; set; }
 
         bool viewSelectedInvoiceButtonEnabled { get; set; }
+        bool updateRecordsButtonEnabled { get; set; }
 
         bool yearTextBoxEnabled { get; set; }
         bool radioButtonMonthlyEnabled { get; set; }
@@ -68,6 +71,8 @@ namespace InvoiceGen.View
         event EventHandler newInvoiceButtonClicked;
 
         event EventHandler viewSelectedInvoiceButtonClicked;
+        event EventHandler updateRecordsButtonClicked;
+        event EventHandler invoiceHistoryDataGridViewSelectionChanged;
 
         event EventHandler monthlyTitleRadioButtonClicked;
         event EventHandler monthComboBoxTextChanged;
