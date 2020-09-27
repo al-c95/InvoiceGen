@@ -44,6 +44,11 @@ namespace InvoiceGen
             // subscribe to UI events
 
             this.button_newInvoice.Click += Button_newInvoice_Click;
+
+            this.button_viewSelected.Click += Button_viewSelected_Click;
+            this.button_updateRecords.Click += Button_updateRecords_Click;
+            this.dataGridView_invoiceHistory.SelectionChanged += DataGridView_invoiceHistory_SelectionChanged;
+
             this.button_addItem.Click += Button_addItem_Click;
 
             this.radioButton_titleCustom.CheckedChanged += RadioButton_titleCustom_CheckedChanged;
@@ -73,6 +78,27 @@ namespace InvoiceGen
         }
 
         #region UI event handlers
+        private void DataGridView_invoiceHistory_SelectionChanged(object sender, EventArgs e)
+        {
+            // TODO: put this logic in the presenter
+            button_viewSelected.Enabled = dataGridView_invoiceHistory.SelectedRows.Count == 1;
+
+            // fire the external event so the subscribed presenter can react
+            invoiceHistoryDataGridViewSelectionChanged?.Invoke(this, e);
+        }
+
+        private void Button_updateRecords_Click(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            updateRecordsButtonClicked?.Invoke(this, e);
+        }
+
+        private void Button_viewSelected_Click(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            viewSelectedInvoiceButtonClicked?.Invoke(this, e);
+        }
+
         private void Button_cancel_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
@@ -251,7 +277,7 @@ namespace InvoiceGen
                 return this.textBox_customTitle.Text;
             }
         }
-
+  
         public string windowTitle
         {
             get => this.Text;
@@ -268,6 +294,18 @@ namespace InvoiceGen
         {
             get => this.statusStrip.BackColor;
             set => this.statusStrip.BackColor = value;
+        }
+
+        public string saveAndEmailButtonText
+        {
+            get => this.button_saveEmail.Text;
+            set => this.button_saveEmail.Text = value;
+        }
+
+        public string saveAndExportXLSXButtonText
+        {
+            get => this.button_saveExportXL.Text;
+            set => this.button_saveExportXL.Text = value;
         }
 
         public bool radioButtonMonthlyEnabled
@@ -594,6 +632,12 @@ namespace InvoiceGen
             set => this.button_viewSelected.Enabled = value;
         }
 
+        public bool updateRecordsButtonEnabled
+        {
+            get => this.button_updateRecords.Enabled;
+            set => this.button_updateRecords.Enabled = value;
+        }
+
         public bool exitToolStripMenuItemEnabled
         {
             get => this.exitToolStripMenuItem.Enabled;
@@ -638,8 +682,10 @@ namespace InvoiceGen
         // new invoice button
         public event EventHandler newInvoiceButtonClicked;
 
-        // view selected invoice button
+        // invoice history tab controls
         public event EventHandler viewSelectedInvoiceButtonClicked;
+        public event EventHandler updateRecordsButtonClicked;
+        public event EventHandler invoiceHistoryDataGridViewSelectionChanged;
 
         // title/description radio buttons
         public event EventHandler monthlyTitleRadioButtonClicked;

@@ -64,16 +64,18 @@
             this.radioButton_titleCustom = new System.Windows.Forms.RadioButton();
             this.radioButton_titleMonthly = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dataGridView_invoiceHistory = new System.Windows.Forms.DataGridView();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.button_viewSelected = new System.Windows.Forms.Button();
+            this.button_updateRecords = new System.Windows.Forms.Button();
+            this.dataGridView_invoiceHistory = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -81,9 +83,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_newEntryQ)).BeginInit();
             this.titleGroup.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_invoiceHistory)).BeginInit();
             this.statusStrip.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -256,9 +259,11 @@
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
+            this.listView_items.FullRowSelect = true;
             this.listView_items.GridLines = true;
             this.listView_items.HideSelection = false;
             this.listView_items.Location = new System.Drawing.Point(6, 245);
+            this.listView_items.MultiSelect = false;
             this.listView_items.Name = "listView_items";
             this.listView_items.Size = new System.Drawing.Size(780, 192);
             this.listView_items.TabIndex = 5;
@@ -446,6 +451,56 @@
             this.tabPage2.Text = "History";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 352F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 511);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(792, 36);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.button_viewSelected, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.button_updateRecords, 1, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(223, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(346, 30);
+            this.tableLayoutPanel2.TabIndex = 1;
+            // 
+            // button_viewSelected
+            // 
+            this.button_viewSelected.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button_viewSelected.Location = new System.Drawing.Point(3, 3);
+            this.button_viewSelected.Name = "button_viewSelected";
+            this.button_viewSelected.Size = new System.Drawing.Size(116, 23);
+            this.button_viewSelected.TabIndex = 0;
+            this.button_viewSelected.Text = "View Selected";
+            this.button_viewSelected.UseVisualStyleBackColor = true;
+            // 
+            // button_updateRecords
+            // 
+            this.button_updateRecords.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.button_updateRecords.Location = new System.Drawing.Point(227, 3);
+            this.button_updateRecords.Name = "button_updateRecords";
+            this.button_updateRecords.Size = new System.Drawing.Size(116, 23);
+            this.button_updateRecords.TabIndex = 1;
+            this.button_updateRecords.Text = "Update Records";
+            this.button_updateRecords.UseVisualStyleBackColor = true;
+            // 
             // dataGridView_invoiceHistory
             // 
             this.dataGridView_invoiceHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -459,52 +514,12 @@
             this.Column4,
             this.Column5});
             this.dataGridView_invoiceHistory.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_invoiceHistory.MultiSelect = false;
             this.dataGridView_invoiceHistory.Name = "dataGridView_invoiceHistory";
             this.dataGridView_invoiceHistory.RowHeadersVisible = false;
-            this.dataGridView_invoiceHistory.Size = new System.Drawing.Size(792, 514);
+            this.dataGridView_invoiceHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView_invoiceHistory.Size = new System.Drawing.Size(792, 508);
             this.dataGridView_invoiceHistory.TabIndex = 0;
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 597);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(800, 22);
-            this.statusStrip.TabIndex = 3;
-            this.statusStrip.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel
-            // 
-            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
-            this.toolStripStatusLabel.Size = new System.Drawing.Size(39, 17);
-            this.toolStripStatusLabel.Text = "Ready";
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.button_viewSelected, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 517);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(792, 30);
-            this.tableLayoutPanel1.TabIndex = 1;
-            // 
-            // button_viewSelected
-            // 
-            this.button_viewSelected.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button_viewSelected.Location = new System.Drawing.Point(339, 3);
-            this.button_viewSelected.Name = "button_viewSelected";
-            this.button_viewSelected.Size = new System.Drawing.Size(114, 23);
-            this.button_viewSelected.TabIndex = 0;
-            this.button_viewSelected.Text = "View Selected";
-            this.button_viewSelected.UseVisualStyleBackColor = true;
             // 
             // Column1
             // 
@@ -532,6 +547,22 @@
             this.Column5.HeaderText = "Paid";
             this.Column5.Name = "Column5";
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 597);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip.TabIndex = 3;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(39, 17);
+            this.toolStripStatusLabel.Text = "Ready";
+            // 
             // mainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -553,10 +584,11 @@
             this.titleGroup.ResumeLayout(false);
             this.titleGroup.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_invoiceHistory)).EndInit();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -610,6 +642,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column5;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Button button_updateRecords;
     }
 }
 

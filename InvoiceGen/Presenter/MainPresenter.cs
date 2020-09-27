@@ -20,7 +20,16 @@ namespace InvoiceGen.Presenter
         string spreadsheetExportAction = "Exporting Spreadsheet";
         string createSpreadsheetAction = "Creating Spreadsheet";
         string sendEmailAction = "Sending Email";
-        string savingToRecordsAction = "Saving to records";
+        string retrievingRecordAction = "Retrieving Record";
+        string retrievingRecordsAction = "Retrieving Records";
+        string savingToRecordsAction = "Saving to Records";
+        string updateRecordsAction = "Updating Records";
+
+        // button labels
+        string saveAndEmail = "Save and Email";
+        string emailOnly = "Email";
+        string saveAndExport = "Save and Export XLSX";
+        string exportOnly = "Export XLSX";
 
         /// <summary>
         /// Constructor with model and view dependency injection.
@@ -37,6 +46,9 @@ namespace InvoiceGen.Presenter
 
             this._view.newInvoiceButtonClicked += _view_newInvoiceButtonClicked;
             this._view.addItemButtonClicked += _view_addItemButtonClicked;
+
+            this._view.viewSelectedInvoiceButtonClicked += _view_viewSelectedInvoiceButtonClicked;
+            this._view.updateRecordsButtonClicked += _view_updateRecordsButtonClicked;
 
             this._view.monthlyTitleRadioButtonClicked += _view_monthlyTitleRadioButtonClicked;
             this._view.customTitleRadioButtonClicked += _view_customTitleRadioButtonClicked;
@@ -63,9 +75,26 @@ namespace InvoiceGen.Presenter
 
             // populate the invoice history
             this._view.invoiceHistory = this._repo.getAllInvoices();
+
+            this._view.viewSelectedInvoiceButtonEnabled = false;
+            this._view.updateRecordsButtonEnabled = false;
         }
 
         #region view event handlers
+        private void _view_updateRecordsButtonClicked(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void _view_viewSelectedInvoiceButtonClicked(object sender, EventArgs e)
+        {
+            // retrieve the selected invoice
+            
+            // display it in the "View or Generate" tab
+
+            // change the appropriate button texts
+        }
+
         private void _view_cancelClicked(object sender, EventArgs e)
         {
             // at this point, it succeeded
@@ -235,27 +264,8 @@ namespace InvoiceGen.Presenter
 
         private void _view_itemListSelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (this._view.numberSelectedInvoiceItems)
-            {
-                case 0:
-                    // no entry is selected
-                    // disable the "duplicate" and "remove" item buttons
-                    this._view.duplicateItemButtonEnabled = false;
-                    this._view.removeItemButtonEnabled = false;
-                    break;
-                case 1:
-                    // one entry is selected
-                    // enable the "duplicate" and "remove" item buttons
-                    this._view.duplicateItemButtonEnabled = true;
-                    this._view.removeItemButtonEnabled = true;
-                    break;
-                default:
-                    // multiple entries are selected
-                    // enable the "duplicate" and "remove" item buttons
-                    this._view.duplicateItemButtonEnabled = true;
-                    this._view.removeItemButtonEnabled = true;
-                    break;
-            }
+            this._view.duplicateItemButtonEnabled = this._view.numberSelectedInvoiceItems == 1;
+            this._view.removeItemButtonEnabled = this._view.numberSelectedInvoiceItems == 1;
         }
 
         private void _view_newItemAmountTextBoxTextChanged(object sender, EventArgs e)
