@@ -10,6 +10,8 @@ namespace InvoiceGen.View
 {
     public interface IMainWindow
     {
+        bool creatingNewInvoice { get; set; }
+
         string windowTitle { get; set; }
         string statusBarText { get; set; }
         System.Drawing.Color statusBarColour { get; set; }

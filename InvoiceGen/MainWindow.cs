@@ -14,6 +14,13 @@ namespace InvoiceGen
 {
     public partial class mainWindow : Form, IMainWindow
     {
+        private bool _creatingNewInvoice;
+        public bool creatingNewInvoice
+        {
+            get => _creatingNewInvoice;
+            set => _creatingNewInvoice = value;
+        }
+
         // TODO: maybe put this in the configuration class
         // a collection of all calendar months, to fill the appropriate combobox
         protected string[] months = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
