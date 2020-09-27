@@ -119,6 +119,13 @@ namespace InvoiceGen.Presenter
 
             // TODO: save to history
 
+            // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
+            this._view.itemDescriptionTextBoxEnabled = false;
+            this._view.itemAmountTextBoxEnabled = false;
+            this._view.itemQuantityUpDownEnabled = false;
+            this._view.itemsListViewEnabled = false;
+            this._view.addItemButtonEnabled = false;
+
             // create the spreadsheet
             // update the status
             this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
@@ -149,6 +156,12 @@ namespace InvoiceGen.Presenter
                 this._view.statusBarText = createSpreadsheetAction + " Failed: " + ex.Message;
                 this._view.statusBarColour = Configuration.ERROR_COLOUR;
 
+                // re-enable some controls
+                this._view.itemDescriptionTextBoxEnabled = false;
+                this._view.itemAmountTextBoxEnabled = false;
+                this._view.itemQuantityUpDownEnabled = false;
+                this._view.itemsListViewEnabled = false;
+
                 return;
             }
 
@@ -171,6 +184,12 @@ namespace InvoiceGen.Presenter
                 this._view.statusBarText = sendEmailAction + " Failed: " + ex.Message;
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 this._view.statusBarColour = Configuration.ERROR_COLOUR;
+
+                // re-enable some controls
+                this._view.itemDescriptionTextBoxEnabled = false;
+                this._view.itemAmountTextBoxEnabled = false;
+                this._view.itemQuantityUpDownEnabled = false;
+                this._view.itemsListViewEnabled = false;
 
                 return;
             }
@@ -203,6 +222,13 @@ namespace InvoiceGen.Presenter
                 this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
                 this._view.statusBarText = spreadsheetExportAction + " In Progress";
 
+                // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
+                this._view.itemDescriptionTextBoxEnabled = false;
+                this._view.itemAmountTextBoxEnabled = false;
+                this._view.itemQuantityUpDownEnabled = false;
+                this._view.itemsListViewEnabled = false;
+                this._view.addItemButtonEnabled = false;
+
                 // get the folder to save it to from a folder picker dialog
                 string dir = this._view.showFolderPickerDialog();
 
@@ -232,6 +258,12 @@ namespace InvoiceGen.Presenter
                 this._view.statusBarText = "Error Saving File";
                 this._view.statusBarColour = Configuration.ERROR_COLOUR;
                 // TODO: log it
+
+                // re-enable some controls
+                this._view.itemDescriptionTextBoxEnabled = true;
+                this._view.itemAmountTextBoxEnabled = true;
+                this._view.itemQuantityUpDownEnabled = true;
+                this._view.itemsListViewEnabled = true;
 
                 // nothing more we can do
                 return;
@@ -444,14 +476,7 @@ namespace InvoiceGen.Presenter
             // if so, enable the add item button also
             if (isEnabled)
             {
-                if (itemDescriptionIsValid() && itemAmountIsValid())
-                {
-                    this._view.addItemButtonEnabled = true;
-                }
-                else
-                {
-                    this._view.addItemButtonEnabled = false;
-                }
+                this._view.addItemButtonEnabled = (itemDescriptionIsValid() && itemAmountIsValid());
             }
             else
             {
@@ -494,9 +519,11 @@ namespace InvoiceGen.Presenter
             this._view.invoiceHistory = this._repo.getAllInvoices();
         }
 
-        public void addNewInvoice()
+        public void addNewInvoiceToRecords()
         {
+            // add it to the records
 
+            // then re-populate the history in the "History" tab
         }
 
         /// <summary>
