@@ -7,9 +7,9 @@ C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.csp
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.mainWindow.resources
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.Properties.Resources.resources
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.View.ConfigWindow.resources
-C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.View.InvoiceHistoryWindow.resources
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.csproj.GenerateResource.cache
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.csproj.CoreCompileInputs.cache
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.csproj.CopyComplete
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.exe
 C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.pdb
+C:\Users\alexc\Documents\GitHub\InvoiceGen\InvoiceGen\obj\Release\InvoiceGen.View.AboutBox.resources
