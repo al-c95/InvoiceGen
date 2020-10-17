@@ -89,10 +89,21 @@ namespace InvoiceGen.Presenter
         private void _view_viewSelectedInvoiceButtonClicked(object sender, EventArgs e)
         {
             // retrieve the selected invoice
-            
+            try
+            {
+
+            }
+            catch (System.IO.IOException ex)
+            {
+
+            }
+
             // display it in the "View or Generate" tab
+            this._view.creatingNewInvoice = false;
 
             // change the appropriate button texts
+            this._view.saveAndEmailButtonText = emailOnly;
+            this._view.saveAndExportXLSXButtonText = exportOnly;
         }
 
         private void _view_cancelClicked(object sender, EventArgs e)
