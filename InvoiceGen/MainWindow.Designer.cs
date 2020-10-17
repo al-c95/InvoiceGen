@@ -140,6 +140,7 @@
             // 
             // viewManualToolStripMenuItem
             // 
+            this.viewManualToolStripMenuItem.Enabled = false;
             this.viewManualToolStripMenuItem.Name = "viewManualToolStripMenuItem";
             this.viewManualToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.viewManualToolStripMenuItem.Text = "View Manual";
@@ -503,6 +504,9 @@
             // 
             // dataGridView_invoiceHistory
             // 
+            this.dataGridView_invoiceHistory.AllowUserToAddRows = false;
+            this.dataGridView_invoiceHistory.AllowUserToDeleteRows = false;
+            this.dataGridView_invoiceHistory.AllowUserToResizeRows = false;
             this.dataGridView_invoiceHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
