@@ -51,7 +51,10 @@ namespace InvoiceGen.View
         bool saveAndExportXLButtonEnabled { get; set; }
         bool cancelButtonEnabled { get; set; }
 
+        bool invoiceHistoryDataGridViewEnabled { get; set; }
         IEnumerable<Invoice> invoiceHistory { set; }
+        IEnumerable<Invoice> modifiedInvoiceRecords { get; }
+        int numberSelectedInvoiceRecords { get; }
 
         IEnumerable<InvoiceItem> invoiceItems { get; set; }
         IEnumerable<InvoiceItem> selectedInvoiceItems { get; }
@@ -105,6 +108,8 @@ namespace InvoiceGen.View
         event EventHandler itemListSelectedIndexChanged;
         event EventHandler duplicateItemButtonClicked;
         event EventHandler removeItemButtonClicked;
+
+        event EventHandler paidStatusChanged;
         #endregion
     }
 }

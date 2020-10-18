@@ -76,27 +76,70 @@ namespace InvoiceGen.Presenter
             // populate the invoice history
             this._view.invoiceHistory = this._repo.getAllInvoices();
 
+            this._view.invoiceHistoryDataGridViewSelectionChanged += _view_invoiceHistoryDataGridViewSelectionChanged;
+            this._view.paidStatusChanged += _view_paidStatusChanged;
+
             this._view.viewSelectedInvoiceButtonEnabled = false;
             this._view.updateRecordsButtonEnabled = false;
         }
 
         #region view event handlers
+        private void _view_paidStatusChanged(object sender, EventArgs e)
+        {
+            // if one row is selected, enable the update button
+            this._view.updateRecordsButtonEnabled = (this._view.numberSelectedInvoiceRecords == 1);
+        }
+
+        private void _view_invoiceHistoryDataGridViewSelectionChanged(object sender, EventArgs e)
+        {
+            // if one row is selected, enable the view button
+            this._view.viewSelectedInvoiceButtonEnabled = (this._view.numberSelectedInvoiceRecords == 1);
+        }
+
         private void _view_updateRecordsButtonClicked(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            // disable controls the user shouldn't play with now
+            // namely the DataGridView and update button
+            this._view.updateRecordsButtonEnabled = false;
+            this._view.invoiceHistoryDataGridViewEnabled = false;
+
+            // update the status bar
+            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.statusBarText = updateRecordsAction + " In Progress";
+
+            // get the modified records 
+            IEnumerable<Invoice> modifiedInvoices = this._view.modifiedInvoiceRecords;
+            try
+            {
+                foreach (Invoice invoice in modifiedInvoices)
+                {
+                    System.Diagnostics.Debug.WriteLine("ID: " + invoice.id + ", Paid: " + invoice.paid);
+                    // update the paid status in the XML
+                    this._repo.updatePaidStatus(invoice.id, invoice.paid);
+                }
+            }
+            catch (System.IO.IOException ioEx)
+            {
+                // something bad happened while saving the file
+                // tell the user via the status bar
+                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+                this._view.statusBarText = updateRecordsAction + " Failed";
+            }
+            // no need to reload the records
+
+            // re-enable the controls, whatever happened
+            this._view.updateRecordsButtonEnabled = true;
+            this._view.invoiceHistoryDataGridViewEnabled = true;
+
+            // update the status bar
+            // update the status bar
+            this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
+            this._view.statusBarText = updateRecordsAction + " Completed Successfully";
         }
 
         private void _view_viewSelectedInvoiceButtonClicked(object sender, EventArgs e)
         {
-            // retrieve the selected invoice
-            try
-            {
-
-            }
-            catch (System.IO.IOException ex)
-            {
-
-            }
+            // retrieve the selected invoice from the loaded records
 
             // display it in the "View or Generate" tab
             this._view.creatingNewInvoice = false;
@@ -400,6 +443,8 @@ namespace InvoiceGen.Presenter
         /// <param name="e"></param>
         private void _view_newInvoiceButtonClicked(object sender, EventArgs e)
         {
+            // change the appropriate button texts
+
             this._view.newInvoiceButtonEnabled = false;
 
             this._view.viewSelectedInvoiceButtonEnabled = false;
