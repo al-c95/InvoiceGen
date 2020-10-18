@@ -26,6 +26,8 @@ namespace InvoiceGen
         protected string[] months = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
+        DataTable invoiceHistoryRecords;
+
         /// <summary>
         /// Constructor for this window.
         /// </summary>
@@ -47,6 +49,16 @@ namespace InvoiceGen
             setToReadyState();
             statusBarText = "Ready";
             statusStrip.BackColor = System.Drawing.Color.LightGray;
+
+            // create the invoice history table and bind it to the UI
+            invoiceHistoryRecords = new DataTable("Invoices");
+            invoiceHistoryRecords.Columns.Add("ID", typeof(int));
+            invoiceHistoryRecords.Columns.Add("Timestamp", typeof(DateTime));
+            invoiceHistoryRecords.Columns.Add("Title", typeof(string));
+            invoiceHistoryRecords.Columns.Add("Total Amount ($)", typeof(decimal));
+            invoiceHistoryRecords.Columns.Add("Paid", typeof(bool));
+            invoiceHistoryRecords.Columns.Add("Items", typeof(IList<InvoiceItem>));
+            dataGridView_invoiceHistory.DataSource = invoiceHistoryRecords;
 
             // subscribe to UI events
 
@@ -82,9 +94,24 @@ namespace InvoiceGen
             this.configurationToolStripMenuItem.Click += ConfigurationToolStripMenuItem_Click;
 
             this.aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
+
+            this.dataGridView_invoiceHistory.CellValueChanged += DataGridView_invoiceHistory_CellValueChanged;
+            this.dataGridView_invoiceHistory.CellContentClick += DataGridView_invoiceHistory_CellContentClick;
         }
 
         #region UI event handlers
+        private void DataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            // this will fire the CellValueChanged event
+        }
+
+        private void DataGridView_invoiceHistory_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            paidStatusChanged?.Invoke(this, e);
+        }
+
         private void DataGridView_invoiceHistory_SelectionChanged(object sender, EventArgs e)
         {
             // TODO: put this logic in the presenter
@@ -441,6 +468,12 @@ namespace InvoiceGen
             set => button_cancel.Enabled = value;
         }
 
+        public bool invoiceHistoryDataGridViewEnabled
+        {
+            get => button_updateRecords.Enabled;
+            set => button_updateRecords.Enabled = value;
+        }
+
         /// <summary>
         /// The full list of invoice items displayed in the "View or Generate" tab. Quantities not specified.
         /// </summary>
@@ -498,6 +531,14 @@ namespace InvoiceGen
         }
 
         /// <summary>
+        /// Get the number of currently-selected rows in the invoice history grid.
+        /// </summary>
+        public int numberSelectedInvoiceRecords
+        {
+            get => this.dataGridView_invoiceHistory.SelectedRows.Count;
+        }
+
+        /// <summary>
         /// Add an item to the list when creating a new invoice.
         /// </summary>
         /// <param name="item"></param>
@@ -547,7 +588,7 @@ namespace InvoiceGen
         }
 
         /// <summary>
-        /// Does what it says. Intended to remove a selected item.
+        /// Intended to remove a selected item.
         /// </summary>
         /// <param name="item"></param>
         public void removeItemFromInvoice(InvoiceItem item)
@@ -572,20 +613,48 @@ namespace InvoiceGen
         }
 
         /// <summary>
-        /// The list of invoices in the DataGridView in the "History" tab.
+        /// All invoices in the DataGridView in the "History" tab.
         /// </summary>
         public IEnumerable<Invoice> invoiceHistory
         {
             set
             {
                 // clear it
-                dataGridView_invoiceHistory.Rows.Clear();
+                invoiceHistoryRecords.Rows.Clear();
 
-                // now add the invoice records to the list one by one
+                // populate it
+                dataGridView_invoiceHistory.Columns["Items"].Visible = false;
+                dataGridView_invoiceHistory.Columns["ID"].ReadOnly = true;
+                dataGridView_invoiceHistory.Columns["Timestamp"].ReadOnly = true;
+                dataGridView_invoiceHistory.Columns["Total Amount ($)"].ReadOnly = true;
+                dataGridView_invoiceHistory.Columns["Title"].ReadOnly = true;
                 foreach (Invoice invoice in value)
+                    invoiceHistoryRecords.Rows.Add(new object[] { invoice.id, invoice.timestamp, invoice.title, invoice.getTotal(), invoice.paid, invoice.items });
+                invoiceHistoryRecords.AcceptChanges();
+                dataGridView_invoiceHistory.EndEdit();
+            }
+        }
+
+        /// <summary>
+        /// Invoice records in the DataGridView in the "History" tab which have been modified by the user.
+        /// </summary>
+        public IEnumerable<Invoice> modifiedInvoiceRecords
+        {
+            get
+            {
+                dataGridView_invoiceHistory.EndEdit();
+                DataRowCollection modifiedRows = invoiceHistoryRecords.GetChanges(DataRowState.Modified)?.Rows;
+                foreach (DataRow row in modifiedRows)
                 {
-                    object[] row = new object[] { invoice.id, invoice.timestamp, invoice.title, invoice.getTotal(), invoice.paid };
-                    dataGridView_invoiceHistory.Rows.Add(row);
+                    yield return new Invoice
+                    {
+                        id = (int)row["ID"],
+                        timestamp = (DateTime)row["Timestamp"],
+                        //timestamp = DateTime.ParseExact((string)row["Timestamp"], "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture), // TODO: factor out date format to config
+                        title = (string)row["Title"],
+                        paid = (bool)row["Paid"],
+                        items = (List<InvoiceItem>)row["Items"]
+                    };
                 }
             }
         }
@@ -733,6 +802,8 @@ namespace InvoiceGen
         public event EventHandler itemListSelectedIndexChanged;
         public event EventHandler duplicateItemButtonClicked;
         public event EventHandler removeItemButtonClicked;
+
+        public event EventHandler paidStatusChanged;
         #endregion  
     }
 }

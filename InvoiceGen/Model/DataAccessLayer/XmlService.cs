@@ -67,13 +67,14 @@ namespace InvoiceGen.Model.DataAccessLayer
         }
 
         /// <summary>
-        /// Does what it says.
+        /// Updates paid status (boolean) by ID.
+        /// Updates paid status (boolean) by ID.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="paid"></param>
         public void updatePaidStatusInXml(int id, bool paid)
         {
-            // TODO: this should work, but test it
+            // TODO: unit test
 
             string xml = this._fileHandler.getXML();
 
@@ -84,12 +85,12 @@ namespace InvoiceGen.Model.DataAccessLayer
         }
 
         /// <summary>
-        /// Does what it says.
+        /// Deletes an invoice by ID.
         /// </summary>
         /// <param name="id"></param>
         public void deleteInvoiceInXml(int id)
         {
-            // TODO: this should work, but test it
+            // TODO: unit test
 
             string xml = this._fileHandler.getXML();
 
