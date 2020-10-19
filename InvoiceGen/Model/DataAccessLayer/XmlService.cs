@@ -22,16 +22,18 @@ namespace InvoiceGen.Model.DataAccessLayer
     /// </summary>
     public class XmlService : IXmlService
     {
-        // dependency injection of external interface (XML file) class
-        private IXmlFileHandler _fileHandler;
+        // dependency injection    
+        private IXmlFileHandler _fileHandler; // of external interface (XML file) class
+        private string _dateFormat;
 
         /// <summary>
         /// Constructor with dependency injection.
         /// </summary>
         /// <param name="fileHandler"></param>
-        public XmlService(IXmlFileHandler fileHandler)
+        public XmlService(IXmlFileHandler fileHandler, string dateFormat)
         {
             this._fileHandler = fileHandler;
+            this._dateFormat = dateFormat;
         }
 
         /// <summary>
@@ -57,7 +59,8 @@ namespace InvoiceGen.Model.DataAccessLayer
             XElement invoiceElement = new XElement(Invoice.XmlName);
             invoiceElement.SetAttributeValue("id", maxID + 1);
             invoiceElement.SetAttributeValue("title", invoice.title);
-            invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString("dd/MM/yyyy hh:mm:ss tt",
+            //invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString("dd/MM/yyyy hh:mm:ss tt",
+            invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString(_dateFormat,
                 System.Globalization.CultureInfo.InvariantCulture));
             invoiceElement.SetAttributeValue("paid", invoice.paid);
             XElement itemsElement = new XElement("items");
@@ -132,10 +135,14 @@ namespace InvoiceGen.Model.DataAccessLayer
 
                     if (reader.MoveToAttribute("title"))
                         invoice.title = reader.ReadContentAsString();
-
+                    /*
                     if (reader.MoveToAttribute("timestamp"))
                         invoice.timestamp = DateTime.ParseExact(reader.ReadContentAsString(),
                                 "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture); // TODO: factor out date format to config
+                                */
+                    if (reader.MoveToAttribute("timestamp"))
+                        invoice.timestamp = DateTime.ParseExact(reader.ReadContentAsString(),
+                                _dateFormat, System.Globalization.CultureInfo.InvariantCulture); // TODO: factor out date format to config
 
                     if (reader.MoveToAttribute("paid"))
                     {
