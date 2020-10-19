@@ -181,7 +181,7 @@ namespace InvoiceGen.View
         /// Get a memory stream of the spreadsheet and dispose of the package.
         /// </summary>
         /// <returns></returns>
-        public MemoryStream closeAndGetMemoryStream()
+        public MemoryStream closeAndGetMemoryStream()  
         {
             MemoryStream ms = new MemoryStream(_pck.GetAsByteArray());
             _pck.Dispose();
