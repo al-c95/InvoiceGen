@@ -128,7 +128,7 @@ namespace InvoiceGen.Presenter
             // no need to reload the records
 
             // re-enable the controls, whatever happened
-            this._view.updateRecordsButtonEnabled = true;
+            this._view.updateRecordsButtonEnabled = false;
             this._view.invoiceHistoryDataGridViewEnabled = true;
 
             // update the status bar

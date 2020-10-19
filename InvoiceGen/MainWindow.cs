@@ -102,6 +102,7 @@ namespace InvoiceGen
         #region UI event handlers
         private void DataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("CellContentClick event fired");
             dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
             // this will fire the CellValueChanged event
         }
@@ -114,9 +115,6 @@ namespace InvoiceGen
 
         private void DataGridView_invoiceHistory_SelectionChanged(object sender, EventArgs e)
         {
-            // TODO: put this logic in the presenter
-            button_viewSelected.Enabled = dataGridView_invoiceHistory.SelectedRows.Count == 1;
-
             // fire the external event so the subscribed presenter can react
             invoiceHistoryDataGridViewSelectionChanged?.Invoke(this, e);
         }
@@ -470,8 +468,8 @@ namespace InvoiceGen
 
         public bool invoiceHistoryDataGridViewEnabled
         {
-            get => button_updateRecords.Enabled;
-            set => button_updateRecords.Enabled = value;
+            get => dataGridView_invoiceHistory.Enabled;
+            set => dataGridView_invoiceHistory.Enabled = value;
         }
 
         /// <summary>
@@ -650,7 +648,6 @@ namespace InvoiceGen
                     {
                         id = (int)row["ID"],
                         timestamp = (DateTime)row["Timestamp"],
-                        //timestamp = DateTime.ParseExact((string)row["Timestamp"], "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture), // TODO: factor out date format to config
                         title = (string)row["Title"],
                         paid = (bool)row["Paid"],
                         items = (List<InvoiceItem>)row["Items"]
