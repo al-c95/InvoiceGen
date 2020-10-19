@@ -56,6 +56,9 @@ namespace InvoiceGen.Model.Repository
             // should have been prevented by this point with data validation, but still check it
             if (invoiceWithTitleExists(invoice.title))
                 return;
+
+            // now add it to the records
+            service.insertInvoiceInXml(invoice);
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace InvoiceGen.Model.Repository
             if (result.ToList().Count > 1)
                 throw new ApplicationException("Found more than one record with the same unique id: " + id); // this shouldn't happen
 
-            if (result.ToList().Count==1)
+            if (result.ToList().Count == 1)
             {
                 // the record is found
                 return result.First<Invoice>();

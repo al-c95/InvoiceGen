@@ -168,8 +168,6 @@ namespace InvoiceGen.Presenter
             this._view.saveAndExportXLButtonEnabled = false;
             this._view.cancelButtonEnabled = false;
 
-            // TODO: save to history
-
             // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
             this._view.itemDescriptionTextBoxEnabled = false;
             this._view.itemAmountTextBoxEnabled = false;
@@ -177,10 +175,10 @@ namespace InvoiceGen.Presenter
             this._view.itemsListViewEnabled = false;
             this._view.addItemButtonEnabled = false;
 
-            // create the spreadsheet
             // update the status
             this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.statusBarText = createSpreadsheetAction + " In Progress";
+            this._view.statusBarText = savingToRecordsAction + " In Progress";
+
             // get the data
             string title = this._view.getTitle();
             List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
@@ -190,6 +188,50 @@ namespace InvoiceGen.Presenter
                 Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
                 items.Add(t);
             }
+
+            // save to records
+            try
+            {
+                Invoice invoice = new Invoice();
+                invoice.timestamp = DateTime.Now;
+                foreach (var i in items)
+                {
+                    for (int j = 1; j <= i.Item2; j++)
+                    {
+                        InvoiceItem invoiceItem = new InvoiceItem
+                        {
+                            description = i.Item1.description,
+                            amount = i.Item1.amount
+                        };
+                        invoice.items.Add(invoiceItem);
+                        invoice.title = title;
+                    }
+                }
+                this._repo.addInvoice(invoice);
+                // repopulate the invoice history
+                this._view.invoiceHistory = this._repo.getAllInvoices();
+            }
+            catch (Exception ex)
+            {
+                // error saving to records
+                // tell the user
+                this._view.statusBarText = "Error Saving To Records";
+                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+
+                // re-enable some controls
+                this._view.itemDescriptionTextBoxEnabled = true;
+                this._view.itemAmountTextBoxEnabled = true;
+                this._view.itemQuantityUpDownEnabled = true;
+                this._view.itemsListViewEnabled = true;
+
+                // nothing more can do
+                return;
+            }
+
+            // update the status
+            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.statusBarText = createSpreadsheetAction + " In Progress";
+
             // create it
             ExcelWriter excelWriter = null;
             try
@@ -220,21 +262,24 @@ namespace InvoiceGen.Presenter
             // update the status
             this._view.statusBarText = sendEmailAction + " In Progress";
             this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+
             // send it
             try
             {
                 await Task.Run(() =>
                 {
-                    EmailService.EmailService emailService = new InvoiceGen.EmailService.EmailService();
+                    EmailService.EmailService emailService = new EmailService.EmailService();
                     emailService.sendInvoice("Invoice " + title, "", excelWriter.closeAndGetMemoryStream());
                 });
             }
             catch(System.Net.Mail.SmtpException ex)
             {
                 // it failed
+                // tell the user
                 this._view.statusBarText = sendEmailAction + " Failed: " + ex.Message;
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 this._view.statusBarColour = Configuration.ERROR_COLOUR;
+                // TODO: log it
 
                 // re-enable some controls
                 this._view.itemDescriptionTextBoxEnabled = false;
@@ -265,34 +310,75 @@ namespace InvoiceGen.Presenter
             this._view.saveAndExportXLButtonEnabled = false;
             this._view.cancelButtonEnabled = false;
 
-            // TODO: save to history
+            // update the status
+            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.statusBarText = savingToRecordsAction + " In Progress";
 
+            // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
+            this._view.itemDescriptionTextBoxEnabled = false;
+            this._view.itemAmountTextBoxEnabled = false;
+            this._view.itemQuantityUpDownEnabled = false;
+            this._view.itemsListViewEnabled = false;
+            this._view.addItemButtonEnabled = false;
+
+            // get the folder to save it to from a folder picker dialog
+            string dir = this._view.showFolderPickerDialog();
+
+            // get the data
+            string title = this._view.getTitle();
+            List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
+            List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
+            foreach (InvoiceItem i in this._view.invoiceItems)
+            {
+                Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
+                items.Add(t);
+            }
+
+            // save to history records
             try
             {
-                // update the status
-                this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-                this._view.statusBarText = spreadsheetExportAction + " In Progress";
-
-                // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
-                this._view.itemDescriptionTextBoxEnabled = false;
-                this._view.itemAmountTextBoxEnabled = false;
-                this._view.itemQuantityUpDownEnabled = false;
-                this._view.itemsListViewEnabled = false;
-                this._view.addItemButtonEnabled = false;
-
-                // get the folder to save it to from a folder picker dialog
-                string dir = this._view.showFolderPickerDialog();
-
-                // get the data
-                string title = this._view.getTitle();
-                List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
-                List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
-                foreach (InvoiceItem i in this._view.invoiceItems)
+                Invoice invoice = new Invoice();
+                invoice.timestamp = DateTime.Now;
+                foreach (var i in items)
                 {
-                    Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
-                    items.Add(t);
+                    for (int j = 1; j <= i.Item2; j++)
+                    {
+                        InvoiceItem invoiceItem = new InvoiceItem
+                        {
+                            description = i.Item1.description,
+                            amount = i.Item1.amount
+                        };
+                        invoice.items.Add(invoiceItem);
+                        invoice.title = title;
+                    }
                 }
+                this._repo.addInvoice(invoice);
+                // repopulate the invoice history
+                this._view.invoiceHistory = this._repo.getAllInvoices();
+            }
+            catch (Exception ex)
+            {
+                // error saving to records
+                // tell the user
+                this._view.statusBarText = "Error Saving To Records";
+                this._view.statusBarColour = Configuration.ERROR_COLOUR;
 
+                // re-enable some controls
+                this._view.itemDescriptionTextBoxEnabled = true;
+                this._view.itemAmountTextBoxEnabled = true;
+                this._view.itemQuantityUpDownEnabled = true;
+                this._view.itemsListViewEnabled = true;
+
+                // nothing more can do
+                return;
+            }
+
+            // update the status
+            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.statusBarText = spreadsheetExportAction + " In Progress";
+
+            try
+            { 
                 await Task.Run(() =>
                 {
                     // write and save spreadsheet
@@ -305,7 +391,7 @@ namespace InvoiceGen.Presenter
             {
                 // error saving the file
                 // inform the user
-                this._view.showErrorDialogOk("Error saving the file.");
+                //this._view.showErrorDialogOk("Error saving the file.");
                 this._view.statusBarText = "Error Saving File";
                 this._view.statusBarColour = Configuration.ERROR_COLOUR;
                 // TODO: log it

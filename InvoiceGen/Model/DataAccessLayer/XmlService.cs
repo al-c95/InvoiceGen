@@ -43,13 +43,22 @@ namespace InvoiceGen.Model.DataAccessLayer
             if (invoice.items.Count == 0)
                 throw new ArgumentException("No items in invoice.");
 
+            // retrieve the XML
             string xml = this._fileHandler.getXML();
 
+            // figure out the new invoice ID
+            int maxID = 0;
+            foreach (Invoice i in readXml())
+                if (i.id > maxID)
+                    maxID = i.id;
+
+            // insert the new invoice data in the XMl
             XDocument doc = XDocument.Parse(xml);
             XElement invoiceElement = new XElement(Invoice.XmlName);
-            invoiceElement.SetAttributeValue("id", invoice.id);
+            invoiceElement.SetAttributeValue("id", maxID + 1);
             invoiceElement.SetAttributeValue("title", invoice.title);
-            invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString());
+            invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString("dd/MM/yyyy hh:mm:ss tt",
+                System.Globalization.CultureInfo.InvariantCulture));
             invoiceElement.SetAttributeValue("paid", invoice.paid);
             XElement itemsElement = new XElement("items");
             foreach (InvoiceItem item in invoice.items)
@@ -63,6 +72,7 @@ namespace InvoiceGen.Model.DataAccessLayer
             invoiceElement.Add(itemsElement);
             doc.Root.Add(invoiceElement);
 
+            // save the XML to the file
             this._fileHandler.saveXMLFile(doc);
         }
 
