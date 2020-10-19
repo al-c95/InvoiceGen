@@ -112,11 +112,8 @@ namespace InvoiceGen.Presenter
             try
             {
                 foreach (Invoice invoice in modifiedInvoices)
-                {
-                    System.Diagnostics.Debug.WriteLine("ID: " + invoice.id + ", Paid: " + invoice.paid);
                     // update the paid status in the XML
                     this._repo.updatePaidStatus(invoice.id, invoice.paid);
-                }
             }
             catch (System.IO.IOException ioEx)
             {
