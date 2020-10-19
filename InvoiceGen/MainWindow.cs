@@ -102,7 +102,6 @@ namespace InvoiceGen
         #region UI event handlers
         private void DataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("CellContentClick event fired");
             dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
             // this will fire the CellValueChanged event
         }
