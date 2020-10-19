@@ -20,7 +20,7 @@ namespace InvoiceGen
 
             var mainWindow = new mainWindow(Configuration.APP_NAME + " v" + Configuration.APP_VERSION);
             var xmlFileHandler = new InvoiceGen.Model.DataAccessLayer.XmlFileHandler(Configuration.XML_FILE_PATH);
-            var xmlService = new InvoiceGen.Model.DataAccessLayer.XmlService(xmlFileHandler);
+            var xmlService = new InvoiceGen.Model.DataAccessLayer.XmlService(xmlFileHandler, Configuration.DATE_FORMAT);
             var repository = new InvoiceGen.Model.Repository.InvoiceRepository(xmlService);
             var mainPresenter = new InvoiceGen.Presenter.MainPresenter(mainWindow, repository);
 
