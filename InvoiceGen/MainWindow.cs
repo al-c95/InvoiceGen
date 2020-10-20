@@ -59,6 +59,7 @@ namespace InvoiceGen
             invoiceHistoryRecords.Columns.Add("Paid", typeof(bool));
             invoiceHistoryRecords.Columns.Add("Items", typeof(IList<InvoiceItem>));
             dataGridView_invoiceHistory.DataSource = invoiceHistoryRecords;
+            dataGridView_invoiceHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             // subscribe to UI events
 

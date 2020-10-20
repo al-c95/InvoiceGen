@@ -7,7 +7,12 @@
   <invoice id="2" title="Sep 2020" timestamp="01/09/2020 01:00:00 PM" paid="false">
     <item desc="rent" amount="910" />
   </invoice>
-  <invoice id="3" title="Oct 2020" timestamp="01/10/2020 01:00:00 PM" paid="false">
+  <invoice id="3" title="Oct 2020" timestamp="01/10/2020 01:00:00 PM" paid="true">
     <item desc="rent" amount="910" />
+  </invoice>
+  <invoice id="4" title="Dec 1000" timestamp="20/10/2020 07:19:09 PM" paid="false">
+    <items>
+      <item desc="test" amount="1" />
+    </items>
   </invoice>
 </invoices>
