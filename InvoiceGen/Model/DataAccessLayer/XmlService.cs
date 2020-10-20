@@ -59,7 +59,6 @@ namespace InvoiceGen.Model.DataAccessLayer
             XElement invoiceElement = new XElement(Invoice.XmlName);
             invoiceElement.SetAttributeValue("id", maxID + 1);
             invoiceElement.SetAttributeValue("title", invoice.title);
-            //invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString("dd/MM/yyyy hh:mm:ss tt",
             invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString(_dateFormat,
                 System.Globalization.CultureInfo.InvariantCulture));
             invoiceElement.SetAttributeValue("paid", invoice.paid);
@@ -135,14 +134,10 @@ namespace InvoiceGen.Model.DataAccessLayer
 
                     if (reader.MoveToAttribute("title"))
                         invoice.title = reader.ReadContentAsString();
-                    /*
+ 
                     if (reader.MoveToAttribute("timestamp"))
                         invoice.timestamp = DateTime.ParseExact(reader.ReadContentAsString(),
-                                "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture); // TODO: factor out date format to config
-                                */
-                    if (reader.MoveToAttribute("timestamp"))
-                        invoice.timestamp = DateTime.ParseExact(reader.ReadContentAsString(),
-                                _dateFormat, System.Globalization.CultureInfo.InvariantCulture); // TODO: factor out date format to config
+                                _dateFormat, System.Globalization.CultureInfo.InvariantCulture); 
 
                     if (reader.MoveToAttribute("paid"))
                     {

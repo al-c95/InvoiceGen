@@ -19,7 +19,7 @@ namespace InvoiceGen.Model.DataAccessLayer
     /// </summary>
     public class XmlFileHandler : IXmlFileHandler
     {
-        private string _fileName; // TODO: get from config
+        private string _fileName; 
         private XDocument _doc;
 
         /// <summary>
