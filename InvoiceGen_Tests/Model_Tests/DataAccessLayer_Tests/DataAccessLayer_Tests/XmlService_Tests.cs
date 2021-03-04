@@ -15,7 +15,7 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
     class XmlService_Tests
     {
         [Test]
-        public void insertInvoiceInXml_Test()
+        public void InsertInvoiceInXml_Test()
         {
             #region arrange
             // xml
@@ -62,50 +62,50 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
 
             // xml service
             var fakeXmlFileHandler = A.Fake<IXmlFileHandler>();
-            A.CallTo(() => fakeXmlFileHandler.getXML()).Returns(testXml);
-            XmlService xmlService = new XmlService(fakeXmlFileHandler);
+            A.CallTo(() => fakeXmlFileHandler.GetXML()).Returns(testXml);
+            XmlService xmlService = new XmlService(fakeXmlFileHandler, "dd/MM/yyyy hh:mm:ss tt");
 
             // data
             InvoiceItem item1 = new InvoiceItem();
-            item1.description = "item 1";
-            item1.amount = (decimal)5.50;
+            item1.Description = "item 1";
+            item1.Amount = (decimal)5.50;
 
             InvoiceItem item2 = new InvoiceItem();
-            item2.description = "item 2";
-            item2.amount = (decimal)6.25;
+            item2.Description = "item 2";
+            item2.Amount = (decimal)6.25;
 
             Invoice invoice = new Invoice();
-            invoice.id = 3;
-            invoice.title = "Oct 2020";
-            invoice.timestamp = DateTime.ParseExact("16/10/2020 09:01:29 AM", 
+            invoice.Id = 3;
+            invoice.Title = "Oct 2020";
+            invoice.Timestamp = DateTime.ParseExact("16/10/2020 09:01:29 AM", 
                 "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
-            invoice.paid = false;
-            invoice.items = new List<InvoiceItem> { item1, item2 };
+            invoice.Paid = false;
+            invoice.Items = new List<InvoiceItem> { item1, item2 };
             #endregion
 
             #region act
-            xmlService.insertInvoiceInXml(invoice);
+            xmlService.InsertInvoiceInXml(invoice);
             #endregion
 
             #region assert
-            A.CallTo(() => fakeXmlFileHandler.saveXMLFile(expectedDoc)).MustHaveHappened();
+            A.CallTo(() => fakeXmlFileHandler.SaveXMLFile(expectedDoc)).MustHaveHappened();
             #endregion
         }
 
         [Test]
-        public void insertInvoiceInXml_Test_noItems()
+        public void InsertInvoiceInXml_Test_NoItems()
         {
             // arrange
             Invoice invoice = new Invoice();
             var fakeXmlFileHandler = A.Fake<IXmlFileHandler>();
-            XmlService xmlService = new XmlService(fakeXmlFileHandler);
+            XmlService xmlService = new XmlService(fakeXmlFileHandler, "dd/MM/yyyy hh:mm:ss tt");
 
             // act/assert
-            Assert.Throws<System.ArgumentException>(delegate { xmlService.insertInvoiceInXml(invoice); });
+            Assert.Throws<System.ArgumentException>(delegate { xmlService.InsertInvoiceInXml(invoice); });
         }
 
         [Test]
-        public void readXml_Test()
+        public void ReadXml_Test()
         {
             #region arrange
             // xml
@@ -126,53 +126,53 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
             testXmlBuilder.AppendLine("</invoices>");
             string testXml = testXmlBuilder.ToString();
             var fakeXmlFileHandler = A.Fake<IXmlFileHandler>();
-            A.CallTo(() => fakeXmlFileHandler.getXML()).Returns(testXml);
+            A.CallTo(() => fakeXmlFileHandler.GetXML()).Returns(testXml);
 
             // xml service
-            XmlService xmlService = new XmlService(fakeXmlFileHandler);
+            XmlService xmlService = new XmlService(fakeXmlFileHandler, "dd/MM/yyyy hh:mm:ss tt");
 
             // expected objects
-            InvoiceItem item1 = new InvoiceItem { description = "item 1 in invoice 1", amount = 50 };
-            InvoiceItem item2 = new InvoiceItem { description = "item 2 in invoice 1", amount = 50 };
+            InvoiceItem item1 = new InvoiceItem { Description = "item 1 in invoice 1", Amount = 50 };
+            InvoiceItem item2 = new InvoiceItem { Description = "item 2 in invoice 1", Amount = 50 };
             Invoice invoice1 = new Invoice
             {
-                id = 1,
-                title = "Aug 2020",
-                timestamp = DateTime.ParseExact("16/08/2020 09:01:29 AM", "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture),
-                paid = true,
-                items = new List<InvoiceItem>() { item1, item2 }
+                Id = 1,
+                Title = "Aug 2020",
+                Timestamp = DateTime.ParseExact("16/08/2020 09:01:29 AM", "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture),
+                Paid = true,
+                Items = new List<InvoiceItem>() { item1, item2 }
             };
-            InvoiceItem item3 = new InvoiceItem { description = "item in invoice 2", amount = 100 };
+            InvoiceItem item3 = new InvoiceItem { Description = "item in invoice 2", Amount = 100 };
             Invoice invoice2 = new Invoice
             {
-                id = 2,
-                title = "Sep 2020",
-                timestamp = DateTime.ParseExact("16/08/2020 09:01:29 AM", "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture),
-                paid = true,
-                items = new List<InvoiceItem> { item3 }
+                Id = 2,
+                Title = "Sep 2020",
+                Timestamp = DateTime.ParseExact("16/08/2020 09:01:29 AM", "dd/MM/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture),
+                Paid = true,
+                Items = new List<InvoiceItem> { item3 }
             };
             #endregion
 
             #region act
             // actual collection of objects
-            List<Invoice> actual = xmlService.readXml().ToList();
+            List<Invoice> actual = xmlService.ReadXml().ToList();
             #endregion
 
             #region assert
             // TODO: override Equals in the Invoice and InvoiceItem objects
-            Assert.That(actual.Any(i => i.id == invoice1.id));
-            Assert.That(actual.Any(i => i.paid == invoice1.paid));
-            Assert.That(actual.Any(i => i.timestamp == invoice1.timestamp));
-            Assert.That(actual.Any(i => i.title == invoice1.title));
-            Assert.That(actual.Any(i => i.id == invoice2.id));
-            Assert.That(actual.Any(i => i.paid == invoice2.paid));
-            Assert.That(actual.Any(i => i.timestamp == invoice2.timestamp));
-            Assert.That(actual.Any(i => i.title == invoice2.title));
+            Assert.That(actual.Any(i => i.Id == invoice1.Id));
+            Assert.That(actual.Any(i => i.Paid == invoice1.Paid));
+            Assert.That(actual.Any(i => i.Timestamp == invoice1.Timestamp));
+            Assert.That(actual.Any(i => i.Title == invoice1.Title));
+            Assert.That(actual.Any(i => i.Id == invoice2.Id));
+            Assert.That(actual.Any(i => i.Paid == invoice2.Paid));
+            Assert.That(actual.Any(i => i.Timestamp == invoice2.Timestamp));
+            Assert.That(actual.Any(i => i.Title == invoice2.Title));
             foreach (Invoice i in actual)
             {
-                if (i.id==invoice1.id)
+                if (i.Id==invoice1.Id)
                 {
-                    if (i.items.Any(item => item.amount == 50))
+                    if (i.Items.Any(item => item.Amount == 50))
                     {
                         Assert.Pass();
                     }
@@ -182,9 +182,9 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
                     }
                 }
 
-                if (i.id == invoice2.id)
+                if (i.Id == invoice2.Id)
                 {
-                    if (i.items.Any(item => item.amount == 100))
+                    if (i.Items.Any(item => item.Amount == 100))
                     {
                         Assert.Pass();
                     }

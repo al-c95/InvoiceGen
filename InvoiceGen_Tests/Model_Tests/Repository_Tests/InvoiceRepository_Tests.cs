@@ -15,109 +15,110 @@ namespace InvoiceGen_Tests.Model_Tests.Repository_Tests
     class InvoiceRepository_Tests
     {
         [Test]
-        public void getAllInvoices_Test()
+        public void GetAllInvoices_Test()
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
             InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
 
             // act
-            repo.getAllInvoices();
+            repo.GetAllInvoices();
 
             // assert
-            A.CallTo(() => fakeService.readXml()).MustHaveHappened();
+            A.CallTo(() => fakeService.ReadXml()).MustHaveHappened();
         }
 
         [Test]
-        public void getInvoiceById_Test_multipleRecordsSameId()
+        public void GetInvoiceById_Test_MultipleRecordsSameId()
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
             int iD = 1;
-            A.CallTo(() => fakeService.readXml()).Returns(new List<Invoice> { new Invoice { id = iD }, new Invoice { id = iD } });
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            A.CallTo(() => fakeService.ReadXml()).Returns(new List<Invoice> { new Invoice { Id = iD }, new Invoice { Id = iD } });
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
 
             // act/assert
-            Assert.Throws<System.ApplicationException>(delegate { repo.getInvoiceById(iD); });
+            Assert.Throws<System.ApplicationException>(delegate { repo.GetInvoiceById(iD); });
         }
 
         [Test]
-        public void getInvoiceById_Test_noRecordFound()
+        public void GetInvoiceById_Test_NoRecordFound()
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
             int iD = 1;
-            A.CallTo(() => fakeService.readXml()).Returns(new List<Invoice> { new Invoice { id = 2 }, new Invoice { id = 3 } });
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            A.CallTo(() => fakeService.ReadXml()).Returns(new List<Invoice> { new Invoice { Id = 2 }, new Invoice { Id = 3 } });
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
 
             // act/assert
-            Assert.AreEqual(null, repo.getInvoiceById(iD));
+            Assert.AreEqual(null, repo.GetInvoiceById(iD));
         }
 
         [Test]
-        public void getInvoiceById_Test_recordFound()
+        public void GetInvoiceById_Test_RecordFound()
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
             int iD = 1;
             string expectedTitle = "I am the one!";
-            A.CallTo(() => fakeService.readXml()).Returns(new List<Invoice> {
-                new Invoice { id = 1, title = expectedTitle }, new Invoice { id = 3 } });
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            A.CallTo(() => fakeService.ReadXml()).Returns(new List<Invoice> {
+                new Invoice { Id = 1, Title = expectedTitle }, new Invoice { Id = 3 } });
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
 
             // act
-            Invoice result = repo.getInvoiceById(iD);
+            Invoice result = repo.GetInvoiceById(iD);
 
             // assert
-            Assert.AreEqual(expectedTitle, result.title);
+            Assert.AreEqual(expectedTitle, result.Title);
         }
 
+        /*
         [TestCase("exists", ExpectedResult = true)]
         [TestCase("does not exist", ExpectedResult = false)]
-        public bool invoiceWithTitleExists_Test(string title)
+        public bool invoiceWithTitleExists_Test(string title, bool ExpectedResult)
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
-            string testTitle = "exists";
-            A.CallTo(() => fakeService.readXml()).Returns(new List<Invoice> { new Invoice { title=testTitle} });
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            A.CallTo(() => fakeService.readXml()).Returns(new List<Invoice> { new Invoice { title=title } });
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
 
             // act
-            bool result = repo.invoiceWithTitleExists(testTitle);
+            bool actualResult = repo.invoiceWithTitleExists(title);
 
             // assert
-            return result;
+            //return result;
         }
+        */
 
         [Test]
-        public void updatePaidStatus_Test()
+        public void UpdatePaidStatus_Test()
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
             int id = 1;
             bool paid = true;
 
             // act
-            repo.updatePaidStatus(id, paid);
+            repo.UpdatePaidStatus(id, paid);
 
             // assert
-            A.CallTo(() => fakeService.updatePaidStatusInXml(id, paid)).MustHaveHappened();
+            A.CallTo(() => fakeService.UpdatePaidStatusInXml(id, paid)).MustHaveHappened();
         }
 
         [Test]
-        public void deleteInvoice_Test()
+        public void DeleteInvoice_Test()
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
             int id = 1;
 
             // act
-            repo.deleteInvoice(id);
+            repo.DeleteInvoice(id);
 
             // assert
-            A.CallTo(() => fakeService.deleteInvoiceInXml(id)).MustHaveHappened();
+            A.CallTo(() => fakeService.DeleteInvoiceInXml(id)).MustHaveHappened();
         }
     }
 }

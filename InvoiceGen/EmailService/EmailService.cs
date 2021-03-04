@@ -18,17 +18,20 @@ namespace InvoiceGen.EmailService
         private SmtpClient _smtpClient;
         private MemoryStream _ms;
 
+        /// <summary>
+        /// Constructor. Reads from configuration.
+        /// </summary>
         public EmailService()
         {
             // read from config
-            _fromAddress = new MailAddress(Configuration.senderEmailAddress);
-            _toAddress = new MailAddress(Configuration.recipientEmailAddress);
-            _fromPassword = Configuration.senderPassword;
+            _fromAddress = new MailAddress(Configuration.SenderEmailAddress);
+            _toAddress = new MailAddress(Configuration.RecipientEmailAddress);
+            _fromPassword = Configuration.SenderPassword;
 
             // set the parameters of the SMTP client
             _smtpClient = new SmtpClient();
             _smtpClient.UseDefaultCredentials = false;
-            _smtpClient.Host = Configuration.host;
+            _smtpClient.Host = Configuration.Host;
             _smtpClient.Port = Configuration.port;
             _smtpClient.EnableSsl = true;
             _smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
@@ -39,7 +42,7 @@ namespace InvoiceGen.EmailService
         /// <summary>
         /// Send the message. Throws SmtpException with Status Code when errors occur.
         /// </summary>
-        public void sendInvoice(string subject, string body, MemoryStream attachment)
+        public void SendInvoice(string subject, string body, MemoryStream attachment)
         {
             // create the message
             MailMessage message = new MailMessage();

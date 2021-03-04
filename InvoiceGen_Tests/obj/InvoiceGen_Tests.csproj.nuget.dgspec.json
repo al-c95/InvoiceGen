@@ -1,32 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj": {}
+    "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj": {
-      "version": "1.0.0",
+    "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj",
+        "projectUniqueName": "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj",
         "projectName": "InvoiceGen",
-        "projectPath": "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj"
+        "projectPath": "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj"
       },
       "frameworks": {
         "net461": {}
       }
     },
-    "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj": {
+    "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj",
+        "projectUniqueName": "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj",
         "projectName": "InvoiceGen_Tests",
-        "projectPath": "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj",
+        "projectPath": "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\InvoiceGen_Tests.csproj",
         "packagesPath": "C:\\Users\\alexc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\obj\\",
+        "outputPath": "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen_Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
           "C:\\Users\\alexc\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -42,9 +40,10 @@
         },
         "frameworks": {
           "netcoreapp2.1": {
+            "targetAlias": "netcoreapp2.1",
             "projectReferences": {
-              "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj": {
-                "projectPath": "C:\\Users\\alexc\\Documents\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj"
+              "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj": {
+                "projectPath": "C:\\Users\\alexc\\Documents\\projects\\GitHub\\InvoiceGen\\InvoiceGen\\InvoiceGen.csproj"
               }
             }
           }
@@ -57,6 +56,7 @@
       },
       "frameworks": {
         "netcoreapp2.1": {
+          "targetAlias": "netcoreapp2.1",
           "dependencies": {
             "FakeItEasy": {
               "target": "Package",
@@ -67,6 +67,7 @@
               "version": "[15.8.0, )"
             },
             "Microsoft.NETCore.App": {
+              "suppressParent": "All",
               "target": "Package",
               "version": "[2.1.0, )",
               "autoReferenced": true
@@ -81,10 +82,16 @@
             }
           },
           "imports": [
-            "net461"
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

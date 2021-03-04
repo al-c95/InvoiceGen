@@ -17,12 +17,12 @@ namespace InvoiceGen.View
             InitializeComponent();
 
             // load the values from the configuration
-            this.textBox_senderAddress.Text = Configuration.senderEmailAddress;
-            this.textBox_senderName.Text = Configuration.senderName;
-            this.textBox_host.Text = Configuration.host;
-            this.textBox_senderEmailPassword.Text = Configuration.senderPassword;
-            this.textBox_recipientAddress.Text = Configuration.recipientEmailAddress;
-            this.textBox_recipientName.Text = Configuration.recipientName;
+            this.textBox_senderAddress.Text = Configuration.SenderEmailAddress;
+            this.textBox_SenderName.Text = Configuration.SenderName;
+            this.textBox_Host.Text = Configuration.Host;
+            this.textBox_senderEmailPassword.Text = Configuration.SenderPassword;
+            this.textBox_recipientAddress.Text = Configuration.RecipientEmailAddress;
+            this.textBox_recipientName.Text = Configuration.RecipientName;
             this.numericUpDown_port.Value = Configuration.port;
         }
 
@@ -33,19 +33,19 @@ namespace InvoiceGen.View
 
         private void button_save_Click(object sender, EventArgs e)
         {
-            setValue("senderEmail", textBox_senderAddress.Text);
-            setValue("senderName", textBox_senderName.Text);
-            setValue("senderPassword", textBox_senderEmailPassword.Text);
-            setValue("host", textBox_host.Text);
-            setValue("port", numericUpDown_port.Value.ToString());
-            setValue("recipientEmail", textBox_recipientAddress.Text);
-            setValue("recipientName", textBox_recipientName.Text);
+            SetValue("senderEmail", textBox_senderAddress.Text);
+            SetValue("SenderName", textBox_SenderName.Text);
+            SetValue("SenderPassword", textBox_senderEmailPassword.Text);
+            SetValue("Host", textBox_Host.Text);
+            SetValue("port", numericUpDown_port.Value.ToString());
+            SetValue("recipientEmail", textBox_recipientAddress.Text);
+            SetValue("recipientName", textBox_recipientName.Text);
 
             this.Close();
             Application.Exit();
         }
 
-        private void setValue(string key, string value)
+        private void SetValue(string key, string value)
         {
             System.Configuration.Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
             config.AppSettings.Settings[key].Value = value;

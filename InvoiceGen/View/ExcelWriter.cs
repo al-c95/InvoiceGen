@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System.IO;
+using System.Drawing;
 using InvoiceGen.Model.ObjectModel;
 
 namespace InvoiceGen.View
@@ -28,6 +30,13 @@ namespace InvoiceGen.View
         private const string EVEN_ROW_STYLE_WITH_CURRENCY = "Even with currency formatting";
         private const string ODD_ROW_STYLE_WITH_CURRENCY = "Odd with currency formatting";
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="directory">Where to save the spreadsheet.</param>
+        /// <param name="title">Invoice title.</param>
+        /// <param name="from">Sender.</param>
+        /// <param name="to">Recipient.</param>
         public ExcelWriter(string directory, string title, string from, string to)
         {
             // create the package and worksheet
@@ -37,54 +46,54 @@ namespace InvoiceGen.View
             // create and add the named styles
 
             OfficeOpenXml.Style.XmlAccess.ExcelNamedStyleXml namedStyle;
-            System.Drawing.Color colour;
+            Color colour;
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(META_AND_HEADER_STYLE);
-            namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            colour = System.Drawing.Color.FromArgb(255, 0, 0, 170);
+            namedStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            colour = Color.FromArgb(255, 0, 0, 170);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
             namedStyle.Style.Font.Bold = true;
-            colour = System.Drawing.Color.FromArgb(255, 255, 255, 255);
+            colour = Color.FromArgb(255, 255, 255, 255);
             namedStyle.Style.Font.Color.SetColor(colour);
-            namedStyle.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-            namedStyle.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thick;
-            namedStyle.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thick;
+            namedStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            namedStyle.Style.Border.Left.Style = ExcelBorderStyle.Thick;
+            namedStyle.Style.Border.Right.Style = ExcelBorderStyle.Thick;
             namedStyle.Style.Border.Left.Color.SetColor(colour);
             namedStyle.Style.Border.Right.Color.SetColor(colour);
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(TOTAL_STYLE_WITH_CURRENCY);
-            namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            colour = System.Drawing.Color.FromArgb(255, 0, 0, 170);
+            namedStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            colour = Color.FromArgb(255, 0, 0, 170);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
             namedStyle.Style.Font.Bold = true;
-            colour = System.Drawing.Color.FromArgb(255, 255, 255, 255);
+            colour = Color.FromArgb(255, 255, 255, 255);
             namedStyle.Style.Font.Color.SetColor(colour);
-            namedStyle.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-            namedStyle.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thick;
-            namedStyle.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thick;
+            namedStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            namedStyle.Style.Border.Left.Style = ExcelBorderStyle.Thick;
+            namedStyle.Style.Border.Right.Style = ExcelBorderStyle.Thick;
             namedStyle.Style.Border.Left.Color.SetColor(colour);
             namedStyle.Style.Border.Right.Color.SetColor(colour);
             namedStyle.Style.Numberformat.Format = "$#,##0.00";
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(EVEN_ROW_STYLE);
-            namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            colour = System.Drawing.Color.FromArgb(255, 239, 239, 255);
+            namedStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            colour = Color.FromArgb(255, 239, 239, 255);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(ODD_ROW_STYLE);
-            namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            colour = System.Drawing.Color.FromArgb(255, 207, 207, 255);
+            namedStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            colour = Color.FromArgb(255, 207, 207, 255);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(EVEN_ROW_STYLE_WITH_CURRENCY);
             namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            colour = System.Drawing.Color.FromArgb(255, 239, 239, 255);
+            colour = Color.FromArgb(255, 239, 239, 255);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
             namedStyle.Style.Numberformat.Format = "$#,##0.00";
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(ODD_ROW_STYLE_WITH_CURRENCY);
-            namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            colour = System.Drawing.Color.FromArgb(255, 207, 207, 255);
+            namedStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            colour = Color.FromArgb(255, 207, 207, 255);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
             namedStyle.Style.Numberformat.Format = "$#,##0.00";
 
@@ -117,16 +126,16 @@ namespace InvoiceGen.View
         /// <summary>
         /// Add rows for each of the items and style them.
         /// </summary>
-        /// <param name="items"></param>
-        public void addItems(List<Tuple<InvoiceItem, int>> items)
+        /// <param name="items">A list of tuples of invoice items and their quantities.</param>
+        public void AddItems(List<Tuple<InvoiceItem, int>> items)
         {
             // write and style each item record 
             int row = HEADER_ROW + 1;
             foreach (var i in items)
             {
-                this._ws.Cells[row, 1].Value = i.Item1.description;
+                this._ws.Cells[row, 1].Value = i.Item1.Description;
 
-                this._ws.Cells[row, 2].Value = Convert.ToDecimal(i.Item1.amount);
+                this._ws.Cells[row, 2].Value = Convert.ToDecimal(i.Item1.Amount);
 
                 this._ws.Cells[row, 3].Value = i.Item2;
 
@@ -160,7 +169,7 @@ namespace InvoiceGen.View
             this._ws.Cells[totalValueAddress].StyleName = TOTAL_STYLE_WITH_CURRENCY;
 
             // calculate values from formulas
-            this._ws.Calculate();
+            //this._ws.Calculate();
 
             // clean up 
             // autofit 
@@ -170,9 +179,9 @@ namespace InvoiceGen.View
         /// <summary>
         /// Save the file and dispose of the package.
         /// </summary>
-        public void close()
+        public void CloseAndSave()
         {
-            System.IO.FileInfo fi = new System.IO.FileInfo(this._fileName);
+            FileInfo fi = new FileInfo(this._fileName);
             _pck.SaveAs(fi);
             _pck.Dispose();
         }
@@ -181,7 +190,7 @@ namespace InvoiceGen.View
         /// Get a memory stream of the spreadsheet and dispose of the package.
         /// </summary>
         /// <returns></returns>
-        public MemoryStream closeAndGetMemoryStream()  
+        public MemoryStream CloseAndGetMemoryStream()  
         {
             MemoryStream ms = new MemoryStream(_pck.GetAsByteArray());
             _pck.Dispose();

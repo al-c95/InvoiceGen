@@ -31,14 +31,14 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.textBox_host = new System.Windows.Forms.TextBox();
+            this.textBox_Host = new System.Windows.Forms.TextBox();
             this.numericUpDown_port = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.textBox_senderEmailPassword = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox_senderAddress = new System.Windows.Forms.TextBox();
-            this.textBox_senderName = new System.Windows.Forms.TextBox();
+            this.textBox_SenderName = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -58,14 +58,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.textBox_host);
+            this.groupBox1.Controls.Add(this.textBox_Host);
             this.groupBox1.Controls.Add(this.numericUpDown_port);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.textBox_senderEmailPassword);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.textBox_senderAddress);
-            this.groupBox1.Controls.Add(this.textBox_senderName);
+            this.groupBox1.Controls.Add(this.textBox_SenderName);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(333, 205);
@@ -80,7 +80,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(29, 13);
             this.label7.TabIndex = 13;
-            this.label7.Text = "Port:";
+            this.label7.Text = "port:";
             // 
             // label6
             // 
@@ -91,14 +91,14 @@
             this.label6.TabIndex = 12;
             this.label6.Text = "Host:";
             // 
-            // textBox_host
+            // textBox_Host
             // 
-            this.textBox_host.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBox_Host.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_host.Location = new System.Drawing.Point(72, 136);
-            this.textBox_host.Name = "textBox_host";
-            this.textBox_host.Size = new System.Drawing.Size(255, 20);
-            this.textBox_host.TabIndex = 11;
+            this.textBox_Host.Location = new System.Drawing.Point(72, 136);
+            this.textBox_Host.Name = "textBox_Host";
+            this.textBox_Host.Size = new System.Drawing.Size(255, 20);
+            this.textBox_Host.TabIndex = 11;
             // 
             // numericUpDown_port
             // 
@@ -158,14 +158,14 @@
             this.textBox_senderAddress.Size = new System.Drawing.Size(255, 20);
             this.textBox_senderAddress.TabIndex = 4;
             // 
-            // textBox_senderName
+            // textBox_SenderName
             // 
-            this.textBox_senderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBox_SenderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_senderName.Location = new System.Drawing.Point(72, 58);
-            this.textBox_senderName.Name = "textBox_senderName";
-            this.textBox_senderName.Size = new System.Drawing.Size(255, 20);
-            this.textBox_senderName.TabIndex = 5;
+            this.textBox_SenderName.Location = new System.Drawing.Point(72, 58);
+            this.textBox_SenderName.Name = "textBox_SenderName";
+            this.textBox_SenderName.Size = new System.Drawing.Size(255, 20);
+            this.textBox_SenderName.TabIndex = 5;
             // 
             // groupBox2
             // 
@@ -275,12 +275,12 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox_senderAddress;
-        private System.Windows.Forms.TextBox textBox_senderName;
+        private System.Windows.Forms.TextBox textBox_SenderName;
         private System.Windows.Forms.TextBox textBox_senderEmailPassword;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numericUpDown_port;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBox_host;
+        private System.Windows.Forms.TextBox textBox_Host;
         private System.Windows.Forms.Label label7;
     }
 }

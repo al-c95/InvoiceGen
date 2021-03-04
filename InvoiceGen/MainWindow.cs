@@ -14,17 +14,7 @@ namespace InvoiceGen
 {
     public partial class mainWindow : Form, IMainWindow
     {
-        private bool _creatingNewInvoice;
-        public bool creatingNewInvoice
-        {
-            get => _creatingNewInvoice;
-            set => _creatingNewInvoice = value;
-        }
-
-        // TODO: maybe put this in the configuration class
-        // a collection of all calendar months, to fill the appropriate combobox
-        protected string[] months = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+        public bool CreatingNewInvoice { get; set; }
 
         DataTable invoiceHistoryRecords;
 
@@ -36,20 +26,14 @@ namespace InvoiceGen
             InitializeComponent();
 
             // set the window title
-            this.windowTitle = windowTitle;
+            this.WindowTitle = windowTitle;
 
-            // fill the months combobox
-            foreach (string m in months)
-                comboBox_month.Items.Add(m);
-            // and apply autocomplete
-            comboBox_month.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            comboBox_month.AutoCompleteSource = AutoCompleteSource.ListItems;
+            // IMPORTANT
+            this.exitToolStripMenuItem.Click += ((sender, args) => Application.Exit());
+            this.aboutToolStripMenuItem.Click += ((sender, args) => new AboutBox().Show());
+            this.configurationToolStripMenuItem.Click += ((sender, args) => new ConfigWindow().ShowDialog());
 
-            // set to ready state
-            setToReadyState();
-            statusBarText = "Ready";
-            statusStrip.BackColor = System.Drawing.Color.LightGray;
-
+            /*
             // create the invoice history table and bind it to the UI
             invoiceHistoryRecords = new DataTable("Invoices");
             invoiceHistoryRecords.Columns.Add("ID", typeof(int));
@@ -60,6 +44,7 @@ namespace InvoiceGen
             invoiceHistoryRecords.Columns.Add("Items", typeof(IList<InvoiceItem>));
             dataGridView_invoiceHistory.DataSource = invoiceHistoryRecords;
             dataGridView_invoiceHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            */
 
             // subscribe to UI events
 
@@ -72,11 +57,11 @@ namespace InvoiceGen
             this.button_addItem.Click += Button_addItem_Click;
 
             this.radioButton_titleCustom.CheckedChanged += RadioButton_titleCustom_CheckedChanged;
-            //this.customTitleTextBoxTextChanged += textBox_customTitle_TextChanged;
+            //this.CustomTitleTextBoxTextChanged += textBox_customTitle_TextChanged;
 
             this.radioButton_titleMonthly.CheckedChanged += RadioButton_titleMonthly_CheckedChanged;
-            this.comboBox_month.TextChanged += ComboBox_month_TextChanged;
-            this.textBox_year.TextChanged += TextBox_year_TextChanged;
+            this.comboBox_Month.TextChanged += ComboBox_Month_TextChanged;
+            this.textBox_Year.TextChanged += TextBox_Year_TextChanged;
 
             this.textBox_newEntryDesc.TextChanged += TextBox_newEntryDesc_TextChanged;
             this.textBox_newEntryAmt.TextChanged += TextBox_newEntryAmt_TextChanged;
@@ -85,7 +70,7 @@ namespace InvoiceGen
             this.button_removeItem.Click += MainWindow_removeSelectedItemButtonClicked;
             this.button_duplicateItem.Click += MainWindow_duplicateSelectedItemButtonClicked;
 
-            this.button_saveExportXL.Click += MainWindow_saveAndExportXLSXButtonClicked;
+            this.button_saveExportXL.Click += MainWindow_SaveAndExportXLSXButtonClicked;
             this.button_saveEmail.Click += Button_saveEmail_Click;
 
             this.button_cancel.Click += Button_cancel_Click;
@@ -110,43 +95,42 @@ namespace InvoiceGen
         private void DataGridView_invoiceHistory_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            paidStatusChanged?.Invoke(this, e);
+            PaidStatusChanged?.Invoke(this, e);
         }
 
         private void DataGridView_invoiceHistory_SelectionChanged(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            invoiceHistoryDataGridViewSelectionChanged?.Invoke(this, e);
+            InvoiceHistoryDataGridViewSelectionChanged?.Invoke(this, e);
         }
 
         private void Button_updateRecords_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            updateRecordsButtonClicked?.Invoke(this, e);
+            UpdateRecordsButtonClicked?.Invoke(this, e);
         }
 
         private void Button_viewSelected_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            viewSelectedInvoiceButtonClicked?.Invoke(this, e);
+            ViewSelectedInvoiceButtonClicked?.Invoke(this, e);
         }
 
         private void Button_cancel_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            cancelClicked?.Invoke(this, e);
+            CancelClicked?.Invoke(this, e);
         }
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // fire the external event so the subscribed presenter can react
-            helpAboutMenuItemClicked?.Invoke(this, e);
+
         }
 
         private void Button_saveEmail_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            saveAndEmailButtonClicked?.Invoke(this, e);
+            SaveAndEmailButtonClicked?.Invoke(this, e);
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -156,40 +140,39 @@ namespace InvoiceGen
 
         private void ConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // fire the external event so the subscribed presenter can react
-            settingsConfigMenuItemClicked?.Invoke(this, e);
+
         }
 
-        private void MainWindow_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
+        private void MainWindow_SaveAndExportXLSXButtonClicked(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            saveAndExportXLSXButtonClicked?.Invoke(this, e);
+            SaveAndExportXLSXButtonClicked?.Invoke(this, e);
         }
 
         private void MainWindow_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            duplicateItemButtonClicked?.Invoke(this, e);
+            DuplicateItemButtonClicked?.Invoke(this, e);
         }
 
         private void MainWindow_removeSelectedItemButtonClicked(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            removeItemButtonClicked?.Invoke(this, e);
+            RemoveItemButtonClicked?.Invoke(this, e);
         }
 
         private void ListView_items_SelectedIndexChanged(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            itemListSelectedIndexChanged?.Invoke(this, e);
-
+            ItemListSelectedIndexChanged?.Invoke(this, e);
+            /*
             // TODO: put this logic in the presenter
             switch (this.numberSelectedInvoiceItems)
             {
                 case 1:
                     // one item selected
                     // display its amount
-                    displaySelectedAmount();
+                    //displaySelectedAmount();
                     break;
                 default:
                     // no items or multiple items are selected
@@ -197,419 +180,244 @@ namespace InvoiceGen
                     displayTotal();
                     break;
             }
+            */
         }
 
-        private void TextBox_newEntryAmt_TextChanged(object sender, EventArgs e)
+        private void TextBox_newEntryAmt_TextChanged(object sender, EventArgs args)
         {
             // fire the external event so the subscribed presenter can react;
-            newItemAmountTextBoxTextChanged?.Invoke(this, e);
+            NewItemDetailsUpdated?.Invoke(sender, args);
         }
 
-        private void TextBox_newEntryDesc_TextChanged(object sender, EventArgs e)
+        private void TextBox_newEntryDesc_TextChanged(object sender, EventArgs args)
         {
             // fire the external event so the subscribed presenter can react
-            newItemDescriptionTextBoxTextChanged?.Invoke(this, e);
+            NewItemDetailsUpdated?.Invoke(sender, args);
         }
 
-        private void TextBox_year_TextChanged(object sender, EventArgs e)
+        // IMPORTANT
+        private void TextBox_Year_TextChanged(object sender, EventArgs args)
         {
             // fire the external event so the subscribed presenter can react
-            yearTextBoxTextChanged?.Invoke(this, e);
+            MonthlyInvoiceMonthYearUpdated?.Invoke(sender, args);
         }
 
-        private void ComboBox_month_TextChanged(object sender, EventArgs e)
+        private void ComboBox_Month_TextChanged(object sender, EventArgs args)
         {
             // fire the external event so the subscribed presenter can react
-            monthComboBoxTextChanged?.Invoke(this, e);
+            MonthlyInvoiceMonthYearUpdated?.Invoke(sender, args);
         }
 
         private void RadioButton_titleMonthly_CheckedChanged(object sender, EventArgs e)
         {
-            // fire the external event so the subscribed presenter can react
-            monthlyTitleRadioButtonClicked?.Invoke(this, e);
+
         }
 
         private void RadioButton_titleCustom_CheckedChanged(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            customTitleRadioButtonClicked?.Invoke(this, e);
+            //CustomTitleRadioButtonClicked?.Invoke(this, e);
         }
 
         private void textBox_customTitle_TextChanged(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            customTitleTextBoxTextChanged?.Invoke(this, e);
+            CustomTitleTextBoxTextChanged?.Invoke(this, e);
         }
 
-        private void comboBox_month_TextUpdate(object sender, EventArgs e)
+        private void comboBox_Month_TextUpdate(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            monthComboBoxTextChanged?.Invoke(this, e);
+            //MonthComboBoxTextChanged?.Invoke(this, e);
         }
 
         private void Button_newInvoice_Click(object sender, EventArgs e)
         {
-            // fire the external event so the subscribed presenter can react
-            newInvoiceButtonClicked?.Invoke(this, e);
+
         }
 
         private void Button_addItem_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            addItemButtonClicked?.Invoke(this, e);
+            AddItemButtonClicked?.Invoke(this, e);
         }
         #endregion
 
-        public void setToReadyState()
-        {
-            // set which controls are currently active
-
-            button_newInvoice.Enabled = true;
-
-            radioButton_titleMonthly.Checked = true;
-            radioButton_titleMonthly.Enabled = false;
-            radioButton_titleCustom.Checked = false;
-            radioButton_titleCustom.Enabled = false;
-
-            comboBox_month.Enabled = false;
-            textBox_year.Enabled = false;
-            textBox_year.Text = string.Empty;
-            textBox_customTitle.Enabled = false;
-            textBox_customTitle.Text = string.Empty;
-
-            button_addItem.Enabled = false;
-            textBox_newEntryDesc.Enabled = false;
-            textBox_newEntryDesc.Text = string.Empty;
-            textBox_newEntryAmt.Enabled = false;
-            textBox_newEntryAmt.Text = string.Empty;
-            numericUpDown_newEntryQ.Value = 1;
-            numericUpDown_newEntryQ.Enabled = false;
-
-            button_duplicateItem.Enabled = false;
-            button_removeItem.Enabled = false;
-            listView_items.Enabled = false;
-            listView_items.Items.Clear();
-
-            button_saveEmail.Enabled = false;
-            button_saveExportXL.Enabled = false;
-
-            button_cancel.Enabled = false;
-
-            richTextBox_total.Text = "0.00";
-        }
-
-        public string getTitle()
-        {
-            if (this.radioButton_titleMonthly.Checked)
-            {
-                return comboBox_month.Text + " " + textBox_year.Text;
-            }
-            else
-            {
-                return this.textBox_customTitle.Text;
-            }
-        }
-  
-        public string windowTitle
+        public string WindowTitle
         {
             get => this.Text;
             set => this.Text = value;
         }
 
-        public string statusBarText
+        public int SelectedTabIndex
+        {
+            get => this.tabControl.SelectedIndex;
+            set => this.tabControl.SelectedIndex = value;
+        }
+
+        public string StatusBarText
         {
             get => this.toolStripStatusLabel.Text;
             set => this.toolStripStatusLabel.Text = value;
         }
 
-        public System.Drawing.Color statusBarColour
+        public Color StatusBarColour
         {
             get => this.statusStrip.BackColor;
             set => this.statusStrip.BackColor = value;
         }
 
-        public string saveAndEmailButtonText
+        public string SaveAndEmailButtonText
         {
             get => this.button_saveEmail.Text;
             set => this.button_saveEmail.Text = value;
         }
 
-        public string saveAndExportXLSXButtonText
+        public string SaveAndExportXLSXButtonText
         {
             get => this.button_saveExportXL.Text;
             set => this.button_saveExportXL.Text = value;
         }
 
-        public bool radioButtonMonthlyEnabled
+        public bool RadioButtonMonthlyEnabled
         {
             get => this.radioButton_titleMonthly.Enabled;
             set => this.radioButton_titleMonthly.Enabled = value;
         }
 
-        public bool radioButtonCustomEnabled
+        public bool RadioButtonCustomEnabled
         {
             get => this.radioButton_titleCustom.Enabled;
             set => this.radioButton_titleCustom.Enabled = value;
         }
 
-        public bool monthComboboxEnabled
+        public bool MonthComboboxEnabled
         {
-            get => this.comboBox_month.Enabled;
-            set => this.comboBox_month.Enabled = value;
+            get => this.comboBox_Month.Enabled;
+            set => this.comboBox_Month.Enabled = value;
         }
 
-        public string month
+        public string Month
         {
-            get => this.comboBox_month.Text;
-            set => this.comboBox_month.Text = value;
+            get => this.comboBox_Month.Text;
+            set => this.comboBox_Month.Text = value;
         }
 
-        public bool yearTextBoxEnabled
+        public bool YearTextBoxEnabled
         {
-            get => this.textBox_year.Enabled;
-            set => this.textBox_year.Enabled = value;
+            get => this.textBox_Year.Enabled;
+            set => this.textBox_Year.Enabled = value;
         }
 
-        public string year
+        public string Year
         {
-            get => textBox_year.Text;
-            set => textBox_year.Text = value;
+            get => textBox_Year.Text;
+            set => textBox_Year.Text = value;
         }
 
-        public bool customTitleTextBoxEnabled
+        public bool CustomTitleTextBoxEnabled
         {
             get => this.textBox_customTitle.Enabled;
             set => this.textBox_customTitle.Enabled = value;
         }
 
-        public string customTitleText
+        public string CustomTitleText
         {
             get => this.textBox_customTitle.Text;
             set => this.textBox_customTitle.Text = value;
         }
 
-        public bool addItemButtonEnabled
+        public bool AddItemButtonEnabled
         {
             get => this.button_addItem.Enabled;
             set => this.button_addItem.Enabled = value;
         }
 
-        public bool itemDescriptionTextBoxEnabled
+        public bool ItemDescriptionTextBoxEnabled
         {
             get => this.textBox_newEntryDesc.Enabled;
             set => this.textBox_newEntryDesc.Enabled = value;
         }
 
-        public string itemDescription
+        public string ItemDescription
         {
             get => this.textBox_newEntryDesc.Text;
             set => this.textBox_newEntryDesc.Text = value;
         }
 
-        public bool itemAmountTextBoxEnabled
+        public bool ItemAmountTextBoxEnabled
         {
             get => this.textBox_newEntryAmt.Enabled;
             set => this.textBox_newEntryAmt.Enabled = value;
         }
 
-        public string itemAmount
+        public string ItemAmount
         {
             get => textBox_newEntryAmt.Text;
             set => this.textBox_newEntryAmt.Text = value;
         }
 
-        public bool itemQuantityUpDownEnabled
+        public bool ItemQuantityUpDownEnabled
         {
             get => this.numericUpDown_newEntryQ.Enabled;
             set => this.numericUpDown_newEntryQ.Enabled = value;
         }
 
-        public int itemQuantity
+        public int ItemQuantity
         {
             get => (int)numericUpDown_newEntryQ.Value;
             set => numericUpDown_newEntryQ.Value = value;
         }
 
-        public bool itemsListViewEnabled
+        public bool ItemsListViewEnabled
         {
             get => listView_items.Enabled;
             set => listView_items.Enabled = value;
         }
 
-        public bool duplicateItemButtonEnabled
+        public bool DuplicateItemButtonEnabled
         {
             get => button_duplicateItem.Enabled;
             set => button_duplicateItem.Enabled = value;
         }
 
-        public bool removeItemButtonEnabled
+        public bool RemoveItemButtonEnabled
         {
             get => button_removeItem.Enabled;
             set => button_removeItem.Enabled = value;
         }
 
-        public bool saveAndEmailButtonEnabled
+        public bool SaveAndEmailButtonEnabled
         {
             get => button_saveEmail.Enabled;
             set => button_saveEmail.Enabled = value;
         }
 
-        public bool saveAndExportXLButtonEnabled
+        public bool SaveAndExportXLButtonEnabled
         {
             get => button_saveExportXL.Enabled;
             set => button_saveExportXL.Enabled = value;
         }
 
-        public bool cancelButtonEnabled
+        public bool CancelButtonEnabled
         {
             get => button_cancel.Enabled;
             set => button_cancel.Enabled = value;
         }
 
-        public bool invoiceHistoryDataGridViewEnabled
+        public bool InvoiceHistoryDataGridViewEnabled
         {
             get => dataGridView_invoiceHistory.Enabled;
             set => dataGridView_invoiceHistory.Enabled = value;
         }
 
-        /// <summary>
-        /// The full list of invoice items displayed in the "View or Generate" tab. Quantities not specified.
-        /// </summary>
-        public IEnumerable<InvoiceItem> invoiceItems
+        public bool RadioButtonMonthlyChecked
         {
-            get
-            {
-                foreach (ListViewItem item in this.listView_items.Items)
-                {
-                    yield return new InvoiceItem
-                    {
-                        description = item.SubItems[0].Text,
-                        amount = decimal.Parse(item.SubItems[1].Text)
-                    };
-                }
-            }
-
-            set
-            {
-                // clear the list
-                this.listView_items.Items.Clear();
-
-                // add the items to the list one by one
-                foreach (InvoiceItem item in value)
-                {
-                    addItemToNewInvoice(item,1);
-                }
-            }
+            get => this.radioButton_titleMonthly.Checked;
+            set => this.radioButton_titleMonthly.Checked = value;
         }
 
-        /// <summary>
-        /// The list of invoice items displayed in the "View or Generate" tab, that have been selected. Quantities not specified.
-        /// </summary>
-        public IEnumerable<InvoiceItem> selectedInvoiceItems
-        {
-            get
-            {
-                foreach (ListViewItem selectedItem in this.listView_items.SelectedItems)
-                {
-                    yield return new InvoiceItem
-                    {
-                        description = selectedItem.SubItems[0].Text,
-                        amount = decimal.Parse(selectedItem.SubItems[1].Text)
-                    };
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get the number of currently-selected items in the new invoice item list.
-        /// </summary>
-        public int numberSelectedInvoiceItems
-        {
-            get => this.listView_items.SelectedItems.Count;
-        }
-
-        /// <summary>
-        /// Get the number of currently-selected rows in the invoice history grid.
-        /// </summary>
-        public int numberSelectedInvoiceRecords
-        {
-            get => this.dataGridView_invoiceHistory.SelectedRows.Count;
-        }
-
-        /// <summary>
-        /// Add an item to the list when creating a new invoice.
-        /// </summary>
-        /// <param name="item"></param>
-        public void addItemToNewInvoice(InvoiceItem item, int quantity)
-        {
-            // check if this item is already in the list
-            bool exists = false;
-            foreach (ListViewItem existingItem in listView_items.Items)
-            {
-                if (existingItem.SubItems[0].Text.Equals(item.description, StringComparison.InvariantCulture) &&
-                    decimal.Parse(existingItem.SubItems[1].Text) == item.amount)
-                {
-                    exists = true;
-
-                    int currQuantity = int.Parse(existingItem.SubItems[2].Text);
-                    existingItem.SubItems[2].Text = (currQuantity + quantity).ToString();
-                }
-            }
-
-            if (!exists)
-            {
-                // create the new row and add it
-                string[] row = { item.description, item.amount.ToString(), quantity.ToString() };
-                var listViewItem = new ListViewItem(row);
-                this.listView_items.Items.Add(listViewItem);
-            }
-
-            displayTotal();
-        }
-
-        /// <summary>
-        /// Does what it says.
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public int getQuantityOfExistingItem(InvoiceItem item)
-        {
-            foreach (ListViewItem listItem in listView_items.Items)
-            {
-                if (listItem.SubItems[0].Text.Equals(item.description) && decimal.Parse(listItem.SubItems[1].Text) == item.amount)
-                {
-                    return int.Parse(listItem.SubItems[2].Text);
-                }
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Intended to remove a selected item.
-        /// </summary>
-        /// <param name="item"></param>
-        public void removeItemFromInvoice(InvoiceItem item)
-        {
-            for (int i = 0; i < listView_items.Items.Count;)
-            {
-                if (listView_items.Items[i].SubItems[0].Text.Equals(item.description, StringComparison.InvariantCulture) && 
-                    decimal.Parse(listView_items.Items[i].SubItems[1].Text) == item.amount)
-                {
-                    // found it
-                    // now deselect and remove it
-                    listView_items.Items[i].Selected = false;
-                    listView_items.Items[i].Remove();
-
-                    return;
-                }
-                else
-                {
-                    i++;
-                }
-            }
-        }
-
+        /*
         /// <summary>
         /// All invoices in the DataGridView in the "History" tab.
         /// </summary>
@@ -627,117 +435,148 @@ namespace InvoiceGen
                 dataGridView_invoiceHistory.Columns["Total Amount ($)"].ReadOnly = true;
                 dataGridView_invoiceHistory.Columns["Title"].ReadOnly = true;
                 foreach (Invoice invoice in value)
-                    invoiceHistoryRecords.Rows.Add(new object[] { invoice.id, invoice.timestamp, invoice.title, invoice.getTotal(), invoice.paid, invoice.items });
+                    invoiceHistoryRecords.Rows.Add(new object[] { invoice.Id, invoice.Timestamp, invoice.Title, invoice.GetTotal(), invoice.Paid, invoice.Items });
                 invoiceHistoryRecords.AcceptChanges();
                 dataGridView_invoiceHistory.EndEdit();
             }
         }
+        */
 
-        /// <summary>
-        /// Invoice records in the DataGridView in the "History" tab which have been modified by the user.
-        /// </summary>
-        public IEnumerable<Invoice> modifiedInvoiceRecords
-        {
-            get
-            {
-                dataGridView_invoiceHistory.EndEdit();
-                DataRowCollection modifiedRows = invoiceHistoryRecords.GetChanges(DataRowState.Modified)?.Rows;
-                foreach (DataRow row in modifiedRows)
-                {
-                    yield return new Invoice
-                    {
-                        id = (int)row["ID"],
-                        timestamp = (DateTime)row["Timestamp"],
-                        title = (string)row["Title"],
-                        paid = (bool)row["Paid"],
-                        items = (List<InvoiceItem>)row["Items"]
-                    };
-                }
-            }
-        }
-
-        public string totalText
+        public string TotalText
         {
             get => this.richTextBox_total.Text;
             set => this.richTextBox_total.Text = value;
         }
 
-        /// <summary>
-        /// Display the total amount for the invoice in the "total" text box.
-        /// TODO: put this logic in the presenter
-        /// </summary>
-        public void displayTotal()
-        {
-            decimal total = 0;
-            foreach (ListViewItem item in listView_items.Items)
-            {
-                total += decimal.Parse(item.SubItems[1].Text) * int.Parse(item.SubItems[2].Text);
-            }
-
-            string toDisplay = "Total: " + total.ToString("C2", new System.Globalization.CultureInfo("en-AU"));
-            richTextBox_total.Text = toDisplay;
-        }
-
-        /// <summary>
-        /// Display the amount for the currently-selected item in the "total" text box.
-        /// TODO: put this logic in the presenter.
-        /// </summary>
-        public void displaySelectedAmount()
-        {
-            if (listView_items.SelectedItems.Count == 0 || listView_items.SelectedItems.Count > 1)
-                return;
-
-            // one item is selected
-            ListViewItem selected = listView_items.SelectedItems[0];
-            string toDisplay = (decimal.Parse(selected.SubItems[1].Text) * int.Parse(selected.SubItems[2].Text)).ToString("C2", new System.Globalization.CultureInfo("en-AU"));
-            richTextBox_total.Text = toDisplay;
-        }
-
-        public bool newInvoiceButtonEnabled
+        public bool NewInvoiceButtonEnabled
         {
             get => this.button_newInvoice.Enabled;
             set => this.button_newInvoice.Enabled = value;
         }
 
-        public bool viewSelectedInvoiceButtonEnabled
+        public bool ViewSelectedInvoiceButtonEnabled
         {
             get => this.button_viewSelected.Enabled;
             set => this.button_viewSelected.Enabled = value;
         }
 
-        public bool updateRecordsButtonEnabled
+        public bool UpdateRecordsButtonEnabled
         {
             get => this.button_updateRecords.Enabled;
             set => this.button_updateRecords.Enabled = value;
         }
 
-        public bool exitToolStripMenuItemEnabled
+        public bool RadioButtonCustomChecked
         {
-            get => this.exitToolStripMenuItem.Enabled;
-            set => this.exitToolStripMenuItem.Enabled = value;
+            get => this.radioButton_titleCustom.Checked;
+            set => this.radioButton_titleCustom.Checked = value;
         }
 
-        public void showErrorDialogOk(string message)
+        public IEnumerable<Tuple<InvoiceItem, int>> ItemsListEntries
         {
-            System.Windows.Forms.MessageBox.Show(message, Configuration.APP_NAME, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            get
+            {
+                foreach (ListViewItem listItem in this.listView_items.Items)
+                {
+                    InvoiceItem invoiceItem = new InvoiceItem
+                    {
+                        Amount = Decimal.Parse((listItem.SubItems[1].Text)),
+                        Description = listItem.SubItems[0].Text
+                    };
+
+                    yield return Tuple.Create(invoiceItem, Int32.Parse(listItem.SubItems[2].Text));
+                }
+            }
         }
 
-        public void showErrorDialogAbortRetryIgnore(string message)
+        public void AddEntryToItemsList(InvoiceItem item, int quantity)
+        {
+            string[] row = { item.Description, item.Amount.ToString("0.00"), quantity.ToString() };
+            var newListItem = new ListViewItem(row);
+            listView_items.Items.Add(newListItem);
+        }
+
+        public void UpdateQuantityInItemsList(InvoiceItem item, int newQuantity)
+        {
+            for (int index = this.listView_items.Items.Count - 1; index >= 0; index--)
+            {
+                if (this.listView_items.Items[index].SubItems[0].Text.Equals(item.Description) &&
+                    this.listView_items.Items[index].SubItems[1].Text.Equals(item.Amount.ToString("0.00")))
+                {
+                    string[] row = { item.Description, item.Amount.ToString("0.00"), newQuantity.ToString() };
+                    listView_items.Items[index] = new ListViewItem(row);
+                }
+            }
+        }
+
+        public void RemoveItemFromList(InvoiceItem toRemove)
+        {
+            for (int index = this.listView_items.Items.Count - 1; index >= 0; index--)
+            {
+                if (this.listView_items.Items[index].SubItems[0].Text.Equals(toRemove.Description) &&
+                    this.listView_items.Items[index].SubItems[1].Text.Equals(toRemove.Amount.ToString()))
+                {
+                    listView_items.Items[index].Remove();
+                }
+            }
+        }
+
+        public int GetNumberOfItemsInList() => this.listView_items.Items.Count;
+
+        public Tuple<InvoiceItem, int> GetSelectedItem()
+        {
+            if (this.listView_items.SelectedItems.Count != 0)
+            {
+                ListViewItem selected = this.listView_items.SelectedItems[0]; // only *one* item should be able to be selected
+                return Tuple.Create(new InvoiceItem { Description = selected.SubItems[0].Text, Amount = Decimal.Parse(selected.SubItems[1].Text) },
+                    Int32.Parse(selected.SubItems[2].Text));
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public int GetQuantityOfItemInList(InvoiceItem item)
+        {
+            for (int index = this.listView_items.Items.Count - 1; index >= 0; index--)
+            {
+                if (this.listView_items.Items[index].SubItems[0].Text.Equals(item.Description) &&
+                    this.listView_items.Items[index].SubItems[1].Text.Equals(item.Amount.ToString("0.00")))
+                {
+                    return Int32.Parse(this.listView_items.Items[index].SubItems[2].Text);
+                }
+            }
+
+            return 0;
+        }
+
+        public void ClearItemsList()
+        {
+            this.listView_items.Items.Clear();
+        }
+
+        public void ShowErrorDialogOk(string message)
+        {
+            MessageBox.Show(message, Configuration.APP_NAME, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public void ShowErrorDialogAbortRetryIgnore(string message)
         {
             throw new NotImplementedException();
         }
 
-        public void showSuccessDialog(string message)
+        public void ShowSuccessDialog(string message)
         {
             throw new NotImplementedException();
         }
 
-        public void showSaveFileDialog()
+        public void ShowSaveFileDialog()
         {
             throw new NotImplementedException();
         }
 
-        public string showFolderPickerDialog()
+        public string ShowFolderPickerDialog()
         {
             FolderBrowserDialog folderPicker = new FolderBrowserDialog();
             folderPicker.ShowNewFolderButton = true;
@@ -747,60 +586,70 @@ namespace InvoiceGen
             }
             else
             {
-                return null; 
+                return null;
             }
+        }
+
+        public void PopulateMonthsComboBox(string[] months)
+        {
+            // fill the Months combobox
+            comboBox_Month.Items.Clear();
+            foreach (string m in months)
+                comboBox_Month.Items.Add(m);
+            // and apply autocomplete
+            comboBox_Month.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBox_Month.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
 
         #region UI events
         // new invoice button
-        public event EventHandler newInvoiceButtonClicked;
+        public event EventHandler NewInvoiceButtonClicked;
 
         // invoice history tab controls
-        public event EventHandler viewSelectedInvoiceButtonClicked;
-        public event EventHandler updateRecordsButtonClicked;
-        public event EventHandler invoiceHistoryDataGridViewSelectionChanged;
-
-        // title/description radio buttons
-        public event EventHandler monthlyTitleRadioButtonClicked;
-        public event EventHandler customTitleRadioButtonClicked;
+        public event EventHandler ViewSelectedInvoiceButtonClicked;
+        public event EventHandler UpdateRecordsButtonClicked;
+        public event EventHandler InvoiceHistoryDataGridViewSelectionChanged;
 
         // description data entry widgets
-        public event EventHandler monthComboBoxTextChanged;
-        public event EventHandler yearTextBoxTextChanged;
-        public event EventHandler customTitleTextBoxTextChanged;
+        public event EventHandler MonthlyInvoiceMonthYearUpdated;
+        public event EventHandler CustomTitleTextBoxTextChanged;
 
         // adding item
-        public event EventHandler addItemButtonClicked;
-        public event EventHandler newItemDescriptionTextBoxTextChanged;
-        public event EventHandler newItemAmountTextBoxTextChanged;
+        public event EventHandler AddItemButtonClicked;
+        public event EventHandler NewItemDetailsUpdated;
 
         // save buttons
-        public event EventHandler saveAndEmailButtonClicked;
-        public event EventHandler saveAndExportXLSXButtonClicked;
+        public event EventHandler SaveAndEmailButtonClicked;
+        public event EventHandler SaveAndExportXLSXButtonClicked;
 
         // cancel button
-        public event EventHandler cancelClicked;
-
-        // file menu
-        public event EventHandler fileNewInvoiceMenuItemClicked;
-        public event EventHandler fileLoadInvoiceMenuItemClicked;
-        public event EventHandler fileSaveAndEmailMenuItemClicked;
-        public event EventHandler fileSaveAndExportXLSXMenuItemClicked;
-        public event EventHandler fileExitMenuItemClicked;
-
-        // settings menu
-        public event EventHandler settingsConfigMenuItemClicked;
-
-        // help menu
-        public event EventHandler helpManualMenuItemClicked;
-        public event EventHandler helpAboutMenuItemClicked;
+        public event EventHandler CancelClicked;
 
         // items list view and associated buttons
-        public event EventHandler itemListSelectedIndexChanged;
-        public event EventHandler duplicateItemButtonClicked;
-        public event EventHandler removeItemButtonClicked;
+        public event EventHandler ItemListSelectedIndexChanged;
+        public event EventHandler DuplicateItemButtonClicked;
+        public event EventHandler RemoveItemButtonClicked;
 
-        public event EventHandler paidStatusChanged;
-        #endregion  
+        public event EventHandler PaidStatusChanged;
+        public event EventHandler InvoiceTypeSelected;
+        #endregion
+
+        // IMPORTANT
+        private void button_newInvoice_Click_1(object sender, EventArgs args)
+        {
+            NewInvoiceButtonClicked?.Invoke(sender, args);
+        }
+
+        // IMPORTANT
+        private void radioButton_titleCustom_CheckedChanged_1(object sender, EventArgs args)
+        {
+            InvoiceTypeSelected?.Invoke(sender, args);
+        }
+
+        // IMPORTANT
+        private void radioButton_titleMonthly_CheckedChanged_1(object sender, EventArgs args)
+        {
+            InvoiceTypeSelected?.Invoke(sender, args);
+        }
     }
 }

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.ComponentModel;
+using System.Net.Mail;
 using InvoiceGen.View;
 using InvoiceGen.Model.Repository;
 using InvoiceGen.Model.ObjectModel;
@@ -12,667 +16,533 @@ namespace InvoiceGen.Presenter
 {
     public class MainPresenter
     {
-        // dependency-injected values
         public IMainWindow _view;
         public IInvoiceRepository _repo;
 
-        // action labels for status/progress reporting
-        string spreadsheetExportAction = "Exporting Spreadsheet";
-        string createSpreadsheetAction = "Creating Spreadsheet";
-        string sendEmailAction = "Sending Email";
-        string retrievingRecordAction = "Retrieving Record";
-        string retrievingRecordsAction = "Retrieving Records";
-        string savingToRecordsAction = "Saving to Records";
-        string updateRecordsAction = "Updating Records";
-
-        // button labels
-        string saveAndEmail = "Save and Email";
-        string emailOnly = "Email";
-        string saveAndExport = "Save and Export XLSX";
-        string exportOnly = "Export XLSX";
+        public readonly string[] Months = new string[] { "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December" };
 
         /// <summary>
-        /// Constructor with model and view dependency injection.
+        /// Constructor with View and Model dependency injection.
         /// </summary>
         /// <param name="view"></param>
         /// <param name="repository"></param>
         public MainPresenter(IMainWindow view, IInvoiceRepository repository)
         {
-            // set the injected values
             this._view = view;
             this._repo = repository;
 
-            // subscribe to the view's events
+            // subscribe to the View's events
+            this._view.InvoiceTypeSelected += InvoiceTypeSelected;
+            this._view.NewInvoiceButtonClicked += NewInvoiceButtonClicked;
+            this._view.CancelClicked += CancelButtonClicked;
+            this._view.CustomTitleTextBoxTextChanged += CustomTitleTextChanged;
+            this._view.MonthlyInvoiceMonthYearUpdated += MonthlyInvoiceMonthYearUpdated;
+            this._view.NewItemDetailsUpdated += NewItemDetailsUpdated;
+            this._view.AddItemButtonClicked += AddItemButtonClicked;
+            this._view.ItemListSelectedIndexChanged += ItemListSelectedIndexChanged;
+            this._view.DuplicateItemButtonClicked += DuplicateItemButtonClicked;
+            this._view.RemoveItemButtonClicked += RemoveItemButtonClicked;
+            this._view.SaveAndEmailButtonClicked += SaveAndEmailButtonClicked;
+            this._view.SaveAndExportXLSXButtonClicked += SaveAndExportXLSXButtonClicked;
 
-            this._view.newInvoiceButtonClicked += _view_newInvoiceButtonClicked;
-            this._view.addItemButtonClicked += _view_addItemButtonClicked;
+            // enable/disable some controls initially
+            this._view.NewInvoiceButtonEnabled = true;
+            this._view.SaveAndEmailButtonEnabled = false;
+            this._view.SaveAndExportXLButtonEnabled = false;
+            this._view.CancelButtonEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.ItemDescriptionTextBoxEnabled = false;
+            this._view.ItemAmountTextBoxEnabled = false;
+            this._view.ItemQuantityUpDownEnabled = false;
+            this._view.AddItemButtonEnabled = false;
+            this._view.ItemsListViewEnabled = false;
+            this._view.DuplicateItemButtonEnabled = false;
+            this._view.RemoveItemButtonEnabled = false;
 
-            this._view.viewSelectedInvoiceButtonClicked += _view_viewSelectedInvoiceButtonClicked;
-            this._view.updateRecordsButtonClicked += _view_updateRecordsButtonClicked;
+            // populate months combo box
+            this._view.PopulateMonthsComboBox(Months);
 
-            this._view.monthlyTitleRadioButtonClicked += _view_monthlyTitleRadioButtonClicked;
-            this._view.customTitleRadioButtonClicked += _view_customTitleRadioButtonClicked;
-
-            this._view.monthComboBoxTextChanged += _view_monthComboBoxTextChanged;
-            this._view.yearTextBoxTextChanged += _view_yearTextBoxTextChanged;
-            this._view.customTitleTextBoxTextChanged += _view_customTitleTextBoxTextChanged;
-
-            this._view.newItemDescriptionTextBoxTextChanged += _view_newItemDescriptionTextBoxTextChanged;
-            this._view.newItemAmountTextBoxTextChanged += _view_newItemAmountTextBoxTextChanged;
-
-            this._view.itemListSelectedIndexChanged += _view_itemListSelectedIndexChanged;
-            this._view.removeItemButtonClicked += _view_removeItemButtonClicked;
-            this._view.duplicateItemButtonClicked += _view_duplicateSelectedItemButtonClicked;
-
-            this._view.saveAndExportXLSXButtonClicked += _view_saveAndExportXLSXButtonClicked;
-            this._view.saveAndEmailButtonClicked += _view_saveAndEmailButtonClicked;
-
-            this._view.cancelClicked += _view_cancelClicked;
-
-            this._view.settingsConfigMenuItemClicked += _view_settingsConfigMenuItemClicked;
-
-            this._view.helpAboutMenuItemClicked += _view_helpAboutMenuItemClicked;
-
-            // populate the invoice history
-            this._view.invoiceHistory = this._repo.getAllInvoices();
-
-            this._view.invoiceHistoryDataGridViewSelectionChanged += _view_invoiceHistoryDataGridViewSelectionChanged;
-            this._view.paidStatusChanged += _view_paidStatusChanged;
-
-            this._view.viewSelectedInvoiceButtonEnabled = false;
-            this._view.updateRecordsButtonEnabled = false;
+            this._view.CreatingNewInvoice = true;
         }
 
-        #region view event handlers
-        private void _view_paidStatusChanged(object sender, EventArgs e)
+        #region View event handlers
+        public void MonthlyInvoiceMonthYearUpdated(object sender, EventArgs args)
         {
-            // if one row is selected, enable the update button
-            this._view.updateRecordsButtonEnabled = (this._view.numberSelectedInvoiceRecords == 1);
-        }
+            bool valid = true;
+            valid = valid && this.Months.Contains(this._view.Month);
+            valid = valid && Int32.TryParse(this._view.Year, out int year);
 
-        private void _view_invoiceHistoryDataGridViewSelectionChanged(object sender, EventArgs e)
-        {
-            // if one row is selected, enable the view button
-            this._view.viewSelectedInvoiceButtonEnabled = (this._view.numberSelectedInvoiceRecords == 1);
-        }
+            this._view.ItemDescriptionTextBoxEnabled = valid;
+            this._view.ItemAmountTextBoxEnabled = valid;
+            this._view.ItemQuantityUpDownEnabled = valid;
 
-        private void _view_updateRecordsButtonClicked(object sender, EventArgs e)
-        {
-            // disable controls the user shouldn't play with now
-            // namely the DataGridView and update button
-            this._view.updateRecordsButtonEnabled = false;
-            this._view.invoiceHistoryDataGridViewEnabled = false;
-
-            // update the status bar
-            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.statusBarText = updateRecordsAction + " In Progress";
-
-            // get the modified records 
-            IEnumerable<Invoice> modifiedInvoices = this._view.modifiedInvoiceRecords;
-            try
+            if (Months.Contains(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
             {
-                foreach (Invoice invoice in modifiedInvoices)
-                    // update the paid status in the XML
-                    this._repo.updatePaidStatus(invoice.id, invoice.paid);
+                this._view.SaveAndEmailButtonEnabled = true;
+                this._view.SaveAndExportXLButtonEnabled = true;
             }
-            catch (System.IO.IOException ioEx)
+            else
             {
-                // something bad happened while saving the file
-                // tell the user via the status bar
-                this._view.statusBarColour = Configuration.ERROR_COLOUR;
-                this._view.statusBarText = updateRecordsAction + " Failed";
+                this._view.SaveAndEmailButtonEnabled = false;
+                this._view.SaveAndExportXLButtonEnabled = false;
             }
-            // no need to reload the records
-
-            // re-enable the controls, whatever happened
-            this._view.updateRecordsButtonEnabled = false;
-            this._view.invoiceHistoryDataGridViewEnabled = true;
-
-            // update the status bar
-            // update the status bar
-            this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
-            this._view.statusBarText = updateRecordsAction + " Completed Successfully";
         }
 
-        private void _view_viewSelectedInvoiceButtonClicked(object sender, EventArgs e)
+        public void CancelButtonClicked(object sender, EventArgs e)
         {
-            // retrieve the selected invoice from the loaded records
+            this._view.NewInvoiceButtonEnabled = true;
+            this._view.SaveAndEmailButtonEnabled = false;
+            this._view.SaveAndExportXLButtonEnabled = false;
+            this._view.CancelButtonEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.ItemDescriptionTextBoxEnabled = false;
+            this._view.ItemAmountTextBoxEnabled = false;
+            this._view.ItemQuantityUpDownEnabled = false;
+            this._view.AddItemButtonEnabled = false;
+            this._view.ItemsListViewEnabled = false;
+            this._view.DuplicateItemButtonEnabled = false;
+            this._view.RemoveItemButtonEnabled = false;
+            this._view.ItemQuantity = 1;
 
-            // display it in the "View or Generate" tab
-            this._view.creatingNewInvoice = false;
+            // clear entered data
+            this._view.CustomTitleText = string.Empty;
+            this._view.ItemDescription = string.Empty;
+            this._view.ItemAmount = string.Empty;
+            this._view.Year = string.Empty;
+            this._view.Month = string.Empty;
+            this._view.ClearItemsList();
 
-            // change the appropriate button texts
-            this._view.saveAndEmailButtonText = emailOnly;
-            this._view.saveAndExportXLSXButtonText = exportOnly;
+            this._view.TotalText = "0.00";
+
+            // reset the status bar
+            this._view.StatusBarText = "Ready";
+            this._view.StatusBarColour = Configuration.DEFAULT_COLOUR;
         }
 
-        private void _view_cancelClicked(object sender, EventArgs e)
+        public void InvoiceTypeSelected(object sender, EventArgs args)
         {
-            // at this point, it succeeded
-            this._view.statusBarText = "Ready";
-            this._view.statusBarColour = Configuration.DEFAULT_COLOUR;
-            // reset
-            this._view.setToReadyState();
-        }
-
-        private void _view_helpAboutMenuItemClicked(object sender, EventArgs e)
-        {
-            // show the about box
-            AboutBox aboutBox = new AboutBox();
-            aboutBox.Show();
-        }
-
-        private async void _view_saveAndEmailButtonClicked(object sender, EventArgs e)
-        {
-            this._view.saveAndEmailButtonEnabled = false;
-            this._view.saveAndExportXLButtonEnabled = false;
-            this._view.cancelButtonEnabled = false;
-
-            // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
-            this._view.itemDescriptionTextBoxEnabled = false;
-            this._view.itemAmountTextBoxEnabled = false;
-            this._view.itemQuantityUpDownEnabled = false;
-            this._view.itemsListViewEnabled = false;
-            this._view.addItemButtonEnabled = false;
-
-            // update the status
-            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.statusBarText = savingToRecordsAction + " In Progress";
-
-            // get the data
-            string title = this._view.getTitle();
-            List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
-            List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
-            foreach (InvoiceItem i in this._view.invoiceItems)
+            if (this._view.RadioButtonMonthlyChecked && !this._view.RadioButtonCustomChecked)
             {
-                Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
-                items.Add(t);
-            }
+                this._view.MonthComboboxEnabled = true;
+                this._view.YearTextBoxEnabled = true;
 
-            // save to records
-            try
-            {
-                Invoice invoice = new Invoice();
-                invoice.timestamp = DateTime.Now;
-                foreach (var i in items)
+                this._view.CustomTitleTextBoxEnabled = false;
+
+                if (Months.Contains(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
                 {
-                    for (int j = 1; j <= i.Item2; j++)
-                    {
-                        InvoiceItem invoiceItem = new InvoiceItem
-                        {
-                            description = i.Item1.description,
-                            amount = i.Item1.amount
-                        };
-                        invoice.items.Add(invoiceItem);
-                        invoice.title = title;
-                    }
+                    this._view.SaveAndEmailButtonEnabled = true;
+                    this._view.SaveAndExportXLButtonEnabled = true;
                 }
-                this._repo.addInvoice(invoice);
-                // repopulate the invoice history
-                this._view.invoiceHistory = this._repo.getAllInvoices();
+                else
+                {
+                    this._view.SaveAndEmailButtonEnabled = false;
+                    this._view.SaveAndExportXLButtonEnabled = false;
+                }
             }
-            catch (Exception ex)
+            else if (!this._view.RadioButtonMonthlyChecked && this._view.RadioButtonCustomChecked)
             {
-                // error saving to records
-                // tell the user
-                this._view.statusBarText = "Error Saving To Records";
-                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+                this._view.MonthComboboxEnabled = false;
+                this._view.YearTextBoxEnabled = false;
 
-                // re-enable some controls
-                this._view.itemDescriptionTextBoxEnabled = true;
-                this._view.itemAmountTextBoxEnabled = true;
-                this._view.itemQuantityUpDownEnabled = true;
-                this._view.itemsListViewEnabled = true;
+                this._view.CustomTitleTextBoxEnabled = true;
 
-                // nothing more can do
+                if (!string.IsNullOrWhiteSpace(this._view.CustomTitleText) && this._view.GetNumberOfItemsInList() > 0)
+                {
+                    this._view.SaveAndEmailButtonEnabled = true;
+                    this._view.SaveAndExportXLButtonEnabled = true;
+                }
+                else
+                {
+                    this._view.SaveAndEmailButtonEnabled = false;
+                    this._view.SaveAndExportXLButtonEnabled = false;
+                }
+            }
+        }
+
+        public void NewInvoiceButtonClicked(object sender, EventArgs args)
+        {
+            this._view.NewInvoiceButtonEnabled = false;
+            this._view.CancelButtonEnabled = true;
+
+            this._view.RadioButtonMonthlyEnabled = true;
+            this._view.RadioButtonCustomEnabled = true;
+
+            this._view.RadioButtonMonthlyChecked = true;
+            this._view.MonthComboboxEnabled = true;
+            this._view.YearTextBoxEnabled = true;
+
+            // reset the status bar
+            this._view.StatusBarText = "Ready";
+            this._view.StatusBarColour = Configuration.DEFAULT_COLOUR;
+        }
+
+        public void CustomTitleTextChanged(object sender, EventArgs args)
+        {
+            if (string.IsNullOrWhiteSpace(this._view.CustomTitleText))
+            {
+                this._view.ItemDescriptionTextBoxEnabled = false;
+                this._view.ItemAmountTextBoxEnabled = false;
+                this._view.ItemQuantityUpDownEnabled = false;
+            }
+            else
+            {
+                this._view.ItemDescriptionTextBoxEnabled = true;
+                this._view.ItemAmountTextBoxEnabled = true;
+                this._view.ItemQuantityUpDownEnabled = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(this._view.CustomTitleText) && this._view.GetNumberOfItemsInList() > 0)
+            {
+                this._view.SaveAndEmailButtonEnabled = true;
+                this._view.SaveAndExportXLButtonEnabled = true;
+            }
+            else
+            {
+                this._view.SaveAndEmailButtonEnabled = false;
+                this._view.SaveAndExportXLButtonEnabled = false;
+            }
+        }
+
+        public void NewItemDetailsUpdated(object sender, EventArgs args)
+        {
+            // perform validation of entered item details
+            bool valid = true;
+            valid = valid && !string.IsNullOrWhiteSpace(this._view.ItemDescription);
+            valid = valid && Regex.IsMatch(this._view.ItemAmount, @"\d+\.(\d{2})");
+            valid = valid && this._view.ItemQuantity > 0;
+
+            // enable or disable "Add Item" button and the items list
+            this._view.AddItemButtonEnabled = valid;
+            this._view.ItemsListViewEnabled = valid;
+        }
+
+        public void AddItemButtonClicked(object sender, EventArgs args)
+        {
+            // grab the entered data from the UI
+            string description = this._view.ItemDescription;
+            decimal amount = Math.Round(Decimal.Parse(this._view.ItemAmount),2);
+            int quantity = this._view.ItemQuantity;
+
+            // check if this item already exists
+            // if it does, update the quantity. if not, add it.
+            bool exists = this._view.ItemsListEntries.Any(i => i.Item1.Description.Equals(description) && i.Item1.Amount.Equals(amount));
+            if (exists)
+            {
+                InvoiceItem item = new InvoiceItem { Description = description, Amount = amount };
+                int currentQuantity = this._view.GetQuantityOfItemInList(item);
+                this._view.UpdateQuantityInItemsList(item, currentQuantity + quantity);
+            }
+            else
+            {
+                this._view.AddEntryToItemsList(new InvoiceItem { Description = description, Amount = amount }, quantity);
+            }
+
+            // update the total
+            string toDisplay = "Total: " + GetTotalAmountFromList().ToString("C2", new System.Globalization.CultureInfo("en-AU"));
+            this._view.TotalText = toDisplay;
+
+            EnableOrDisableSaveButtons();
+        }
+
+        public void ItemListSelectedIndexChanged(object sender, EventArgs args)
+        {
+            // enable or disable "Duplicate" and "Remove" item buttons
+            this._view.DuplicateItemButtonEnabled = (this._view.GetSelectedItem() != null);
+            this._view.RemoveItemButtonEnabled = (this._view.GetSelectedItem() != null);
+
+            // display total or current item amount
+            if (this._view.GetSelectedItem() == null)
+            {
+                string toDisplay = "Total: " + GetAmountInDollarsToDisplay(GetTotalAmountFromList()); 
+                this._view.TotalText = toDisplay;
+            }
+            else
+            {
+                var selectedListItem = this._view.GetSelectedItem();
+                string toDisplay = GetAmountInDollarsToDisplay(selectedListItem.Item1.Amount);
+                this._view.TotalText = toDisplay;
+            }
+        }
+
+        public void DuplicateItemButtonClicked(object sender, EventArgs args)
+        {
+            // double the quantity of this item in the list
+            Tuple<InvoiceItem, int> selectedListItem = this._view.GetSelectedItem();
+            this._view.UpdateQuantityInItemsList(selectedListItem.Item1, selectedListItem.Item2*2);
+
+            // update the total
+            string toDisplay = "Total: " + GetAmountInDollarsToDisplay(GetTotalAmountFromList());
+            this._view.TotalText = toDisplay;
+
+            EnableOrDisableSaveButtons();
+        }
+
+        public void RemoveItemButtonClicked(object sender, EventArgs args)
+        {
+            // remove this item from the list
+            Tuple<InvoiceItem, int> selectedListItem = this._view.GetSelectedItem();
+            this._view.RemoveItemFromList(selectedListItem.Item1);
+
+            // update the total
+            string toDisplay = "Total: " + GetAmountInDollarsToDisplay(GetTotalAmountFromList());
+            this._view.TotalText = toDisplay;
+
+            EnableOrDisableSaveButtons();
+        }
+
+        public void SaveAndEmailButtonClicked(object sender, EventArgs args)
+        {
+            // disable controls the user shouldn't play with at this point
+            DisableControlsWhilePerformingOperation();
+
+            // first check if an invoice with this title already exists
+            string title = "";
+            if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
+            {
+                title = this._view.CustomTitleText;
+            }
+            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyEnabled)
+            {
+                title = this._view.Month + " " + this._view.Year;
+            }
+            bool exists = this._repo.InvoiceWithTitleExists(title);
+            if (exists)
+            {
+                this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
+
                 return;
             }
 
-            // update the status
-            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.statusBarText = createSpreadsheetAction + " In Progress";
+            // send email
+            this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.StatusBarText = "Sending Email In Progress";
+            ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
+            excelWriter.AddItems(this._view.ItemsListEntries.ToList());
+            // do it on a worker thread so the UI remains responsive
+            BackgroundWorker sendEmailWorker = new BackgroundWorker();
+            sendEmailWorker.DoWork += BeginSendEmail;
+            sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to record upon successful sending of email
+            sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream() });
+        }
 
-            // create it
-            ExcelWriter excelWriter = null;
+        private void BeginSendEmail(object sender, DoWorkEventArgs args)
+        {
+            // unpack arguments
+            object[] arguments = (object[])args.Argument;
+            string title = (string)arguments[0];
+            MemoryStream attachment = (MemoryStream)arguments[1];
+
+            // send email
+            EmailService.EmailService emailService = new EmailService.EmailService();
+            emailService.SendInvoice("Invoice: " + title, "", attachment); // TODO: default or custom email body text?
+        }
+
+        private void EndSendEmail(object sender, RunWorkerCompletedEventArgs args)
+        {
+            Exception error = args.Error;
+            if (error==null)
+            {
+                // success
+                this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
+                this._view.StatusBarText = "Sending Email Completed Successfully";
+
+                // fire the event to save the invoice to the records
+                SendEmailFinished += OnSendEmailFinished;
+                SendEmailFinished?.Invoke(null,null);
+            }
+            else
+            {
+                // it failed
+                if (error is SmtpException)
+                {
+                    this._view.StatusBarColour = Configuration.ERROR_COLOUR;
+                    this._view.StatusBarText = "Error Sending Email";
+                }
+                else
+                {
+                    throw error;
+                }
+            }
+        }
+
+        public event EventHandler SendEmailFinished;
+        private void OnSendEmailFinished(object sender,EventArgs args)
+        {
+            SaveToRecords();
+        }
+
+        private void DisableControlsWhilePerformingOperation()
+        {
+            this._view.NewInvoiceButtonEnabled = false;
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.ItemDescriptionTextBoxEnabled = false;
+            this._view.ItemAmountTextBoxEnabled = false;
+            this._view.ItemQuantityUpDownEnabled = false;
+            this._view.DuplicateItemButtonEnabled = false;
+            this._view.RemoveItemButtonEnabled = false;
+            this._view.ItemsListViewEnabled = false;
+            this._view.SaveAndEmailButtonEnabled = false;
+            this._view.SaveAndExportXLButtonEnabled = false;
+            this._view.CancelButtonEnabled = false;
+        }
+        
+        public void SaveAndExportXLSXButtonClicked(object sender, EventArgs args)
+        {
+            // first check if an invoice with this title already exists
+            string title = "";
+            if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
+            {
+                title = this._view.CustomTitleText;
+            }
+            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyEnabled)
+            {
+                title = this._view.Month + " " + this._view.Year;
+            }
+            bool exists = this._repo.InvoiceWithTitleExists(title);
+            if (exists)
+            {
+                this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
+
+                return;
+            }
+
+            // disable controls the user shouldn't play with at this point
+            DisableControlsWhilePerformingOperation();
+
+            // ask the user for the export directory
+            string outputDir = this._view.ShowFolderPickerDialog();
+            if (outputDir == null)
+                return;
+
+            // now save
+            SaveToExcel(outputDir, false);
+            SaveToRecords();
+        }
+        #endregion
+
+        private decimal GetTotalAmountFromList()
+        {
+            decimal total = 0;
+            foreach (var listItem in this._view.ItemsListEntries)
+            {
+                total += listItem.Item1.Amount * listItem.Item2;
+            }
+
+            return total;
+        }
+
+        private string GetAmountInDollarsToDisplay(decimal amount) => amount.ToString("C2", new System.Globalization.CultureInfo("en-AU"));
+
+        private void EnableOrDisableSaveButtons()
+        {
+            this._view.SaveAndEmailButtonEnabled = (this._view.GetNumberOfItemsInList() > 0);
+            this._view.SaveAndExportXLButtonEnabled = (this._view.GetNumberOfItemsInList() > 0);
+        }
+
+        private MemoryStream SaveToExcel(string outputDir, bool getMemoryStream)
+        {
+            // grab the invoice title
+            string title = string.Empty;
+            if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
+            {
+                title = this._view.CustomTitleText;
+            }
+            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyChecked)
+            {
+                title = this._view.Month + " " + this._view.Year;
+            }
+
+            // finally, write the data and save the spreadsheet
+            this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.StatusBarText = "Exporting Spreadsheet In Progress";
+            MemoryStream ms = null;
             try
             {
-                await Task.Run(() =>
-                {
-                    // write and save spreadsheet
-                    excelWriter = new ExcelWriter(null, title, Configuration.senderEmailAddress, Configuration.recipientEmailAddress);
-                    excelWriter.addItems(items);
-                });
+                ExcelWriter excelWriter = new ExcelWriter(outputDir, title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
+                excelWriter.AddItems(this._view.ItemsListEntries.ToList());
+                
+                if (getMemoryStream)
+                    ms = excelWriter.CloseAndGetMemoryStream();
+                else      
+                    excelWriter.CloseAndSave();
             }
             catch (Exception ex)
             {
                 // it failed
-                this._view.statusBarText = createSpreadsheetAction + " Failed: " + ex.Message;
-                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+                // update the status bar (and show a dialog?)
+                this._view.StatusBarColour = Configuration.ERROR_COLOUR;
+                this._view.StatusBarText = "Exporting Spreadsheet Failed";
 
-                // re-enable some controls
-                this._view.itemDescriptionTextBoxEnabled = false;
-                this._view.itemAmountTextBoxEnabled = false;
-                this._view.itemQuantityUpDownEnabled = false;
-                this._view.itemsListViewEnabled = false;
-
-                return;
+                return null;
             }
 
-            // send it an email
-            // update the status
-            this._view.statusBarText = sendEmailAction + " In Progress";
-            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            // successful
+            this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
+            this._view.StatusBarText = "Exporting Spreadsheet Completed Successfully";
 
-            // send it
-            try
-            {
-                await Task.Run(() =>
-                {
-                    EmailService.EmailService emailService = new EmailService.EmailService();
-                    emailService.sendInvoice("Invoice " + title, "", excelWriter.closeAndGetMemoryStream());
-                });
-            }
-            catch(System.Net.Mail.SmtpException ex)
-            {
-                // it failed
-                // tell the user
-                this._view.statusBarText = sendEmailAction + " Failed: " + ex.Message;
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                this._view.statusBarColour = Configuration.ERROR_COLOUR;
-                // TODO: log it
-
-                // re-enable some controls
-                this._view.itemDescriptionTextBoxEnabled = false;
-                this._view.itemAmountTextBoxEnabled = false;
-                this._view.itemQuantityUpDownEnabled = false;
-                this._view.itemsListViewEnabled = false;
-
-                return;
-            }
-
-            // at this point, it succeeded
-            this._view.statusBarText = sendEmailAction + " Completed Successfully";
-            this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
-            // reset
-            this._view.setToReadyState();
+            return ms;
         }
 
-        private void _view_settingsConfigMenuItemClicked(object sender, EventArgs e)
+        private void SaveToRecords()
         {
-            // show the config window
-            ConfigWindow configWindow = new ConfigWindow();
-            configWindow.ShowDialog();
-        }
+            this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
+            this._view.StatusBarText = "Saving To Records In Progress";
 
-        private async void _view_saveAndExportXLSXButtonClicked(object sender, EventArgs e)
-        {
-            this._view.saveAndEmailButtonEnabled = false;
-            this._view.saveAndExportXLButtonEnabled = false;
-            this._view.cancelButtonEnabled = false;
-
-            // update the status
-            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.statusBarText = savingToRecordsAction + " In Progress";
-
-            // disable some controls that shouldn't be played with at this point (the "New Item" group and the ListView)
-            this._view.itemDescriptionTextBoxEnabled = false;
-            this._view.itemAmountTextBoxEnabled = false;
-            this._view.itemQuantityUpDownEnabled = false;
-            this._view.itemsListViewEnabled = false;
-            this._view.addItemButtonEnabled = false;
-
-            // get the folder to save it to from a folder picker dialog
-            string dir = this._view.showFolderPickerDialog();
-
-            // get the data
-            string title = this._view.getTitle();
-            List<InvoiceItem> itemsFromList = this._view.invoiceItems.ToList();
-            List<Tuple<InvoiceItem, int>> items = new List<Tuple<InvoiceItem, int>>();
-            foreach (InvoiceItem i in this._view.invoiceItems)
-            {
-                Tuple<InvoiceItem, int> t = new Tuple<InvoiceItem, int>(i, this._view.getQuantityOfExistingItem(i));
-                items.Add(t);
-            }
-
-            // save to history records
             try
             {
-                Invoice invoice = new Invoice();
-                invoice.timestamp = DateTime.Now;
-                foreach (var i in items)
+                // grab the title, and create the new invoice
+                string title = string.Empty;
+                if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
                 {
-                    for (int j = 1; j <= i.Item2; j++)
+                    title = this._view.CustomTitleText;
+                }
+                else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyChecked)
+                {
+                    title = this._view.Month + " " + this._view.Year;
+                }
+                Invoice newInvoice = new Invoice();
+                newInvoice.Title = title;
+
+                // add items to the new invoice
+                foreach (var listItem in this._view.ItemsListEntries)
+                {
+                    InvoiceItem invoiceItem = listItem.Item1;
+                    int quantity = listItem.Item2;
+                    for (int i = 1; i <= quantity; i++)
                     {
-                        InvoiceItem invoiceItem = new InvoiceItem
-                        {
-                            description = i.Item1.description,
-                            amount = i.Item1.amount
-                        };
-                        invoice.items.Add(invoiceItem);
-                        invoice.title = title;
+                        newInvoice.Items.Add(invoiceItem);
                     }
                 }
-                this._repo.addInvoice(invoice);
-                // repopulate the invoice history
-                this._view.invoiceHistory = this._repo.getAllInvoices();
+
+                // finally, save it to the records
+                this._repo.AddInvoice(newInvoice);
             }
             catch (Exception ex)
             {
-                // error saving to records
-                // tell the user
-                this._view.statusBarText = "Error Saving To Records";
-                this._view.statusBarColour = Configuration.ERROR_COLOUR;
+                // it failed
+                this._view.StatusBarColour = Configuration.ERROR_COLOUR;
+                this._view.StatusBarText = "Error Saving To Records";
 
-                // re-enable some controls
-                this._view.itemDescriptionTextBoxEnabled = true;
-                this._view.itemAmountTextBoxEnabled = true;
-                this._view.itemQuantityUpDownEnabled = true;
-                this._view.itemsListViewEnabled = true;
-
-                // nothing more can do
                 return;
             }
 
-            // update the status
-            this._view.statusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.statusBarText = spreadsheetExportAction + " In Progress";
-
-            try
-            { 
-                await Task.Run(() =>
-                {
-                    // write and save spreadsheet
-                    ExcelWriter excelWriter = new ExcelWriter(dir, title, Configuration.senderEmailAddress, Configuration.recipientEmailAddress); 
-                    excelWriter.addItems(items);
-                    excelWriter.close();
-                });
-            }
-            catch (System.IO.IOException ex)
-            {
-                // error saving the file
-                // inform the user
-                //this._view.showErrorDialogOk("Error saving the file.");
-                this._view.statusBarText = "Error Saving File";
-                this._view.statusBarColour = Configuration.ERROR_COLOUR;
-                // TODO: log it
-
-                // re-enable some controls
-                this._view.itemDescriptionTextBoxEnabled = true;
-                this._view.itemAmountTextBoxEnabled = true;
-                this._view.itemQuantityUpDownEnabled = true;
-                this._view.itemsListViewEnabled = true;
-
-                // nothing more we can do
-                return;
-            }
-
-            // at this point, it succeeded
-            // inform the user
-            this._view.statusBarText = spreadsheetExportAction + " Completed Successfully";
-            this._view.statusBarColour = Configuration.SUCCESS_COLOUR;
-            // reset
-            this._view.setToReadyState();
+            // it succeeded
+            CancelButtonClicked(null, null);
+            this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
+            this._view.StatusBarText = "Saving To Records Completed Successfully";
         }
-
-        private void _view_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
-        {
-            // assume one item is already selected
-            List<InvoiceItem> selectedItems = this._view.selectedInvoiceItems.ToList();
-            int currQuantity = this._view.getQuantityOfExistingItem(selectedItems[0]);
-            this._view.addItemToNewInvoice(selectedItems[0], currQuantity);
-        }
-
-        private void _view_removeItemButtonClicked(object sender, EventArgs e)
-        {
-            // assume one item is already selected
-            List<InvoiceItem> selectedItems = this._view.selectedInvoiceItems.ToList();
-            this._view.removeItemFromInvoice(selectedItems[0]);
-
-            this._view.displayTotal();
-        }
-
-        private void _view_itemListSelectedIndexChanged(object sender, EventArgs e)
-        {
-            this._view.duplicateItemButtonEnabled = this._view.numberSelectedInvoiceItems == 1;
-            this._view.removeItemButtonEnabled = this._view.numberSelectedInvoiceItems == 1;
-        }
-
-        private void _view_newItemAmountTextBoxTextChanged(object sender, EventArgs e)
-        {
-            // validate and enable adding the new item if valid
-            int itemCount = this._view.invoiceItems.ToList().Count;
-            if (itemCount == 0)
-            {
-                enableItemListAndActionControls(itemDescriptionIsValid() && itemAmountIsValid());
-            }
-            else
-            {
-                enableItemListAndActionControls(true);
-            }
-            this._view.addItemButtonEnabled = itemDescriptionIsValid() && itemAmountIsValid();
-        }
-
-        private void _view_newItemDescriptionTextBoxTextChanged(object sender, EventArgs e)
-        {
-            // validate and enable adding the new item if valid
-            enableItemListAndActionControls(itemDescriptionIsValid() && itemAmountIsValid());
-            this._view.addItemButtonEnabled = itemDescriptionIsValid() && itemAmountIsValid();
-        }
-
-        private void _view_customTitleRadioButtonClicked(object sender, EventArgs e)
-        {
-            enableNewItemGroup(false);
-
-            // enable the custom description text box
-            this._view.customTitleTextBoxEnabled = true;
-            this._view.monthComboboxEnabled = false;
-            this._view.yearTextBoxEnabled = false;
-            
-            // validate and enable the adding of items if valid
-            enableNewItemGroup(customDescriptionIsValid());
-
-            enableItemListAndActionControls(customDescriptionIsValid());
-        }
-
-        private void _view_monthlyTitleRadioButtonClicked(object sender, EventArgs e)
-        {
-            enableNewItemGroup(false);
-
-            // enable the custom description text box
-            this._view.customTitleTextBoxEnabled = false;
-            this._view.monthComboboxEnabled = true;
-            this._view.yearTextBoxEnabled = true;
-
-            // validate and enable the adding of items if valid
-            enableNewItemGroup(yearIsValid() && monthIsValid());
-
-            enableItemListAndActionControls(yearIsValid() && monthIsValid());
-        }
-
-        private void _view_customTitleTextBoxTextChanged(object sender, EventArgs e)
-        {
-            // validate and enable the adding of items if valid
-            enableNewItemGroup(customDescriptionIsValid());
-        }
-
-        private void _view_yearTextBoxTextChanged(object sender, EventArgs e)
-        {
-            // validate and enable the adding of items if valid
-            enableNewItemGroup(yearIsValid() && monthIsValid());
-        }
-
-        private void _view_monthComboBoxTextChanged(object sender, EventArgs e)
-        {
-            enableNewItemGroup(false);
-
-            // validate and enable the adding of items if valid
-            enableNewItemGroup(yearIsValid() && monthIsValid());
-        }
-
-        /// <summary>
-        /// The button to add a new item to the invoice being created is clicked.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void _view_addItemButtonClicked(object sender, EventArgs e)
-        {
-            addItemToNewInvoice();
-        }
-
-        /// <summary>
-        /// "New" invoice button in the view clicked.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void _view_newInvoiceButtonClicked(object sender, EventArgs e)
-        {
-            // change the appropriate button texts
-
-            this._view.newInvoiceButtonEnabled = false;
-
-            this._view.viewSelectedInvoiceButtonEnabled = false;
-
-            this._view.monthComboboxEnabled = true;
-            this._view.radioButtonMonthlyEnabled = true;
-            this._view.radioButtonCustomEnabled = true;
-            this._view.yearTextBoxEnabled = true;
-
-            this._view.cancelButtonEnabled = true;
-
-            this._view.statusBarColour = Configuration.DEFAULT_COLOUR;
-            this._view.statusBarText = "Ready";
-        }
-        #endregion
-
-        #region window operations
-
-        public bool yearIsValid()
-        {
-            if (string.IsNullOrEmpty(this._view.year))
-                return false;
-
-            int year;
-            bool isValid = int.TryParse(this._view.year, out year);
-
-            return isValid;
-        }
-
-        public bool monthIsValid()
-        {
-            string month = this._view.month;
-
-            switch(month)
-            {
-                case "Jan":
-                case "Feb":
-                case "Mar":
-                case "Apr":
-                case "May":
-                case "Jun":
-                case "Jul":
-                case "Aug":
-                case "Sep":
-                case "Oct":
-                case "Nov":
-                case "Dec":
-
-                    return true;
-
-                default:
-
-                    return false;
-            }
-        }
-
-        public bool customDescriptionIsValid()
-        {
-            return !(string.IsNullOrEmpty(this._view.customTitleText));
-        }
-
-        public bool itemDescriptionIsValid()
-        {
-            return !(string.IsNullOrEmpty(this._view.itemDescription));
-        }
-
-        public bool itemAmountIsValid()
-        {
-            if (string.IsNullOrEmpty(this._view.itemAmount))
-                return false;
-
-            decimal amount;
-            bool isValid = decimal.TryParse(this._view.itemAmount, out amount);
-
-            return isValid;
-        }
-
-        private void enableNewItemGroup(bool isEnabled)
-        {
-            this._view.itemDescriptionTextBoxEnabled = isEnabled;
-            this._view.itemAmountTextBoxEnabled = isEnabled;
-            this._view.itemQuantityUpDownEnabled = isEnabled;
-
-            // check if there is item data entered
-            // if so, enable the add item button also
-            if (isEnabled)
-            {
-                this._view.addItemButtonEnabled = (itemDescriptionIsValid() && itemAmountIsValid());
-            }
-            else
-            {
-                this._view.addItemButtonEnabled = false;
-            }
-        }
-
-        private void enableItemListAndActionControls(bool areEnabled)
-        {
-            this._view.itemsListViewEnabled = areEnabled;
-
-            this._view.saveAndEmailButtonEnabled = areEnabled;
-            this._view.saveAndExportXLButtonEnabled = areEnabled;
-        }
-
-        /// <summary>
-        /// Gather data from the title group and add a new item record to the new invoice.
-        /// </summary>
-        public void addItemToNewInvoice()
-        {
-            // gather the data
-            InvoiceItem newItem = new InvoiceItem
-            {
-                description = this._view.itemDescription,
-
-                // this should have been validated by this point, so it seems ok...
-                amount = decimal.Parse(this._view.itemAmount)
-            };
-
-            this._view.addItemToNewInvoice(newItem, this._view.itemQuantity);
-        }
-        #endregion
-
-        #region data operations
-        /// <summary>
-        /// Retrieve all the invoice records, and tell the view to display them.
-        /// </summary>
-        public void populateInvoiceHistory()
-        {
-            this._view.invoiceHistory = this._repo.getAllInvoices();
-        }
-
-        public void addNewInvoiceToRecords()
-        {
-            // add it to the records
-
-            // then re-populate the history in the "History" tab
-        }
-
-        /// <summary>
-        /// Set the "paid" status of an invoice to "true".
-        /// </summary>
-        /// <param name="id"></param>
-        public void setInvoicePaid(int id)
-        {
-            this._repo.updatePaidStatus(id, true);
-        }
-        #endregion
     }
 }

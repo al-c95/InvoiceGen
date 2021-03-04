@@ -10,11 +10,11 @@ namespace InvoiceGen.Model.Repository
 {
     public interface IInvoiceRepository
     {
-        Invoice getInvoiceById(int id);
-        IEnumerable<Invoice> getAllInvoices();
-        void addInvoice(Invoice invoice);
-        void updatePaidStatus(int id, bool paid);
-        bool invoiceWithTitleExists(string title);
+        Invoice GetInvoiceById(int id);
+        IEnumerable<Invoice> GetAllInvoices();
+        void AddInvoice(Invoice invoice);
+        void UpdatePaidStatus(int id, bool paid);
+        bool InvoiceWithTitleExists(string title);
     }
 
     public class InvoiceRepository : IInvoiceRepository
@@ -36,11 +36,11 @@ namespace InvoiceGen.Model.Repository
         /// </summary>
         /// <param name="title"></param>
         /// <returns>boolean</returns>
-        public bool invoiceWithTitleExists(string title)
+        public bool InvoiceWithTitleExists(string title)
         {
             //return getAllInvoices().Any(i => i.title == title);
-            foreach (Invoice i in getAllInvoices())
-                if (i.title == title)
+            foreach (Invoice i in GetAllInvoices())
+                if (i.Title == title)
                     return true;
 
             return false;
@@ -50,24 +50,24 @@ namespace InvoiceGen.Model.Repository
         /// Create a new invoice record.
         /// </summary>
         /// <param name="invoice"></param>
-        public void addInvoice(Invoice invoice)
+        public void AddInvoice(Invoice invoice)
         {
             // make sure that we don't add more than one with the same title
             // should have been prevented by this point with data validation, but still check it
-            if (invoiceWithTitleExists(invoice.title))
-                return;
+            if (InvoiceWithTitleExists(invoice.Title))
+                return; // TODO: throw an exception here
 
             // now add it to the records
-            service.insertInvoiceInXml(invoice);
+            service.InsertInvoiceInXml(invoice);
         }
 
         /// <summary>
         /// Get all invoice records.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Invoice> getAllInvoices()
+        public IEnumerable<Invoice> GetAllInvoices()
         {
-            return service.readXml();
+            return service.ReadXml();
         }
 
         /// <summary>
@@ -75,9 +75,10 @@ namespace InvoiceGen.Model.Repository
         /// </summary>
         /// <param name="id">Unique id for the invoice.</param>
         /// <returns>Retrieved invoice record.</returns>
-        public Invoice getInvoiceById(int id)
+        public Invoice GetInvoiceById(int id)
         {
-            IEnumerable<Invoice> result = getAllInvoices().Where(i => i.id == id);
+            IEnumerable<Invoice> result = GetAllInvoices()
+                .Where(i => i.Id == id);
 
             // validate that either 0 or 1 record found
             if (result.ToList().Count > 1)
@@ -100,18 +101,18 @@ namespace InvoiceGen.Model.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <param name="paid"></param>
-        public void updatePaidStatus(int id, bool paid)
+        public void UpdatePaidStatus(int id, bool paid)
         {
-            this.service.updatePaidStatusInXml(id, paid);
+            this.service.UpdatePaidStatusInXml(id, paid);
         }
 
         /// <summary>
         /// Does what it says.
         /// </summary>
         /// <param name="id"></param>
-        public void deleteInvoice(int id)
+        public void DeleteInvoice(int id)
         {
-            this.service.deleteInvoiceInXml(id);
+            this.service.DeleteInvoiceInXml(id);
         }
     }
 }
