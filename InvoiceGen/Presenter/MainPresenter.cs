@@ -299,12 +299,8 @@ namespace InvoiceGen.Presenter
             EnableOrDisableSaveButtons();
         }
 
-        public void SaveAndEmailButtonClicked(object sender, EventArgs args)
+        private string GetNewInvoiceTitle()
         {
-            // disable controls the user shouldn't play with at this point
-            DisableControlsWhilePerformingOperation();
-
-            // first check if an invoice with this title already exists
             string title = "";
             if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
             {
@@ -314,6 +310,17 @@ namespace InvoiceGen.Presenter
             {
                 title = this._view.Month + " " + this._view.Year;
             }
+
+            return title;
+        }
+
+        public void SaveAndEmailButtonClicked(object sender, EventArgs args)
+        {
+            // disable controls the user shouldn't play with at this point
+            DisableControlsWhilePerformingOperation();
+
+            // first check if an invoice with this title already exists
+            string title = GetNewInvoiceTitle();
             bool exists = this._repo.InvoiceWithTitleExists(title);
             if (exists)
             {
@@ -374,43 +381,10 @@ namespace InvoiceGen.Presenter
             }
         }
 
-        public event EventHandler SendEmailFinished;
-        private void OnSendEmailFinished(object sender,EventArgs args)
-        {
-            SaveToRecords();
-        }
-
-        private void DisableControlsWhilePerformingOperation()
-        {
-            this._view.NewInvoiceButtonEnabled = false;
-            this._view.RadioButtonCustomEnabled = false;
-            this._view.RadioButtonMonthlyEnabled = false;
-            this._view.MonthComboboxEnabled = false;
-            this._view.CustomTitleTextBoxEnabled = false;
-            this._view.YearTextBoxEnabled = false;
-            this._view.ItemDescriptionTextBoxEnabled = false;
-            this._view.ItemAmountTextBoxEnabled = false;
-            this._view.ItemQuantityUpDownEnabled = false;
-            this._view.DuplicateItemButtonEnabled = false;
-            this._view.RemoveItemButtonEnabled = false;
-            this._view.ItemsListViewEnabled = false;
-            this._view.SaveAndEmailButtonEnabled = false;
-            this._view.SaveAndExportXLButtonEnabled = false;
-            this._view.CancelButtonEnabled = false;
-        }
-        
         public void SaveAndExportXLSXButtonClicked(object sender, EventArgs args)
         {
             // first check if an invoice with this title already exists
-            string title = "";
-            if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
-            {
-                title = this._view.CustomTitleText;
-            }
-            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyEnabled)
-            {
-                title = this._view.Month + " " + this._view.Year;
-            }
+            string title = GetNewInvoiceTitle();
             bool exists = this._repo.InvoiceWithTitleExists(title);
             if (exists)
             {
@@ -455,15 +429,7 @@ namespace InvoiceGen.Presenter
         private MemoryStream SaveToExcel(string outputDir, bool getMemoryStream)
         {
             // grab the invoice title
-            string title = string.Empty;
-            if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
-            {
-                title = this._view.CustomTitleText;
-            }
-            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyChecked)
-            {
-                title = this._view.Month + " " + this._view.Year;
-            }
+            string title = GetNewInvoiceTitle();
 
             // finally, write the data and save the spreadsheet
             this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
@@ -496,6 +462,31 @@ namespace InvoiceGen.Presenter
             return ms;
         }
 
+        private event EventHandler SendEmailFinished;
+        private void OnSendEmailFinished(object sender, EventArgs args)
+        {
+            SaveToRecords();
+        }
+
+        private void DisableControlsWhilePerformingOperation()
+        {
+            this._view.NewInvoiceButtonEnabled = false;
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.ItemDescriptionTextBoxEnabled = false;
+            this._view.ItemAmountTextBoxEnabled = false;
+            this._view.ItemQuantityUpDownEnabled = false;
+            this._view.DuplicateItemButtonEnabled = false;
+            this._view.RemoveItemButtonEnabled = false;
+            this._view.ItemsListViewEnabled = false;
+            this._view.SaveAndEmailButtonEnabled = false;
+            this._view.SaveAndExportXLButtonEnabled = false;
+            this._view.CancelButtonEnabled = false;
+        }
+
         private void SaveToRecords()
         {
             this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
@@ -504,15 +495,7 @@ namespace InvoiceGen.Presenter
             try
             {
                 // grab the title, and create the new invoice
-                string title = string.Empty;
-                if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
-                {
-                    title = this._view.CustomTitleText;
-                }
-                else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyChecked)
-                {
-                    title = this._view.Month + " " + this._view.Year;
-                }
+                string title = GetNewInvoiceTitle();
                 Invoice newInvoice = new Invoice();
                 newInvoice.Title = title;
 
