@@ -266,18 +266,18 @@ namespace InvoiceGen_Tests.Presenter_Tests
             NUnit.Framework.Assert.IsFalse(fakeView.ItemsListViewEnabled);
         }
 
-        [TestCase("Jan")]
-        [TestCase("Feb")]
-        [TestCase("Mar")]
-        [TestCase("Apr")]
+        [TestCase("January")]
+        [TestCase("February")]
+        [TestCase("March")]
+        [TestCase("April")]
         [TestCase("May")]
-        [TestCase("Jun")]
-        [TestCase("Jul")]
-        [TestCase("Aug")]
-        [TestCase("Sep")]
-        [TestCase("Oct")]
-        [TestCase("Nov")]
-        [TestCase("Dec")]
+        [TestCase("June")]
+        [TestCase("July")]
+        [TestCase("August")]
+        [TestCase("September")]
+        [TestCase("October")]
+        [TestCase("November")]
+        [TestCase("December")]
         public void MonthlyInvoiceMonthYearUpdated_Test_ValidMonthValidYearEmptyItemsList(string monthEntered)
         {
             // arrange
