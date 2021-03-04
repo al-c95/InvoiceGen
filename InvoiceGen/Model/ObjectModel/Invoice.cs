@@ -10,33 +10,33 @@ namespace InvoiceGen.Model.ObjectModel
     {
         public const string XmlName = "invoice";
 
-        public int id { get; set; }
-        public string title { get; set; }
-        public DateTime timestamp { get; set; }
-        public bool paid { get; set; }
-        public IList<InvoiceItem> items { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public DateTime Timestamp { get; set; }
+        public bool Paid { get; set; }
+        public IList<InvoiceItem> Items { get; set; }
 
         /// <summary>
         /// Default constructor. Initialises the collection of items.
         /// </summary>
         public Invoice()
         {
-            this.items = new List<InvoiceItem>();
+            this.Items = new List<InvoiceItem>();
         }
 
         /// <summary>
         /// Get total of all item amounts.
         /// </summary>
         /// <returns></returns>
-        public decimal getTotal()
+        public decimal GetTotal()
         {
-            if (items == null)
+            if (Items == null)
                 return 0;
 
             decimal total = 0;
 
-            foreach (InvoiceItem item in this.items)
-                total += item.amount;
+            foreach (InvoiceItem item in this.Items)
+                total += item.Amount;
 
             return total;
         }

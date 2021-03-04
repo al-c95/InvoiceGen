@@ -4,6 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
+using InvoiceGen.Model.DataAccessLayer;
+using InvoiceGen.Model.Repository;
+using InvoiceGen.View;
+using InvoiceGen.Presenter;
 
 namespace InvoiceGen
 {
@@ -19,19 +23,19 @@ namespace InvoiceGen
             Application.SetCompatibleTextRenderingDefault(false);
 
             var mainWindow = new mainWindow(Configuration.APP_NAME + " v" + Configuration.APP_VERSION);
-            var xmlFileHandler = new InvoiceGen.Model.DataAccessLayer.XmlFileHandler(Configuration.XML_FILE_PATH);
-            var xmlService = new InvoiceGen.Model.DataAccessLayer.XmlService(xmlFileHandler, Configuration.DATE_FORMAT);
-            var repository = new InvoiceGen.Model.Repository.InvoiceRepository(xmlService);
-            var mainPresenter = new InvoiceGen.Presenter.MainPresenter(mainWindow, repository);
+            var xmlFileHandler = new XmlFileHandler(Configuration.XML_FILE_PATH);
+            var xmlService = new XmlService(xmlFileHandler, Configuration.DATE_FORMAT);
+            var repository = new InvoiceRepository(xmlService);
+            var mainPresenter = new MainPresenter(mainWindow, repository);
 
             // load the configuration data
-            Configuration.senderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
-            Configuration.senderName = ConfigurationManager.AppSettings["senderName"];
-            Configuration.senderPassword = ConfigurationManager.AppSettings["senderPassword"];
-            Configuration.host = ConfigurationManager.AppSettings["host"];
+            Configuration.SenderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
+            Configuration.SenderName = ConfigurationManager.AppSettings["SenderName"];
+            Configuration.SenderPassword = ConfigurationManager.AppSettings["SenderPassword"];
+            Configuration.Host = ConfigurationManager.AppSettings["Host"];
             Configuration.port = int.Parse(ConfigurationManager.AppSettings["port"]);
-            Configuration.recipientEmailAddress = ConfigurationManager.AppSettings["recipientEmail"];
-            Configuration.recipientName = ConfigurationManager.AppSettings["recipientName"];
+            Configuration.RecipientEmailAddress = ConfigurationManager.AppSettings["recipientEmail"];
+            Configuration.RecipientName = ConfigurationManager.AppSettings["recipientName"];
 
             try
             {

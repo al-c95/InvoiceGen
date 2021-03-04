@@ -3,31 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace InvoiceGen
 {
-    public static class Configuration
+    internal static class Configuration
     {
-        public const string APP_VERSION = "0.1.0 (beta)";
-        public const string APP_NAME = "InvoiceGen";
+        internal const string APP_VERSION = "0.1.0 (beta)";
+        internal const string APP_NAME = "InvoiceGen";
 
-        public const string XML_FILE_PATH = "invoices.xml";
+        internal const string XML_FILE_PATH = "invoices.xml";
 
-        public const string DATE_FORMAT = "dd/MM/yyyy hh:mm:ss tt";
+        internal const string DATE_FORMAT = "dd/MM/yyyy hh:mm:ss tt";
 
-        public static string senderEmailAddress;
-        public static string senderName;
-        public static string senderPassword;
-        public static string host;
-        public static int port;
-        public static string recipientEmailAddress;
-        public static string recipientName;
+        // email settings
+        internal static string SenderEmailAddress;
+        internal static string SenderName;
+        internal static string SenderPassword;
+        internal static string Host;
+        internal static int port;
+        internal static string RecipientEmailAddress;
+        internal static string RecipientName;
 
         // status/progress colours
-        public static readonly System.Drawing.Color DEFAULT_COLOUR = System.Drawing.Color.LightGray;
-        public static readonly System.Drawing.Color IN_PROGRESS_COLOUR = System.Drawing.Color.FromArgb(255, 128, 128, 255);
-        public static readonly System.Drawing.Color SUCCESS_COLOUR = System.Drawing.Color.FromArgb(255, 42, 255, 42);
-        public static readonly System.Drawing.Color ERROR_COLOUR = System.Drawing.Color.FromArgb(255, 255, 42, 42);
-        public static readonly System.Drawing.Color WARNING_COLOUR = System.Drawing.Color.FromArgb(255, 255, 212, 42);
+        internal static readonly Color DEFAULT_COLOUR = Color.LightGray;
+        internal static readonly Color IN_PROGRESS_COLOUR = Color.FromArgb(255, 128, 128, 255);
+        internal static readonly Color SUCCESS_COLOUR = Color.FromArgb(255, 42, 255, 42);
+        internal static readonly Color ERROR_COLOUR = Color.FromArgb(255, 255, 42, 42);
+        internal static readonly Color WARNING_COLOUR = Color.FromArgb(255, 255, 212, 42);
     }
 }

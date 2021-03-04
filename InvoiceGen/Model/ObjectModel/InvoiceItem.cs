@@ -10,7 +10,21 @@ namespace InvoiceGen.Model.ObjectModel
     {
         public const string XmlName = "item";
 
-        public string description { get; set; }
-        public decimal amount { get; set; }
+        public string Description { get; set; }
+        public decimal Amount { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is InvoiceItem))
+                throw new InvalidOperationException("Can only compare InvoiceItems with InvoiceItems.");
+
+            InvoiceItem that = (InvoiceItem)obj;
+            return (this.Description.Equals(that.Description) && this.Amount.Equals(that.Amount));
+        }
+
+        public override int GetHashCode()
+        {
+            return Tuple.Create(this.Description, this.Amount).GetHashCode();
+        }
     }
 }

@@ -4,112 +4,116 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
 using InvoiceGen.Model.ObjectModel;
 
 namespace InvoiceGen.View
 {
     public interface IMainWindow
     {
-        bool creatingNewInvoice { get; set; }
+        #region properties
+        string WindowTitle { get; set; }
+        string StatusBarText { get; set; }
+        Color StatusBarColour { get; set; }
+        int SelectedTabIndex { get; set; }
+        bool CreatingNewInvoice { get; set; }
 
-        string windowTitle { get; set; }
-        string statusBarText { get; set; }
-        System.Drawing.Color statusBarColour { get; set; }
-        string saveAndEmailButtonText { get; set; }
-        string saveAndExportXLSXButtonText { get; set; }
+        // "save" buttons texts
+        string SaveAndEmailButtonText { get; set; }
+        string SaveAndExportXLSXButtonText { get; set; }
 
-        void setToReadyState();
+        bool NewInvoiceButtonEnabled { get; set; }
 
-        bool newInvoiceButtonEnabled { get; set; }
+        bool ViewSelectedInvoiceButtonEnabled { get; set; }
+        bool UpdateRecordsButtonEnabled { get; set; }
 
-        bool viewSelectedInvoiceButtonEnabled { get; set; }
-        bool updateRecordsButtonEnabled { get; set; }
+        // month and year selection
+        bool MonthComboboxEnabled { get; set; }
+        bool YearTextBoxEnabled { get; set; }
 
-        bool yearTextBoxEnabled { get; set; }
-        bool radioButtonMonthlyEnabled { get; set; }
-        bool radioButtonCustomEnabled { get; set; }
-        bool monthComboboxEnabled { get; set; }
-        string month { get; set; }
-        string year { get; set; }
-        bool customTitleTextBoxEnabled { get; set; }
-        string customTitleText { get; set; }
-        bool addItemButtonEnabled { get; set; }
-        string getTitle();
+        // invoice type radio buttons
+        bool RadioButtonMonthlyEnabled { get; set; }
+        bool RadioButtonMonthlyChecked { get; set; }
+        bool RadioButtonCustomEnabled { get; set; }
+        bool RadioButtonCustomChecked { get; set; }
 
-        bool itemDescriptionTextBoxEnabled { get; set; }
-        string itemDescription { get; set; }
-        bool itemAmountTextBoxEnabled { get; set; }
-        string itemAmount { get; set; }
-        bool itemQuantityUpDownEnabled { get; set; }
-        int itemQuantity { get; set; }
+        // monthly invoice - year and month
+        string Month { get; set; }
 
-        bool itemsListViewEnabled { get; set; }
-        bool duplicateItemButtonEnabled { get; set; }
-        bool removeItemButtonEnabled { get; set; }
+        string Year { get; set; }
 
-        bool saveAndEmailButtonEnabled { get; set; }
-        bool saveAndExportXLButtonEnabled { get; set; }
-        bool cancelButtonEnabled { get; set; }
+        bool CustomTitleTextBoxEnabled { get; set; }
+        string CustomTitleText { get; set; }
 
-        bool invoiceHistoryDataGridViewEnabled { get; set; }
-        IEnumerable<Invoice> invoiceHistory { set; }
-        IEnumerable<Invoice> modifiedInvoiceRecords { get; }
-        int numberSelectedInvoiceRecords { get; }
+        bool AddItemButtonEnabled { get; set; }
 
-        IEnumerable<InvoiceItem> invoiceItems { get; set; }
-        IEnumerable<InvoiceItem> selectedInvoiceItems { get; }
-        int numberSelectedInvoiceItems { get; }
-        void addItemToNewInvoice(InvoiceItem item, int quantity);
-        int getQuantityOfExistingItem(InvoiceItem item);
-        void removeItemFromInvoice(InvoiceItem item);
+        bool ItemDescriptionTextBoxEnabled { get; set; }
+        string ItemDescription { get; set; }
 
-        string totalText { get; set; }
-        void displayTotal();
+        bool ItemAmountTextBoxEnabled { get; set; }
+        string ItemAmount { get; set; }
 
-        void showErrorDialogOk(string message);
-        void showErrorDialogAbortRetryIgnore(string message);
-        void showSuccessDialog(string message);
-        void showSaveFileDialog();
-        string showFolderPickerDialog();
+        bool ItemQuantityUpDownEnabled { get; set; }
+        int ItemQuantity { get; set; }
+
+        bool ItemsListViewEnabled { get; set; }
+        bool DuplicateItemButtonEnabled { get; set; }
+        bool RemoveItemButtonEnabled { get; set; }
+
+        bool SaveAndEmailButtonEnabled { get; set; }
+        bool SaveAndExportXLButtonEnabled { get; set; }
+        bool CancelButtonEnabled { get; set; }
+
+        bool InvoiceHistoryDataGridViewEnabled { get; set; }
+
+        string TotalText { get; set; }
+
+        // new invoice items list
+        IEnumerable<Tuple<InvoiceItem, int>> ItemsListEntries { get; }
+        void AddEntryToItemsList(InvoiceItem item, int quantity);
+        void UpdateQuantityInItemsList(InvoiceItem item, int newQuantity);
+        void RemoveItemFromList(InvoiceItem toRemove);
+        int GetNumberOfItemsInList();
+        Tuple<InvoiceItem, int> GetSelectedItem();
+        int GetQuantityOfItemInList(InvoiceItem item);
+        void ClearItemsList();
+        #endregion
+
+        #region show dialog methods
+        void ShowErrorDialogOk(string message);
+        void ShowErrorDialogAbortRetryIgnore(string message);
+        void ShowSuccessDialog(string message);
+        void ShowSaveFileDialog();
+        string ShowFolderPickerDialog();
+        #endregion
+
+        void PopulateMonthsComboBox(string[] months);
 
         #region UI event handlers
-        event EventHandler newInvoiceButtonClicked;
+        event EventHandler NewInvoiceButtonClicked;
 
-        event EventHandler viewSelectedInvoiceButtonClicked;
-        event EventHandler updateRecordsButtonClicked;
-        event EventHandler invoiceHistoryDataGridViewSelectionChanged;
+        event EventHandler ViewSelectedInvoiceButtonClicked;
+        event EventHandler UpdateRecordsButtonClicked;
+        event EventHandler InvoiceHistoryDataGridViewSelectionChanged;
 
-        event EventHandler monthlyTitleRadioButtonClicked;
-        event EventHandler monthComboBoxTextChanged;
-        event EventHandler yearTextBoxTextChanged;
-        event EventHandler customTitleRadioButtonClicked;
-        event EventHandler customTitleTextBoxTextChanged;
+        event EventHandler InvoiceTypeSelected;
+        event EventHandler MonthlyInvoiceMonthYearUpdated;
+        event EventHandler CustomTitleTextBoxTextChanged;
 
-        event EventHandler addItemButtonClicked;
-        event EventHandler newItemDescriptionTextBoxTextChanged;
-        event EventHandler newItemAmountTextBoxTextChanged;
+        event EventHandler AddItemButtonClicked;
+        event EventHandler NewItemDetailsUpdated;
 
-        event EventHandler saveAndEmailButtonClicked;
-        event EventHandler saveAndExportXLSXButtonClicked;
+        event EventHandler SaveAndEmailButtonClicked;
+        event EventHandler SaveAndExportXLSXButtonClicked;
 
-        event EventHandler cancelClicked;
+        event EventHandler CancelClicked;
 
-        event EventHandler fileNewInvoiceMenuItemClicked;
-        event EventHandler fileLoadInvoiceMenuItemClicked;
-        event EventHandler fileSaveAndEmailMenuItemClicked;
-        event EventHandler fileSaveAndExportXLSXMenuItemClicked;
-        event EventHandler fileExitMenuItemClicked;
+        event EventHandler ItemListSelectedIndexChanged;
+        event EventHandler DuplicateItemButtonClicked;
+        event EventHandler RemoveItemButtonClicked;
 
-        event EventHandler settingsConfigMenuItemClicked;
-
-        event EventHandler helpManualMenuItemClicked;
-        event EventHandler helpAboutMenuItemClicked;
-
-        event EventHandler itemListSelectedIndexChanged;
-        event EventHandler duplicateItemButtonClicked;
-        event EventHandler removeItemButtonClicked;
-
-        event EventHandler paidStatusChanged;
+        event EventHandler PaidStatusChanged;
         #endregion
     }
 }

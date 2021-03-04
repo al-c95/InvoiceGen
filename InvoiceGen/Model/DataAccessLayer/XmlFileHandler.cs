@@ -10,8 +10,8 @@ namespace InvoiceGen.Model.DataAccessLayer
 {
     public interface IXmlFileHandler
     {
-        string getXML();
-        void saveXMLFile(XDocument doc);
+        string GetXML();
+        void SaveXMLFile(XDocument doc);
     }
 
     /// <summary>
@@ -30,26 +30,26 @@ namespace InvoiceGen.Model.DataAccessLayer
         {
             this._fileName = fileName;
 
-            load();
+            Load();
         }
 
         /// <summary>
         /// Save the XML file.
         /// </summary>
-        public void saveXMLFile(XDocument doc)
+        public void SaveXMLFile(XDocument doc)
         {
             // first try saving it
             doc.Save(_fileName);
 
             // then reload it
-            load();
+            Load();
         }
 
         /// <summary>
         /// Return the XML as a string.
         /// </summary>
         /// <returns></returns>
-        public string getXML()
+        public string GetXML()
         {
             return _doc.ToString();
         }
@@ -57,7 +57,7 @@ namespace InvoiceGen.Model.DataAccessLayer
         /// <summary>
         /// Opens the file.
         /// </summary>
-        private void load()
+        private void Load()
         {
             this._doc = XDocument.Load(_fileName);
         }

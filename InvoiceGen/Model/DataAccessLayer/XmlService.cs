@@ -11,10 +11,10 @@ namespace InvoiceGen.Model.DataAccessLayer
 {
     public interface IXmlService
     {
-        void insertInvoiceInXml(Invoice invoice);
-        void updatePaidStatusInXml(int id, bool paid);
-        void deleteInvoiceInXml(int id);
-        IEnumerable<Invoice> readXml();
+        void InsertInvoiceInXml(Invoice invoice);
+        void UpdatePaidStatusInXml(int id, bool paid);
+        void DeleteInvoiceInXml(int id);
+        IEnumerable<Invoice> ReadXml();
     }
 
     /// <summary>
@@ -40,34 +40,34 @@ namespace InvoiceGen.Model.DataAccessLayer
         /// Inserts appropriate nodes in the XML to represent a new invoice.
         /// </summary>
         /// <param name="invoice"></param>
-        public void insertInvoiceInXml(Invoice invoice)
+        public void InsertInvoiceInXml(Invoice invoice)
         {
-            if (invoice.items.Count == 0)
+            if (invoice.Items.Count == 0)
                 throw new ArgumentException("No items in invoice.");
 
             // retrieve the XML
-            string xml = this._fileHandler.getXML();
+            string xml = this._fileHandler.GetXML();
 
             // figure out the new invoice ID
             int maxID = 0;
-            foreach (Invoice i in readXml())
-                if (i.id > maxID)
-                    maxID = i.id;
+            foreach (Invoice i in ReadXml())
+                if (i.Id > maxID)
+                    maxID = i.Id;
 
             // insert the new invoice data in the XMl
             XDocument doc = XDocument.Parse(xml);
             XElement invoiceElement = new XElement(Invoice.XmlName);
             invoiceElement.SetAttributeValue("id", maxID + 1);
-            invoiceElement.SetAttributeValue("title", invoice.title);
-            invoiceElement.SetAttributeValue("timestamp", invoice.timestamp.ToString(_dateFormat,
+            invoiceElement.SetAttributeValue("title", invoice.Title);
+            invoiceElement.SetAttributeValue("timestamp", invoice.Timestamp.ToString(_dateFormat,
                 System.Globalization.CultureInfo.InvariantCulture));
-            invoiceElement.SetAttributeValue("paid", invoice.paid);
+            invoiceElement.SetAttributeValue("paid", invoice.Paid);
             XElement itemsElement = new XElement("items");
-            foreach (InvoiceItem item in invoice.items)
+            foreach (InvoiceItem item in invoice.Items)
             {
                 XElement invoiceItemElement = new XElement(InvoiceItem.XmlName);
-                invoiceItemElement.SetAttributeValue("desc", item.description);
-                invoiceItemElement.SetAttributeValue("amount", item.amount);
+                invoiceItemElement.SetAttributeValue("desc", item.Description);
+                invoiceItemElement.SetAttributeValue("amount", item.Amount);
 
                 itemsElement.Add(invoiceItemElement);
             }
@@ -75,7 +75,7 @@ namespace InvoiceGen.Model.DataAccessLayer
             doc.Root.Add(invoiceElement);
 
             // save the XML to the file
-            this._fileHandler.saveXMLFile(doc);
+            this._fileHandler.SaveXMLFile(doc);
         }
 
         /// <summary>
@@ -84,64 +84,64 @@ namespace InvoiceGen.Model.DataAccessLayer
         /// </summary>
         /// <param name="id"></param>
         /// <param name="paid"></param>
-        public void updatePaidStatusInXml(int id, bool paid)
+        public void UpdatePaidStatusInXml(int id, bool paid)
         {
             // TODO: unit test
 
-            string xml = this._fileHandler.getXML();
+            string xml = this._fileHandler.GetXML();
 
             XDocument doc = XDocument.Parse(xml);
             doc.Root.Elements(Invoice.XmlName).Where(e => int.Parse((e.Attribute("id").Value)) == id).First().SetAttributeValue("paid", paid);
 
-            this._fileHandler.saveXMLFile(doc);
+            this._fileHandler.SaveXMLFile(doc);
         }
 
         /// <summary>
         /// Deletes an invoice by ID.
         /// </summary>
         /// <param name="id"></param>
-        public void deleteInvoiceInXml(int id)
+        public void DeleteInvoiceInXml(int id)
         {
             // TODO: unit test
 
-            string xml = this._fileHandler.getXML();
+            string xml = this._fileHandler.GetXML();
 
             XDocument doc = XDocument.Parse(xml);
             doc.Root.Elements(Invoice.XmlName).Where(e => int.Parse((e.Attribute("id").Value)) == id).Remove();
 
-            this._fileHandler.saveXMLFile(doc);
+            this._fileHandler.SaveXMLFile(doc);
         }
 
         /// <summary>
         /// Get all the objects represented by the XML file.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Invoice> readXml()
+        public IEnumerable<Invoice> ReadXml()
         {
             XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
             xmlReaderSettings.IgnoreWhitespace = true;
             xmlReaderSettings.IgnoreComments = true;
             xmlReaderSettings.IgnoreProcessingInstructions = true;
 
-            using (XmlReader reader = XmlReader.Create(new System.IO.StringReader(this._fileHandler.getXML()), xmlReaderSettings))
+            using (XmlReader reader = XmlReader.Create(new System.IO.StringReader(this._fileHandler.GetXML()), xmlReaderSettings))
             {
                 while (reader.ReadToFollowing(Invoice.XmlName))
                 {
                     Invoice invoice = new Invoice();
 
                     if (reader.MoveToAttribute("id"))
-                        invoice.id = reader.ReadContentAsInt();
+                        invoice.Id = reader.ReadContentAsInt();
 
                     if (reader.MoveToAttribute("title"))
-                        invoice.title = reader.ReadContentAsString();
+                        invoice.Title = reader.ReadContentAsString();
  
                     if (reader.MoveToAttribute("timestamp"))
-                        invoice.timestamp = DateTime.ParseExact(reader.ReadContentAsString(),
+                        invoice.Timestamp = DateTime.ParseExact(reader.ReadContentAsString(),
                                 _dateFormat, System.Globalization.CultureInfo.InvariantCulture); 
 
                     if (reader.MoveToAttribute("paid"))
                     {
-                        invoice.paid = reader.ReadContentAsBoolean();
+                        invoice.Paid = reader.ReadContentAsBoolean();
                     }
 
                     if (reader.ReadToFollowing(InvoiceItem.XmlName))
@@ -151,12 +151,12 @@ namespace InvoiceGen.Model.DataAccessLayer
                             InvoiceItem item = new InvoiceItem();
 
                             if (reader.MoveToAttribute("desc"))
-                                item.description = reader.ReadContentAsString();
+                                item.Description = reader.ReadContentAsString();
 
                             if (reader.MoveToAttribute("amount"))
-                                item.amount = reader.ReadContentAsDecimal();
+                                item.Amount = reader.ReadContentAsDecimal();
 
-                            invoice.items.Add(item);
+                            invoice.Items.Add(item);
 
                         } while (reader.ReadToNextSibling(InvoiceItem.XmlName));
                     }
