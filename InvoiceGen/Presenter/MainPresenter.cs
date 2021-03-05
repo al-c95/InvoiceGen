@@ -124,8 +124,7 @@ namespace InvoiceGen.Presenter
             this._view.TotalText = "0.00";
 
             // reset the status bar
-            this._view.StatusBarText = "Ready";
-            this._view.StatusBarColour = Configuration.DEFAULT_COLOUR;
+            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
         }
 
         public void InvoiceTypeSelected(object sender, EventArgs args)
@@ -181,8 +180,7 @@ namespace InvoiceGen.Presenter
             this._view.YearTextBoxEnabled = true;
 
             // reset the status bar
-            this._view.StatusBarText = "Ready";
-            this._view.StatusBarColour = Configuration.DEFAULT_COLOUR;
+            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
         }
 
         public void CustomTitleTextChanged(object sender, EventArgs args)
@@ -330,8 +328,7 @@ namespace InvoiceGen.Presenter
             }
 
             // send email
-            this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.StatusBarText = "Sending Email In Progress";
+            SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
             ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
             excelWriter.AddItems(this._view.ItemsListEntries.ToList());
             // do it on a worker thread so the UI remains responsive
@@ -359,8 +356,7 @@ namespace InvoiceGen.Presenter
             if (error==null)
             {
                 // success
-                this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
-                this._view.StatusBarText = "Sending Email Completed Successfully";
+                SetStatusBarTextAndColour("Sending Email", StatusBarState.CompletedSuccessfully);
 
                 // fire the event to save the invoice to the records
                 SendEmailFinished += OnSendEmailFinished;
@@ -371,8 +367,7 @@ namespace InvoiceGen.Presenter
                 // it failed
                 if (error is SmtpException)
                 {
-                    this._view.StatusBarColour = Configuration.ERROR_COLOUR;
-                    this._view.StatusBarText = "Error Sending Email";
+                    SetStatusBarTextAndColour("Sending Email", StatusBarState.Failed);
                 }
                 else
                 {
@@ -432,8 +427,7 @@ namespace InvoiceGen.Presenter
             string title = GetNewInvoiceTitle();
 
             // finally, write the data and save the spreadsheet
-            this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.StatusBarText = "Exporting Spreadsheet In Progress";
+            SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.InProgress);
             MemoryStream ms = null;
             try
             {
@@ -449,15 +443,13 @@ namespace InvoiceGen.Presenter
             {
                 // it failed
                 // update the status bar (and show a dialog?)
-                this._view.StatusBarColour = Configuration.ERROR_COLOUR;
-                this._view.StatusBarText = "Exporting Spreadsheet Failed";
+                SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.Failed);
 
                 return null;
             }
 
             // successful
-            this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
-            this._view.StatusBarText = "Exporting Spreadsheet Completed Successfully";
+            SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.CompletedSuccessfully);
 
             return ms;
         }
@@ -489,8 +481,7 @@ namespace InvoiceGen.Presenter
 
         private void SaveToRecords()
         {
-            this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
-            this._view.StatusBarText = "Saving To Records In Progress";
+            SetStatusBarTextAndColour("Saving To Records", StatusBarState.InProgress);
 
             try
             {
@@ -516,16 +507,45 @@ namespace InvoiceGen.Presenter
             catch (Exception ex)
             {
                 // it failed
-                this._view.StatusBarColour = Configuration.ERROR_COLOUR;
-                this._view.StatusBarText = "Error Saving To Records";
+                SetStatusBarTextAndColour("Saving To Records", StatusBarState.Failed);
 
                 return;
             }
 
             // it succeeded
             CancelButtonClicked(null, null);
-            this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
-            this._view.StatusBarText = "Saving To Records Completed Successfully";
+            SetStatusBarTextAndColour("Saving To Records", StatusBarState.CompletedSuccessfully);
+        }
+
+        private enum StatusBarState
+        {
+            Ready,
+            InProgress,
+            CompletedSuccessfully,
+            Failed
+        }
+
+        private void SetStatusBarTextAndColour(string task, StatusBarState state)
+        {
+            switch (state)
+            {
+                case StatusBarState.Ready:
+                    this._view.StatusBarColour = Configuration.DEFAULT_COLOUR;
+                    this._view.StatusBarText = "Ready";
+                    break;
+                case StatusBarState.InProgress:
+                    this._view.StatusBarColour = Configuration.IN_PROGRESS_COLOUR;
+                    this._view.StatusBarText = task + " In Progress";
+                    break;
+                case StatusBarState.CompletedSuccessfully:
+                    this._view.StatusBarColour = Configuration.SUCCESS_COLOUR;
+                    this._view.StatusBarText = task + " Completed Successfully";
+                    break;
+                case StatusBarState.Failed:
+                    this._view.StatusBarColour = Configuration.ERROR_COLOUR;
+                    this._view.StatusBarText = task + " Failed";
+                    break;
+            }
         }
     }
 }
