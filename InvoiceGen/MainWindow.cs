@@ -16,8 +16,6 @@ namespace InvoiceGen
     {
         public bool CreatingNewInvoice { get; set; }
 
-        DataTable invoiceHistoryRecords;
-
         /// <summary>
         /// Constructor for this window.
         /// </summary>
@@ -28,74 +26,40 @@ namespace InvoiceGen
             // set the window title
             this.WindowTitle = windowTitle;
 
-            // IMPORTANT
+            // subscribe to UI events
             this.exitToolStripMenuItem.Click += ((sender, args) => Application.Exit());
             this.aboutToolStripMenuItem.Click += ((sender, args) => new AboutBox().Show());
             this.configurationToolStripMenuItem.Click += ((sender, args) => new ConfigWindow().ShowDialog());
-
-            /*
-            // create the invoice history table and bind it to the UI
-            invoiceHistoryRecords = new DataTable("Invoices");
-            invoiceHistoryRecords.Columns.Add("ID", typeof(int));
-            invoiceHistoryRecords.Columns.Add("Timestamp", typeof(DateTime));
-            invoiceHistoryRecords.Columns.Add("Title", typeof(string));
-            invoiceHistoryRecords.Columns.Add("Total Amount ($)", typeof(decimal));
-            invoiceHistoryRecords.Columns.Add("Paid", typeof(bool));
-            invoiceHistoryRecords.Columns.Add("Items", typeof(IList<InvoiceItem>));
-            dataGridView_invoiceHistory.DataSource = invoiceHistoryRecords;
-            dataGridView_invoiceHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            */
-
-            // subscribe to UI events
-
-            this.button_newInvoice.Click += Button_newInvoice_Click;
-
             this.button_viewSelected.Click += Button_viewSelected_Click;
             this.button_updateRecords.Click += Button_updateRecords_Click;
             this.dataGridView_invoiceHistory.SelectionChanged += DataGridView_invoiceHistory_SelectionChanged;
-
             this.button_addItem.Click += Button_addItem_Click;
-
             this.radioButton_titleCustom.CheckedChanged += RadioButton_titleCustom_CheckedChanged;
-            //this.CustomTitleTextBoxTextChanged += textBox_customTitle_TextChanged;
-
             this.radioButton_titleMonthly.CheckedChanged += RadioButton_titleMonthly_CheckedChanged;
             this.comboBox_Month.TextChanged += ComboBox_Month_TextChanged;
             this.textBox_Year.TextChanged += TextBox_Year_TextChanged;
-
             this.textBox_newEntryDesc.TextChanged += TextBox_newEntryDesc_TextChanged;
             this.textBox_newEntryAmt.TextChanged += TextBox_newEntryAmt_TextChanged;
-
             this.listView_items.SelectedIndexChanged += ListView_items_SelectedIndexChanged;
             this.button_removeItem.Click += MainWindow_removeSelectedItemButtonClicked;
             this.button_duplicateItem.Click += MainWindow_duplicateSelectedItemButtonClicked;
-
+            this.textBox_customTitle.TextChanged += TextBox_customTitle_TextChanged;
             this.button_saveExportXL.Click += MainWindow_SaveAndExportXLSXButtonClicked;
             this.button_saveEmail.Click += Button_saveEmail_Click;
-
             this.button_cancel.Click += Button_cancel_Click;
-
-            this.exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
-
-            this.configurationToolStripMenuItem.Click += ConfigurationToolStripMenuItem_Click;
-
-            this.aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
-
-            this.dataGridView_invoiceHistory.CellValueChanged += DataGridView_invoiceHistory_CellValueChanged;
-            this.dataGridView_invoiceHistory.CellContentClick += DataGridView_invoiceHistory_CellContentClick;
         }
 
         #region UI event handlers
-        private void DataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
-            // this will fire the CellValueChanged event
-        }
-
-        private void DataGridView_invoiceHistory_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void button_newInvoice_Click_1(object sender, EventArgs args)
         {
             // fire the external event so the subscribed presenter can react
-            PaidStatusChanged?.Invoke(this, e);
+            NewInvoiceButtonClicked?.Invoke(sender, args);
+        }
+
+        private void TextBox_customTitle_TextChanged(object sender, EventArgs e)
+        {
+            // fire the external event so the subscribed presenter can react
+            CustomTitleTextBoxTextChanged?.Invoke(this, e);
         }
 
         private void DataGridView_invoiceHistory_SelectionChanged(object sender, EventArgs e)
@@ -122,25 +86,10 @@ namespace InvoiceGen
             CancelClicked?.Invoke(this, e);
         }
 
-        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void Button_saveEmail_Click(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
             SaveAndEmailButtonClicked?.Invoke(this, e);
-        }
-
-        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void ConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void MainWindow_SaveAndExportXLSXButtonClicked(object sender, EventArgs e)
@@ -165,22 +114,6 @@ namespace InvoiceGen
         {
             // fire the external event so the subscribed presenter can react
             ItemListSelectedIndexChanged?.Invoke(this, e);
-            /*
-            // TODO: put this logic in the presenter
-            switch (this.numberSelectedInvoiceItems)
-            {
-                case 1:
-                    // one item selected
-                    // display its amount
-                    //displaySelectedAmount();
-                    break;
-                default:
-                    // no items or multiple items are selected
-                    // display the total
-                    displayTotal();
-                    break;
-            }
-            */
         }
 
         private void TextBox_newEntryAmt_TextChanged(object sender, EventArgs args)
@@ -195,7 +128,6 @@ namespace InvoiceGen
             NewItemDetailsUpdated?.Invoke(sender, args);
         }
 
-        // IMPORTANT
         private void TextBox_Year_TextChanged(object sender, EventArgs args)
         {
             // fire the external event so the subscribed presenter can react
@@ -210,30 +142,14 @@ namespace InvoiceGen
 
         private void RadioButton_titleMonthly_CheckedChanged(object sender, EventArgs e)
         {
-
+            // fire the external event so the subscribed presenter can react
+            InvoiceTypeSelected?.Invoke(this, e);
         }
 
         private void RadioButton_titleCustom_CheckedChanged(object sender, EventArgs e)
         {
             // fire the external event so the subscribed presenter can react
-            //CustomTitleRadioButtonClicked?.Invoke(this, e);
-        }
-
-        private void textBox_customTitle_TextChanged(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            CustomTitleTextBoxTextChanged?.Invoke(this, e);
-        }
-
-        private void comboBox_Month_TextUpdate(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            //MonthComboBoxTextChanged?.Invoke(this, e);
-        }
-
-        private void Button_newInvoice_Click(object sender, EventArgs e)
-        {
-
+            InvoiceTypeSelected?.Invoke(this, e);
         }
 
         private void Button_addItem_Click(object sender, EventArgs e)
@@ -417,31 +333,7 @@ namespace InvoiceGen
             set => this.radioButton_titleMonthly.Checked = value;
         }
 
-        /*
-        /// <summary>
-        /// All invoices in the DataGridView in the "History" tab.
-        /// </summary>
-        public IEnumerable<Invoice> invoiceHistory
-        {
-            set
-            {
-                // clear it
-                invoiceHistoryRecords.Rows.Clear();
-
-                // populate it
-                dataGridView_invoiceHistory.Columns["Items"].Visible = false;
-                dataGridView_invoiceHistory.Columns["ID"].ReadOnly = true;
-                dataGridView_invoiceHistory.Columns["Timestamp"].ReadOnly = true;
-                dataGridView_invoiceHistory.Columns["Total Amount ($)"].ReadOnly = true;
-                dataGridView_invoiceHistory.Columns["Title"].ReadOnly = true;
-                foreach (Invoice invoice in value)
-                    invoiceHistoryRecords.Rows.Add(new object[] { invoice.Id, invoice.Timestamp, invoice.Title, invoice.GetTotal(), invoice.Paid, invoice.Items });
-                invoiceHistoryRecords.AcceptChanges();
-                dataGridView_invoiceHistory.EndEdit();
-            }
-        }
-        */
-
+        
         public string TotalText
         {
             get => this.richTextBox_total.Text;
@@ -633,23 +525,5 @@ namespace InvoiceGen
         public event EventHandler PaidStatusChanged;
         public event EventHandler InvoiceTypeSelected;
         #endregion
-
-        // IMPORTANT
-        private void button_newInvoice_Click_1(object sender, EventArgs args)
-        {
-            NewInvoiceButtonClicked?.Invoke(sender, args);
-        }
-
-        // IMPORTANT
-        private void radioButton_titleCustom_CheckedChanged_1(object sender, EventArgs args)
-        {
-            InvoiceTypeSelected?.Invoke(sender, args);
-        }
-
-        // IMPORTANT
-        private void radioButton_titleMonthly_CheckedChanged_1(object sender, EventArgs args)
-        {
-            InvoiceTypeSelected?.Invoke(sender, args);
-        }
     }
 }

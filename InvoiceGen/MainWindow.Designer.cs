@@ -426,7 +426,6 @@
             this.comboBox_Month.Name = "comboBox_Month";
             this.comboBox_Month.Size = new System.Drawing.Size(91, 24);
             this.comboBox_Month.TabIndex = 5;
-            this.comboBox_Month.TextUpdate += new System.EventHandler(this.comboBox_Month_TextUpdate);
             // 
             // textBox_customTitle
             // 
@@ -436,7 +435,6 @@
             this.textBox_customTitle.Name = "textBox_customTitle";
             this.textBox_customTitle.Size = new System.Drawing.Size(473, 22);
             this.textBox_customTitle.TabIndex = 4;
-            this.textBox_customTitle.TextChanged += new System.EventHandler(this.textBox_customTitle_TextChanged);
             // 
             // radioButton_titleCustom
             // 
@@ -450,7 +448,6 @@
             this.radioButton_titleCustom.TabStop = true;
             this.radioButton_titleCustom.Text = "Custom";
             this.radioButton_titleCustom.UseVisualStyleBackColor = true;
-            this.radioButton_titleCustom.CheckedChanged += new System.EventHandler(this.radioButton_titleCustom_CheckedChanged_1);
             // 
             // radioButton_titleMonthly
             // 
@@ -463,8 +460,6 @@
             this.radioButton_titleMonthly.TabStop = true;
             this.radioButton_titleMonthly.Text = "Monthly";
             this.radioButton_titleMonthly.UseVisualStyleBackColor = true;
-            this.radioButton_titleMonthly.CheckedChanged += new System.EventHandler(this.radioButton_titleMonthly_CheckedChanged_1);
-            //this.radioButton_titleMonthly.Click += new System.EventHandler(this.radioButton_titleMonthly_Click);
             // 
             // tabPage2
             // 
