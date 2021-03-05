@@ -63,11 +63,16 @@ namespace InvoiceGen.Presenter
             this._view.ItemsListViewEnabled = false;
             this._view.DuplicateItemButtonEnabled = false;
             this._view.RemoveItemButtonEnabled = false;
+            this._view.ViewSelectedInvoiceButtonEnabled = false;
+            this._view.UpdateRecordsButtonEnabled = false;
 
             // populate months combo box
             this._view.PopulateMonthsComboBox(Months);
 
             this._view.CreatingNewInvoice = true;
+
+            // populate invoice history data grid
+            this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices();
         }
 
         #region View event handlers
@@ -304,7 +309,7 @@ namespace InvoiceGen.Presenter
             {
                 title = this._view.CustomTitleText;
             }
-            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyEnabled)
+            else if (!this._view.RadioButtonCustomChecked && this._view.RadioButtonMonthlyChecked)
             {
                 title = this._view.Month + " " + this._view.Year;
             }
@@ -516,6 +521,7 @@ namespace InvoiceGen.Presenter
             // it succeeded
             CancelButtonClicked(null, null);
             SetStatusBarTextAndColour("Saving To Records", StatusBarState.CompletedSuccessfully);
+            this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices(); // repopulate the invoice history
         }
 
         private enum StatusBarState

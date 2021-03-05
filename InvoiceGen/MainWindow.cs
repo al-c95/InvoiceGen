@@ -47,6 +47,16 @@ namespace InvoiceGen
             this.button_saveExportXL.Click += MainWindow_SaveAndExportXLSXButtonClicked;
             this.button_saveEmail.Click += Button_saveEmail_Click;
             this.button_cancel.Click += Button_cancel_Click;
+
+            invoiceHistoryRecords = new DataTable();
+            invoiceHistoryRecords.Columns.Add("ID", typeof(int));
+            invoiceHistoryRecords.Columns.Add("Timestamp", typeof(DateTime));
+            invoiceHistoryRecords.Columns.Add("Title", typeof(string));
+            invoiceHistoryRecords.Columns.Add("Total Amount ($)", typeof(decimal));
+            invoiceHistoryRecords.Columns.Add("Paid", typeof(bool));
+            invoiceHistoryRecords.Columns.Add("Items", typeof(List<InvoiceItem>));
+            this.dataGridView_invoiceHistory.DataSource = invoiceHistoryRecords;
+            this.dataGridView_invoiceHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         #region UI event handlers
@@ -378,6 +388,40 @@ namespace InvoiceGen
 
                     yield return Tuple.Create(invoiceItem, Int32.Parse(listItem.SubItems[2].Text));
                 }
+            }
+        }
+
+        private DataTable invoiceHistoryRecords;
+
+        public IEnumerable<Invoice> InvoiceHistoryEntries
+        {
+            get
+            {
+                foreach (DataGridViewRow row in this.dataGridView_invoiceHistory.Rows)
+                {
+                    Invoice invoice = new Invoice
+                    {
+                        Id = (int)row.Cells[0].Value,
+                        Timestamp = (DateTime)row.Cells[1].Value,
+                        Title = (string)row.Cells[2].Value,
+                        Paid = (bool)row.Cells[4].Value,
+                        Items = (List<InvoiceItem>)row.Cells[5].Value
+                    };
+
+                    yield return invoice;
+                }
+            }
+
+            set
+            {
+                DataTable dt = (DataTable)this.dataGridView_invoiceHistory.DataSource;
+                dt.Rows.Clear();
+                foreach (var invoice in value)
+                {
+                    dt.Rows.Add(new object[] { invoice.Id, invoice.Timestamp, invoice.Title, invoice.GetTotal(), false, invoice.Items });
+                }
+                this.dataGridView_invoiceHistory.DataSource = dt;
+                this.dataGridView_invoiceHistory.Columns[4].Visible = false;
             }
         }
 

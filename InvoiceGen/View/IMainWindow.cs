@@ -25,9 +25,6 @@ namespace InvoiceGen.View
 
         bool NewInvoiceButtonEnabled { get; set; }
 
-        bool ViewSelectedInvoiceButtonEnabled { get; set; }
-        bool UpdateRecordsButtonEnabled { get; set; }
-
         // month and year selection
         bool MonthComboboxEnabled { get; set; }
         bool YearTextBoxEnabled { get; set; }
@@ -40,7 +37,6 @@ namespace InvoiceGen.View
 
         // monthly invoice - year and month
         string Month { get; set; }
-
         string Year { get; set; }
 
         bool CustomTitleTextBoxEnabled { get; set; }
@@ -66,6 +62,9 @@ namespace InvoiceGen.View
         bool CancelButtonEnabled { get; set; }
 
         bool InvoiceHistoryDataGridViewEnabled { get; set; }
+        bool ViewSelectedInvoiceButtonEnabled { get; set; }
+        bool UpdateRecordsButtonEnabled { get; set; }
+        IEnumerable<Invoice> InvoiceHistoryEntries { get; set; }
 
         string TotalText { get; set; }
 
