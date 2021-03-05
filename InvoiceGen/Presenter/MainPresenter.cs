@@ -489,6 +489,7 @@ namespace InvoiceGen.Presenter
                 string title = GetNewInvoiceTitle();
                 Invoice newInvoice = new Invoice();
                 newInvoice.Title = title;
+                newInvoice.Timestamp = DateTime.Now;
 
                 // add items to the new invoice
                 foreach (var listItem in this._view.ItemsListEntries)
