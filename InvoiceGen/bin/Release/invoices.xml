@@ -1,3 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <invoices>
+  <invoice id="1" title="" timestamp="05/03/2021 06:41:31 PM" paid="false">
+    <items>
+      <item desc="test" amount="1.00" />
+    </items>
+  </invoice>
 </invoices>
