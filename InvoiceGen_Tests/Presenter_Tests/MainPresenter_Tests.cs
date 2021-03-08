@@ -459,13 +459,37 @@ namespace InvoiceGen_Tests.Presenter_Tests
         }
 
         [Test]
+        public void PaidStatusChanged_Test()
+        {
+            // arrange
+            var fakeView = A.Fake<IMainWindow>();
+            fakeView.UpdateRecordsButtonEnabled = false;
+            var presenter = new MainPresenter(fakeView, null);
+
+            // act
+            presenter.PaidStatusChanged(null, null);
+
+            // assert
+            NUnit.Framework.Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
+        }
+
+        // TODO
+        [Test]
         public void DuplicateItemButtonClicked_Test()
         {
             throw new NotImplementedException();
         }
 
+        // TODO
         [Test]
         public void RemoveItemButtonClicked_Test()
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO
+        [Test]
+        public void UpdateRecordsButtonClicked_Test()
         {
             throw new NotImplementedException();
         }

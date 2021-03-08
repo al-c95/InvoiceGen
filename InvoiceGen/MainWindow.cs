@@ -16,6 +16,8 @@ namespace InvoiceGen
     {
         public bool CreatingNewInvoice { get; set; }
 
+        private DataTable invoiceHistoryTable = new DataTable("Invoice History");
+
         /// <summary>
         /// Constructor for this window.
         /// </summary>
@@ -48,14 +50,6 @@ namespace InvoiceGen
             this.button_saveEmail.Click += Button_saveEmail_Click;
             this.button_cancel.Click += Button_cancel_Click;
 
-            invoiceHistoryRecords = new DataTable();
-            invoiceHistoryRecords.Columns.Add("ID", typeof(int));
-            invoiceHistoryRecords.Columns.Add("Timestamp", typeof(DateTime));
-            invoiceHistoryRecords.Columns.Add("Title", typeof(string));
-            invoiceHistoryRecords.Columns.Add("Total Amount ($)", typeof(decimal));
-            invoiceHistoryRecords.Columns.Add("Paid", typeof(bool));
-            invoiceHistoryRecords.Columns.Add("Items", typeof(List<InvoiceItem>));
-            this.dataGridView_invoiceHistory.DataSource = invoiceHistoryRecords;
             this.dataGridView_invoiceHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
@@ -343,7 +337,6 @@ namespace InvoiceGen
             set => this.radioButton_titleMonthly.Checked = value;
         }
 
-        
         public string TotalText
         {
             get => this.richTextBox_total.Text;
@@ -391,8 +384,6 @@ namespace InvoiceGen
             }
         }
 
-        private DataTable invoiceHistoryRecords;
-
         public IEnumerable<Invoice> InvoiceHistoryEntries
         {
             get
@@ -401,11 +392,10 @@ namespace InvoiceGen
                 {
                     Invoice invoice = new Invoice
                     {
-                        Id = (int)row.Cells[0].Value,
-                        Timestamp = (DateTime)row.Cells[1].Value,
+                        Id = Int32.Parse(row.Cells[0].Value.ToString()),
+                        Timestamp = DateTime.Parse(row.Cells[1].Value.ToString()),
                         Title = (string)row.Cells[2].Value,
-                        Paid = (bool)row.Cells[4].Value,
-                        Items = (List<InvoiceItem>)row.Cells[5].Value
+                        Paid = (bool)row.Cells[4].Value
                     };
 
                     yield return invoice;
@@ -414,14 +404,25 @@ namespace InvoiceGen
 
             set
             {
-                DataTable dt = (DataTable)this.dataGridView_invoiceHistory.DataSource;
-                dt.Rows.Clear();
+                invoiceHistoryTable.Columns.Clear();
+                invoiceHistoryTable.Rows.Clear();
+                invoiceHistoryTable.Columns.Add("Id", typeof(string));
+                invoiceHistoryTable.Columns.Add("Timestamp", typeof(string));
+                invoiceHistoryTable.Columns.Add("Title", typeof(string));
+                invoiceHistoryTable.Columns.Add("Total Amount ($)", typeof(string));
+                invoiceHistoryTable.Columns.Add("Paid", typeof(bool));
                 foreach (var invoice in value)
                 {
-                    dt.Rows.Add(new object[] { invoice.Id, invoice.Timestamp, invoice.Title, invoice.GetTotal(), false, invoice.Items });
+                    invoiceHistoryTable.Rows.Add(invoice.Id, invoice.Timestamp.ToString(), invoice.Title, invoice.GetTotal(), invoice.Paid);
                 }
-                this.dataGridView_invoiceHistory.DataSource = dt;
-                this.dataGridView_invoiceHistory.Columns[4].Visible = false;
+
+                this.dataGridView_invoiceHistory.DataSource = invoiceHistoryTable;
+                // user can only edit "paid" column
+                this.dataGridView_invoiceHistory.Columns[0].ReadOnly = true;
+                this.dataGridView_invoiceHistory.Columns[1].ReadOnly = true;
+                this.dataGridView_invoiceHistory.Columns[2].ReadOnly = true;
+                this.dataGridView_invoiceHistory.Columns[3].ReadOnly = true;
+                this.dataGridView_invoiceHistory.Columns[4].ReadOnly = false;
             }
         }
 
@@ -569,5 +570,15 @@ namespace InvoiceGen
         public event EventHandler PaidStatusChanged;
         public event EventHandler InvoiceTypeSelected;
         #endregion
+
+        private void dataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs args)
+        {
+            this.dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private void dataGridView_invoiceHistory_CellValueChanged(object sender, DataGridViewCellEventArgs args)
+        {
+            PaidStatusChanged?.Invoke(this, args);
+        }
     }
 }

@@ -14,6 +14,9 @@ using InvoiceGen.EmailService;
 
 namespace InvoiceGen.Presenter
 {
+    /// <summary>
+    /// Contains most of the logic which controls the UI, and interacts with the model.
+    /// </summary>
     public class MainPresenter
     {
         public IMainWindow _view;
@@ -45,6 +48,8 @@ namespace InvoiceGen.Presenter
             this._view.RemoveItemButtonClicked += RemoveItemButtonClicked;
             this._view.SaveAndEmailButtonClicked += SaveAndEmailButtonClicked;
             this._view.SaveAndExportXLSXButtonClicked += SaveAndExportXLSXButtonClicked;
+            this._view.PaidStatusChanged += PaidStatusChanged;
+            this._view.UpdateRecordsButtonClicked += UpdateRecordsButtonClicked;
 
             // enable/disable some controls initially
             this._view.NewInvoiceButtonEnabled = true;
@@ -76,6 +81,25 @@ namespace InvoiceGen.Presenter
         }
 
         #region View event handlers
+        public void UpdateRecordsButtonClicked(object sender, EventArgs args)
+        {
+            // update records
+            foreach (var invoice in this._view.InvoiceHistoryEntries)
+            {
+                this._repo.UpdatePaidStatus(invoice.Id, invoice.Paid);
+            }
+
+            // reload
+            this._view.UpdateRecordsButtonEnabled = false;
+            this._view.ViewSelectedInvoiceButtonEnabled = false;
+            this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices();
+        }
+
+        public void PaidStatusChanged(object sender, EventArgs args)
+        {
+            this._view.UpdateRecordsButtonEnabled = true;
+        }
+
         public void MonthlyInvoiceMonthYearUpdated(object sender, EventArgs args)
         {
             bool valid = true;
