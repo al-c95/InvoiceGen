@@ -546,6 +546,8 @@
             this.dataGridView_invoiceHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_invoiceHistory.Size = new System.Drawing.Size(1056, 627);
             this.dataGridView_invoiceHistory.TabIndex = 0;
+            this.dataGridView_invoiceHistory.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_invoiceHistory_CellContentClick);
+            this.dataGridView_invoiceHistory.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_invoiceHistory_CellValueChanged);
             // 
             // statusStrip
             // 

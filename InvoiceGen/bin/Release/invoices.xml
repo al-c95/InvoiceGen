@@ -17,4 +17,9 @@
       <item desc="test2" amount="2.00" />
     </items>
   </invoice>
+  <invoice id="4" title="December 1972" timestamp="08/03/2021 09:46:05 PM" paid="false">
+    <items>
+      <item desc="test" amount="1.00" />
+    </items>
+  </invoice>
 </invoices>
