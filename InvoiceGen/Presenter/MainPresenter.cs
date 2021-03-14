@@ -19,6 +19,7 @@ namespace InvoiceGen.Presenter
     /// </summary>
     public class MainPresenter
     {
+        // dependency injection
         public IMainWindow _view;
         public IInvoiceRepository _repo;
 
@@ -32,6 +33,7 @@ namespace InvoiceGen.Presenter
         /// <param name="repository"></param>
         public MainPresenter(IMainWindow view, IInvoiceRepository repository)
         {
+            // dependency injection
             this._view = view;
             this._repo = repository;
 
@@ -50,6 +52,8 @@ namespace InvoiceGen.Presenter
             this._view.SaveAndExportXLSXButtonClicked += SaveAndExportXLSXButtonClicked;
             this._view.PaidStatusChanged += PaidStatusChanged;
             this._view.UpdateRecordsButtonClicked += UpdateRecordsButtonClicked;
+            this._view.InvoiceHistoryDataGridViewSelectionChanged += InvoiceHistorySelectionChanged;
+            this._view.ViewSelectedInvoiceButtonClicked += ViewSelectedInvoiceButtonClicked;
 
             // enable/disable some controls initially
             this._view.NewInvoiceButtonEnabled = true;
@@ -81,6 +85,95 @@ namespace InvoiceGen.Presenter
         }
 
         #region View event handlers
+        public void ViewSelectedInvoiceButtonClicked(object sender, EventArgs args)
+        {
+            // switch to the create or view invoice tab
+            this._view.SelectedTabIndex = 0;
+            this._view.CreatingNewInvoice = false;
+
+            // clear titles
+            this._view.Month = string.Empty;
+            this._view.Year = string.Empty;
+            this._view.CustomTitleText = string.Empty;
+
+            // grab the title of the invoice and determine its type, then display it
+            Invoice selected = this._view.GetSelectedInvoice();
+            string title = selected.Title;
+            bool startsWithMonth = false;
+            foreach (var m in Months)
+            {
+                if (title.StartsWith(m))
+                {
+                    startsWithMonth = true;
+                }
+            }
+            if (startsWithMonth)
+            {
+                // check if it ends with a space followed by a year
+                if (Regex.IsMatch(title, @"[A-Za-z]+ \d+"))
+                {
+                    // a monthly invoice
+                    // split it by the space between month and year
+                    string[] split = title.Split(' ');
+                    this._view.Month = split[0];
+                    this._view.Year = split[1];
+                    this._view.RadioButtonMonthlyChecked = true;
+                }
+                else
+                {
+                    // a custom-title invoice
+                    this._view.CustomTitleText = title;
+                    this._view.RadioButtonCustomChecked = true;
+                }
+            }
+            else
+            {
+                // a custom-title invoice
+                this._view.CustomTitleText = title;
+                this._view.RadioButtonCustomChecked = true;
+            }
+
+            // change the text of the save buttons
+            this._view.SaveAndEmailButtonText = "Email";
+            this._view.SaveAndExportXLSXButtonText = "Export XLSX";
+
+            // enable or disable appropriate controls
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.NewInvoiceButtonEnabled = false;
+            this._view.CancelButtonEnabled = true;
+            this._view.SaveAndEmailButtonEnabled = true;
+            this._view.SaveAndExportXLButtonEnabled = true;
+
+            // display items
+            foreach (var item in selected.Items)
+            {
+                bool exists = this._view.ItemsListEntries.Any(i => i.Item1.Description.Equals(item.Description) && i.Item1.Amount.Equals(item.Amount));
+                if (exists)
+                {
+                    int currentQuantity = this._view.GetQuantityOfItemInList(item);
+                    this._view.UpdateQuantityInItemsList(item, currentQuantity + 1);
+                }
+                else
+                {
+                    this._view.AddEntryToItemsList(item,1);
+                }
+            }
+
+            // update the total
+            string toDisplay = "Total: " + GetTotalAmountFromList().ToString("C2", new System.Globalization.CultureInfo("en-AU"));
+            this._view.TotalText = toDisplay;
+        }
+
+        public void InvoiceHistorySelectionChanged(object sender, EventArgs args)
+        {
+            Invoice selected = this._view.GetSelectedInvoice();
+            this._view.ViewSelectedInvoiceButtonEnabled = (selected != null);
+        }
+
         public void UpdateRecordsButtonClicked(object sender, EventArgs args)
         {
             // update records
@@ -106,9 +199,9 @@ namespace InvoiceGen.Presenter
             valid = valid && this.Months.Contains(this._view.Month);
             valid = valid && Int32.TryParse(this._view.Year, out int year);
 
-            this._view.ItemDescriptionTextBoxEnabled = valid;
-            this._view.ItemAmountTextBoxEnabled = valid;
-            this._view.ItemQuantityUpDownEnabled = valid;
+            this._view.ItemDescriptionTextBoxEnabled = valid && this._view.CreatingNewInvoice;
+            this._view.ItemAmountTextBoxEnabled = valid && this._view.CreatingNewInvoice;
+            this._view.ItemQuantityUpDownEnabled = valid && this._view.CreatingNewInvoice;
 
             if (Months.Contains(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
             {
@@ -152,6 +245,11 @@ namespace InvoiceGen.Presenter
 
             this._view.TotalText = "0.00";
 
+            this._view.CreatingNewInvoice = true;
+
+            this._view.SaveAndEmailButtonText = "Save and Email";
+            this._view.SaveAndExportXLSXButtonText = "Save and Export XLSX";
+
             // reset the status bar
             SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
         }
@@ -160,15 +258,15 @@ namespace InvoiceGen.Presenter
         {
             if (this._view.RadioButtonMonthlyChecked && !this._view.RadioButtonCustomChecked)
             {
-                this._view.MonthComboboxEnabled = true;
-                this._view.YearTextBoxEnabled = true;
+                this._view.MonthComboboxEnabled = this._view.CreatingNewInvoice;
+                this._view.YearTextBoxEnabled = this._view.CreatingNewInvoice;
 
                 this._view.CustomTitleTextBoxEnabled = false;
 
                 if (Months.Contains(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
                 {
-                    this._view.SaveAndEmailButtonEnabled = true;
-                    this._view.SaveAndExportXLButtonEnabled = true;
+                    this._view.SaveAndEmailButtonEnabled = this._view.CreatingNewInvoice;
+                    this._view.SaveAndExportXLButtonEnabled = this._view.CreatingNewInvoice;
                 }
                 else
                 {
@@ -181,12 +279,12 @@ namespace InvoiceGen.Presenter
                 this._view.MonthComboboxEnabled = false;
                 this._view.YearTextBoxEnabled = false;
 
-                this._view.CustomTitleTextBoxEnabled = true;
+                this._view.CustomTitleTextBoxEnabled = this._view.CreatingNewInvoice;
 
                 if (!string.IsNullOrWhiteSpace(this._view.CustomTitleText) && this._view.GetNumberOfItemsInList() > 0)
                 {
-                    this._view.SaveAndEmailButtonEnabled = true;
-                    this._view.SaveAndExportXLButtonEnabled = true;
+                    this._view.SaveAndEmailButtonEnabled = this._view.CreatingNewInvoice;
+                    this._view.SaveAndExportXLButtonEnabled = this._view.CreatingNewInvoice;
                 }
                 else
                 {
@@ -222,15 +320,15 @@ namespace InvoiceGen.Presenter
             }
             else
             {
-                this._view.ItemDescriptionTextBoxEnabled = true;
-                this._view.ItemAmountTextBoxEnabled = true;
-                this._view.ItemQuantityUpDownEnabled = true;
+                this._view.ItemDescriptionTextBoxEnabled = this._view.CreatingNewInvoice;
+                this._view.ItemAmountTextBoxEnabled = this._view.CreatingNewInvoice;
+                this._view.ItemQuantityUpDownEnabled = this._view.CreatingNewInvoice;
             }
 
             if (!string.IsNullOrWhiteSpace(this._view.CustomTitleText) && this._view.GetNumberOfItemsInList() > 0)
             {
-                this._view.SaveAndEmailButtonEnabled = true;
-                this._view.SaveAndExportXLButtonEnabled = true;
+                this._view.SaveAndEmailButtonEnabled = this._view.CreatingNewInvoice;
+                this._view.SaveAndExportXLButtonEnabled = this._view.CreatingNewInvoice;
             }
             else
             {
@@ -326,7 +424,7 @@ namespace InvoiceGen.Presenter
             EnableOrDisableSaveButtons();
         }
 
-        private string GetNewInvoiceTitle()
+        private string GetInvoiceTitle()
         {
             string title = "";
             if (this._view.RadioButtonCustomChecked && !this._view.RadioButtonMonthlyChecked)
@@ -346,14 +444,17 @@ namespace InvoiceGen.Presenter
             // disable controls the user shouldn't play with at this point
             DisableControlsWhilePerformingOperation();
 
-            // first check if an invoice with this title already exists
-            string title = GetNewInvoiceTitle();
-            bool exists = this._repo.InvoiceWithTitleExists(title);
-            if (exists)
+            string title = GetInvoiceTitle();
+            if (this._view.CreatingNewInvoice)
             {
-                this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
+                // first check if an invoice with this title already exists
+                bool exists = this._repo.InvoiceWithTitleExists(title);
+                if (exists)
+                {
+                    this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
 
-                return;
+                    return;
+                }
             }
 
             // send email
@@ -387,9 +488,18 @@ namespace InvoiceGen.Presenter
                 // success
                 SetStatusBarTextAndColour("Sending Email", StatusBarState.CompletedSuccessfully);
 
-                // fire the event to save the invoice to the records
-                SendEmailFinished += OnSendEmailFinished;
-                SendEmailFinished?.Invoke(null,null);
+                if (this._view.CreatingNewInvoice)
+                {
+                    // fire the event to save the invoice to the records
+                    SendEmailFinished += OnSendEmailFinished;
+                    SendEmailFinished?.Invoke(null, null);
+                }
+                else
+                {
+                    this._view.SaveAndEmailButtonEnabled = true;
+                    this._view.SaveAndExportXLButtonEnabled = true;
+                    this._view.CancelButtonEnabled = true;
+                }
             }
             else
             {
@@ -407,14 +517,17 @@ namespace InvoiceGen.Presenter
 
         public void SaveAndExportXLSXButtonClicked(object sender, EventArgs args)
         {
-            // first check if an invoice with this title already exists
-            string title = GetNewInvoiceTitle();
-            bool exists = this._repo.InvoiceWithTitleExists(title);
-            if (exists)
+            string title = GetInvoiceTitle();
+            if (this._view.CreatingNewInvoice)
             {
-                this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
+                // first check if an invoice with this title already exists
+                bool exists = this._repo.InvoiceWithTitleExists(title);
+                if (exists)
+                {
+                    this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
 
-                return;
+                    return;
+                }
             }
 
             // disable controls the user shouldn't play with at this point
@@ -427,7 +540,16 @@ namespace InvoiceGen.Presenter
 
             // now save
             SaveToExcel(outputDir, false);
-            SaveToRecords();
+            if (this._view.CreatingNewInvoice)
+            {
+                SaveToRecords();
+            }
+            else
+            {
+                this._view.SaveAndEmailButtonEnabled = true;
+                this._view.SaveAndExportXLButtonEnabled = true;
+                this._view.CancelButtonEnabled = true;
+            }
         }
         #endregion
 
@@ -453,7 +575,7 @@ namespace InvoiceGen.Presenter
         private MemoryStream SaveToExcel(string outputDir, bool getMemoryStream)
         {
             // grab the invoice title
-            string title = GetNewInvoiceTitle();
+            string title = GetInvoiceTitle();
 
             // finally, write the data and save the spreadsheet
             SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.InProgress);
@@ -468,11 +590,12 @@ namespace InvoiceGen.Presenter
                 else      
                     excelWriter.CloseAndSave();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 // it failed
                 // update the status bar (and show a dialog?)
                 SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.Failed);
+                System.Windows.Forms.MessageBox.Show(e.Message);
 
                 return null;
             }
@@ -515,7 +638,7 @@ namespace InvoiceGen.Presenter
             try
             {
                 // grab the title, and create the new invoice
-                string title = GetNewInvoiceTitle();
+                string title = GetInvoiceTitle();
                 Invoice newInvoice = new Invoice();
                 newInvoice.Title = title;
                 newInvoice.Timestamp = DateTime.Now;
@@ -534,7 +657,7 @@ namespace InvoiceGen.Presenter
                 // finally, save it to the records
                 this._repo.AddInvoice(newInvoice);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // it failed
                 SetStatusBarTextAndColour("Saving To Records", StatusBarState.Failed);

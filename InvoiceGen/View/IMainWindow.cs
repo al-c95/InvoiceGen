@@ -65,6 +65,7 @@ namespace InvoiceGen.View
         bool ViewSelectedInvoiceButtonEnabled { get; set; }
         bool UpdateRecordsButtonEnabled { get; set; }
         IEnumerable<Invoice> InvoiceHistoryEntries { get; set; }
+        Invoice GetSelectedInvoice();
 
         string TotalText { get; set; }
 

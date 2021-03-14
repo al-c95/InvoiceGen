@@ -16,7 +16,6 @@ namespace InvoiceGen.EmailService
         private string _fromPassword;
 
         private SmtpClient _smtpClient;
-        private MemoryStream _ms;
 
         /// <summary>
         /// Constructor. Reads from configuration.
