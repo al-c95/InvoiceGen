@@ -161,6 +161,16 @@ namespace InvoiceGen
             // fire the external event so the subscribed presenter can react
             AddItemButtonClicked?.Invoke(this, e);
         }
+
+        private void dataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs args)
+        {
+            this.dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private void dataGridView_invoiceHistory_CellValueChanged(object sender, DataGridViewCellEventArgs args)
+        {
+            PaidStatusChanged?.Invoke(this, args);
+        }
         #endregion
 
         public string WindowTitle
@@ -411,9 +421,10 @@ namespace InvoiceGen
                 invoiceHistoryTable.Columns.Add("Title", typeof(string));
                 invoiceHistoryTable.Columns.Add("Total Amount ($)", typeof(string));
                 invoiceHistoryTable.Columns.Add("Paid", typeof(bool));
+                invoiceHistoryTable.Columns.Add("Items", typeof(List<InvoiceItem>)); // invisible column
                 foreach (var invoice in value)
                 {
-                    invoiceHistoryTable.Rows.Add(invoice.Id, invoice.Timestamp.ToString(), invoice.Title, invoice.GetTotal(), invoice.Paid);
+                    invoiceHistoryTable.Rows.Add(invoice.Id, invoice.Timestamp.ToString(), invoice.Title, invoice.GetTotal(), invoice.Paid, invoice.Items);
                 }
 
                 this.dataGridView_invoiceHistory.DataSource = invoiceHistoryTable;
@@ -424,6 +435,30 @@ namespace InvoiceGen
                 this.dataGridView_invoiceHistory.Columns[3].ReadOnly = true;
                 this.dataGridView_invoiceHistory.Columns[4].ReadOnly = false;
             }
+        }
+
+        public Invoice GetSelectedInvoice()
+        {
+            if (this.dataGridView_invoiceHistory.SelectedRows.Count > 0)
+            {
+                int selectedId = Int32.Parse(this.dataGridView_invoiceHistory.SelectedRows[0].Cells[0].Value.ToString());
+                foreach (DataRow row in this.invoiceHistoryTable.Rows)
+                {
+                    if ((Int32.Parse(row[0].ToString()) == selectedId))
+                    {
+                        return new Invoice
+                        {
+                            Id = selectedId,
+                            Timestamp = DateTime.Parse(row[1].ToString()),
+                            Title = (string)row[2],
+                            Paid = (bool)row[4],
+                            Items = (List<InvoiceItem>)row[5]
+                        };
+                    }
+                }
+            }
+
+            return null;
         }
 
         public void AddEntryToItemsList(InvoiceItem item, int quantity)
@@ -505,7 +540,7 @@ namespace InvoiceGen
 
         public void ShowSuccessDialog(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, Configuration.APP_NAME, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public void ShowSaveFileDialog()
@@ -569,16 +604,6 @@ namespace InvoiceGen
 
         public event EventHandler PaidStatusChanged;
         public event EventHandler InvoiceTypeSelected;
-        #endregion
-
-        private void dataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs args)
-        {
-            this.dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
-        }
-
-        private void dataGridView_invoiceHistory_CellValueChanged(object sender, DataGridViewCellEventArgs args)
-        {
-            PaidStatusChanged?.Invoke(this, args);
-        }
+        #endregion  
     }
 }

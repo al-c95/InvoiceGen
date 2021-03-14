@@ -1,25 +1,3 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <invoices>
-  <invoice id="1" title="June 2021" timestamp="05/03/2021 10:59:48 PM" paid="true">
-    <items>
-      <item desc="test" amount="1.00" />
-    </items>
-  </invoice>
-  <invoice id="2" title="test" timestamp="05/03/2021 11:00:02 PM" paid="true">
-    <items>
-      <item desc="test" amount="1.50" />
-    </items>
-  </invoice>
-  <invoice id="3" title="test2" timestamp="05/03/2021 11:09:52 PM" paid="true">
-    <items>
-      <item desc="test" amount="1.00" />
-      <item desc="test2" amount="2.00" />
-      <item desc="test2" amount="2.00" />
-    </items>
-  </invoice>
-  <invoice id="4" title="December 1972" timestamp="08/03/2021 09:46:05 PM" paid="false">
-    <items>
-      <item desc="test" amount="1.00" />
-    </items>
-  </invoice>
 </invoices>
