@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +14,15 @@ namespace InvoiceGen.View
     {
         public AboutBox()
         {
+            StringBuilder attributionBuilder = new StringBuilder();
+            attributionBuilder.AppendLine("\r\nThanks To: ");
+            attributionBuilder.AppendLine("EPPlus by Jan Källman");
+            attributionBuilder.AppendLine("FakeItEasy by Patrik Hägne, FakeItEasy contributors");
+            attributionBuilder.AppendLine("Microsoft.NET.Test.Sdk by Microsoft");
+            attributionBuilder.AppendLine("Microsoft.NETCore.App by Microsoft");
+            attributionBuilder.AppendLine("NUnit by Charlie Poole, Rob Prouse");
+            attributionBuilder.AppendLine("NUnit3TestAdapter by Charlie Poole, Terje Sandstrom");
+
             InitializeComponent();
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
@@ -20,7 +30,7 @@ namespace InvoiceGen.View
             this.labelVersion.Text = Configuration.APP_VERSION;
             this.labelCopyright.Text = AssemblyCopyright;
             this.labelCompanyName.Text = AssemblyCompany;
-            this.textBoxDescription.Text = AssemblyDescription;
+            this.textBoxDescription.Text = AssemblyDescription + "\r\n" + attributionBuilder.ToString();
         }
 
         #region Assembly Attribute Accessors
