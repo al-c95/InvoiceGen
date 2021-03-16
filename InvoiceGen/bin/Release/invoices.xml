@@ -1,3 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <invoices>
+  <invoice id="1" title="March 2021" timestamp="16/03/2021 07:47:36 PM" paid="true">
+    <items>
+      <item desc="Paperclips" amount="2.50" />
+      <item desc="Paperclips" amount="2.50" />
+      <item desc="Paperclips" amount="2.50" />
+      <item desc="Ballpoint Pen" amount="1.95" />
+    </items>
+  </invoice>
+  <invoice id="2" title="test" timestamp="16/03/2021 07:49:27 PM" paid="false">
+    <items>
+      <item desc="test" amount="1.00" />
+    </items>
+  </invoice>
 </invoices>
