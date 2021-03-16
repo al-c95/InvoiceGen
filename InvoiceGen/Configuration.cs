@@ -9,7 +9,7 @@ namespace InvoiceGen
 {
     internal static class Configuration
     {
-        internal const string APP_VERSION = "0.1.0beta";
+        internal const string APP_VERSION = "1.0.0beta";
         internal const string APP_NAME = "InvoiceGen";
 
         internal const string XML_FILE_PATH = "invoices.xml";
