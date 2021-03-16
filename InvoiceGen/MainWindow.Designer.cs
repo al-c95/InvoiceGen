@@ -194,12 +194,15 @@
             // button_cancel
             // 
             this.button_cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_cancel.Image = global::InvoiceGen.Properties.Resources.cancelButton;
+            this.button_cancel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.button_cancel.Location = new System.Drawing.Point(948, 547);
             this.button_cancel.Margin = new System.Windows.Forms.Padding(4);
             this.button_cancel.Name = "button_cancel";
             this.button_cancel.Size = new System.Drawing.Size(100, 113);
             this.button_cancel.TabIndex = 11;
             this.button_cancel.Text = "Cancel";
+            this.button_cancel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button_cancel.UseVisualStyleBackColor = true;
             // 
             // richTextBox_total
