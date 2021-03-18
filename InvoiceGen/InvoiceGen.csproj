@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>resources\icons\icons8-general-ledger-48_Windows_multi.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus, Version=4.5.3.3, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
@@ -119,6 +122,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\icons\cancelButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\icons\configIcon.png" />
+    <Content Include="resources\icons\icons8-general-ledger-48_Windows_multi.ico" />
+    <Content Include="resources\icons\icons8-microsoft-excel-2019-48.png" />
+    <Content Include="resources\icons\icons8-send-email-30.png" />
+    <Content Include="resources\icons\icons8-send-email-80.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
