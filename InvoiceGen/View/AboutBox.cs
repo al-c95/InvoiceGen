@@ -16,6 +16,7 @@ namespace InvoiceGen.View
         {
             StringBuilder attributionBuilder = new StringBuilder();
             attributionBuilder.AppendLine("\r\nThanks To: ");
+            attributionBuilder.AppendLine("Icons by Icons8: http://icons8.com");
             attributionBuilder.AppendLine("EPPlus by Jan Källman");
             attributionBuilder.AppendLine("FakeItEasy by Patrik Hägne, FakeItEasy contributors");
             attributionBuilder.AppendLine("Microsoft.NET.Test.Sdk by Microsoft");
@@ -30,7 +31,8 @@ namespace InvoiceGen.View
             this.labelVersion.Text = Configuration.APP_VERSION;
             this.labelCopyright.Text = AssemblyCopyright;
             this.labelCompanyName.Text = AssemblyCompany;
-            this.textBoxDescription.Text = AssemblyDescription + "\r\n" + attributionBuilder.ToString();
+            this.richTextBoxDescription.Text = AssemblyDescription + "\r\n" + attributionBuilder.ToString();
+            this.richTextBoxDescription.LinkClicked += ((sender, args) => System.Diagnostics.Process.Start(args.LinkText));
         }
 
         #region Assembly Attribute Accessors

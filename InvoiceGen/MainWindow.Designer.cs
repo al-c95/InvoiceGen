@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainWindow));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -194,12 +195,15 @@
             // button_cancel
             // 
             this.button_cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_cancel.Image = global::InvoiceGen.Properties.Resources.cancelButton;
+            this.button_cancel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.button_cancel.Location = new System.Drawing.Point(948, 547);
             this.button_cancel.Margin = new System.Windows.Forms.Padding(4);
             this.button_cancel.Name = "button_cancel";
             this.button_cancel.Size = new System.Drawing.Size(100, 113);
             this.button_cancel.TabIndex = 11;
             this.button_cancel.Text = "Cancel";
+            this.button_cancel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button_cancel.UseVisualStyleBackColor = true;
             // 
             // richTextBox_total
@@ -217,23 +221,29 @@
             // button_saveExportXL
             // 
             this.button_saveExportXL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveExportXL.Image = ((System.Drawing.Image)(resources.GetObject("button_saveExportXL.Image")));
+            this.button_saveExportXL.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.button_saveExportXL.Location = new System.Drawing.Point(116, 547);
             this.button_saveExportXL.Margin = new System.Windows.Forms.Padding(4);
             this.button_saveExportXL.Name = "button_saveExportXL";
             this.button_saveExportXL.Size = new System.Drawing.Size(100, 113);
             this.button_saveExportXL.TabIndex = 9;
             this.button_saveExportXL.Text = "Save and Export XLSX";
+            this.button_saveExportXL.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button_saveExportXL.UseVisualStyleBackColor = true;
             // 
             // button_saveEmail
             // 
             this.button_saveEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveEmail.Image = ((System.Drawing.Image)(resources.GetObject("button_saveEmail.Image")));
+            this.button_saveEmail.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.button_saveEmail.Location = new System.Drawing.Point(8, 547);
             this.button_saveEmail.Margin = new System.Windows.Forms.Padding(4);
             this.button_saveEmail.Name = "button_saveEmail";
             this.button_saveEmail.Size = new System.Drawing.Size(100, 113);
             this.button_saveEmail.TabIndex = 8;
             this.button_saveEmail.Text = "Save and Email";
+            this.button_saveEmail.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button_saveEmail.UseVisualStyleBackColor = true;
             // 
             // button_removeItem
@@ -575,6 +585,7 @@
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "mainWindow";
