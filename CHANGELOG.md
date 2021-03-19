@@ -6,6 +6,8 @@ NOTE: dates are in dd-mm-yyyy format.
 ## [1.1.0beta] - 19-03-2021
 ### Added
 - icons
+### Changed
+- configuration menu item text
 
 ## [1.0.0beta] - 16-03-2021
 ### Added
