@@ -1,0 +1,15 @@
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\bin\Debug\InvoiceGen.exe.config
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\bin\Debug\InvoiceGen.exe
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\bin\Debug\InvoiceGen.pdb
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.dll
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\bin\Debug\EPPlus.xml
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csprojAssemblyReference.cache
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.mainWindow.resources
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.Properties.Resources.resources
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.View.AboutBox.resources
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.View.ConfigWindow.resources
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.GenerateResource.cache
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.CoreCompileInputs.cache
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.csproj.CopyComplete
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.exe
+C:\Users\alexc\Documents\projects\GitHub\InvoiceGen\InvoiceGen\obj\Debug\InvoiceGen.pdb
