@@ -25,6 +25,7 @@ The application is based around a simple Model-View-Presenter (MVP) pattern for 
 Some instructions or a manual may be provided as part of a future release.
 
 ## Attributions
+- Icons by Icons8: http://icons8.com
 - **EPPlus** by Jan Källman.
 - **FakeItEasy** by Patrik Hägne, FakeItEasy contributors.
 - **Microsoft.NET.Test.Sdk** by Microsoft.
