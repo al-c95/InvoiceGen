@@ -8,7 +8,7 @@ It is based on WinForms and targets .NET Framework version 4.6.1.
 
 Invoice records are stored in an XML file, `invoices.xml`, located in the same directory as the executable. 
 
-**Current version: v1.0.0 (beta)**
+**Current version: v1.1.0 (beta)**
 
 ## Contents
 This repository is based around a Microsoft Visual Studio solution. The directories `InvoiceGen` and `InvoiceGen_Tests` contain the source code, that is, the production code and unit tests, respectively. The `docs` directory contains both design and usage documentation.
