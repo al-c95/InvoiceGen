@@ -123,8 +123,8 @@
             // configurationToolStripMenuItem
             // 
             this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
-            this.configurationToolStripMenuItem.Size = new System.Drawing.Size(183, 26);
-            this.configurationToolStripMenuItem.Text = "Configuration";
+            this.configurationToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.configurationToolStripMenuItem.Text = "Email Configuration";
             // 
             // helpToolStripMenuItem
             // 
