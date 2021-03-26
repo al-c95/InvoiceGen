@@ -124,6 +124,9 @@
     <None Include="resources\icons\cancelButton.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="invoices.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="resources\icons\configIcon.png" />
     <Content Include="resources\icons\icons8-general-ledger-48_Windows_multi.ico" />
     <Content Include="resources\icons\icons8-microsoft-excel-2019-48.png" />
