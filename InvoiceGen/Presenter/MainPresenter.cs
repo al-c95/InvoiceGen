@@ -176,16 +176,28 @@ namespace InvoiceGen.Presenter
 
         public void UpdateRecordsButtonClicked(object sender, EventArgs args)
         {
+            SetStatusBarTextAndColour("Updating Records", StatusBarState.InProgress);
+
             // update records
-            foreach (var invoice in this._view.InvoiceHistoryEntries)
+            try
             {
-                this._repo.UpdatePaidStatus(invoice.Id, invoice.Paid);
+                foreach (var invoice in this._view.InvoiceHistoryEntries)
+                {
+                    this._repo.UpdatePaidStatus(invoice.Id, invoice.Paid);
+                }
+            }
+            catch (Exception ex)
+            {
+                SetStatusBarTextAndColour("Updating Records", StatusBarState.Failed);
+                return;
             }
 
             // reload
             this._view.UpdateRecordsButtonEnabled = false;
             this._view.ViewSelectedInvoiceButtonEnabled = false;
             this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices();
+
+            SetStatusBarTextAndColour("Updating Records", StatusBarState.CompletedSuccessfully);
         }
 
         public void PaidStatusChanged(object sender, EventArgs args)
