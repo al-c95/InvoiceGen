@@ -1,5 +1,8 @@
-InvoiceGen/bin
-InvoiceGen/debug
-InvoiceGen/obj
+InvoiceGen/bin/
+InvoiceGen/debug/
+InvoiceGen/obj/
 
-.vs
+InvoiceGen_Tests/bin
+InvoiceGen_Tests/obj/
+
+.vs/
