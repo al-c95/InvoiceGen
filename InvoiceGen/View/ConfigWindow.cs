@@ -20,7 +20,6 @@ namespace InvoiceGen.View
             this.textBox_senderAddress.Text = Configuration.SenderEmailAddress;
             this.textBox_SenderName.Text = Configuration.SenderName;
             this.textBox_Host.Text = Configuration.Host;
-            this.textBox_senderEmailPassword.Text = Configuration.SenderPassword;
             this.textBox_recipientAddress.Text = Configuration.RecipientEmailAddress;
             this.textBox_recipientName.Text = Configuration.RecipientName;
             this.numericUpDown_port.Value = Configuration.port;
@@ -35,7 +34,6 @@ namespace InvoiceGen.View
         {
             SetValue("senderEmail", textBox_senderAddress.Text);
             SetValue("SenderName", textBox_SenderName.Text);
-            SetValue("SenderPassword", textBox_senderEmailPassword.Text);
             SetValue("Host", textBox_Host.Text);
             SetValue("port", numericUpDown_port.Value.ToString());
             SetValue("recipientEmail", textBox_recipientAddress.Text);
