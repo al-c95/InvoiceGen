@@ -80,7 +80,6 @@ namespace InvoiceGen.Model.DataAccessLayer
 
         /// <summary>
         /// Updates paid status (boolean) by ID.
-        /// Updates paid status (boolean) by ID.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="paid"></param>
