@@ -187,18 +187,27 @@ namespace InvoiceGen.Presenter
                     this._repo.UpdatePaidStatus(invoice.Id, invoice.Paid);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                SetStatusBarTextAndColour("Updating Records", StatusBarState.Failed);
+                // it failed
+                // tell the user via a dialog
+                // TODO: log error
+                this._view.ShowErrorDialogOk("Failed to update records");
                 return;
             }
+            finally
+            {
+                // whatever happened, reset the status bar
+                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            }
 
+            // it succeeded
             // reload
             this._view.UpdateRecordsButtonEnabled = false;
             this._view.ViewSelectedInvoiceButtonEnabled = false;
             this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices();
-
-            SetStatusBarTextAndColour("Updating Records", StatusBarState.CompletedSuccessfully);
+            // tell the user via a dialog
+            this._view.ShowSuccessDialog("Updated Records");
         }
 
         public void PaidStatusChanged(object sender, EventArgs args)
@@ -466,6 +475,7 @@ namespace InvoiceGen.Presenter
                 if (exists)
                 {
                     this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
+
                     ReenableControlsAfterOperationCompletedOrAborted();
 
                     return;
@@ -525,6 +535,8 @@ namespace InvoiceGen.Presenter
             if (error==null)
             {
                 // success
+                // tell the user via a dialog and reset the status bar
+                this._view.ShowSuccessDialog("Sent email");
                 SetStatusBarTextAndColour("Sending Email", StatusBarState.CompletedSuccessfully);
 
                 if (this._view.CreatingNewInvoice)
@@ -543,15 +555,14 @@ namespace InvoiceGen.Presenter
             else
             {
                 // it failed
-                if (error is SmtpException)
-                {
-                    SetStatusBarTextAndColour("Sending Email", StatusBarState.Failed);
-                    ReenableControlsAfterOperationCompletedOrAborted();
-                }
-                else
-                {
+                // tell the user via a dialog and reset the status bar
+                this._view.ShowErrorDialogOk("Error sending email");
+                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                
+                ReenableControlsAfterOperationCompletedOrAborted();
+
+                if (!(error is SmtpException))
                     throw error;
-                }
             }
         }
 
@@ -565,7 +576,6 @@ namespace InvoiceGen.Presenter
                 if (exists)
                 {
                     this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
-
                     return;
                 }
             }
@@ -576,7 +586,9 @@ namespace InvoiceGen.Presenter
             // ask the user for the export directory
             string outputDir = this._view.ShowFolderPickerDialog();
             if (outputDir == null)
+            {
                 return;
+            }
 
             // now save
             SaveToExcel(outputDir, false);
@@ -624,24 +636,30 @@ namespace InvoiceGen.Presenter
             {
                 ExcelWriter excelWriter = new ExcelWriter(outputDir, title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
                 excelWriter.AddItems(this._view.ItemsListEntries.ToList());
-                
+
                 if (getMemoryStream)
+                {
                     ms = excelWriter.CloseAndGetMemoryStream();
-                else      
+                }
+                else
+                {
                     excelWriter.CloseAndSave();
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // it failed
-                // update the status bar (and show a dialog?)
-                SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.Failed);
-                MessageBox.Show(e.Message);
-
+                // tell the user via a dialog and reset the status bar
+                // TODO: log error
+                this._view.ShowErrorDialogOk("Error exporting spreadsheet");
+                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
                 return null;
             }
 
-            // successful
-            SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.CompletedSuccessfully);
+            // it succeeded
+            // tell the user via a dialog and reset the status bar
+            this._view.ShowSuccessDialog("Exported spreadsheet");
+            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
 
             return ms;
         }
@@ -719,15 +737,24 @@ namespace InvoiceGen.Presenter
             catch (Exception)
             {
                 // it failed
-                SetStatusBarTextAndColour("Saving To Records", StatusBarState.Failed);
+                // tell the user via a dialog and reset the status bar
+                // TODO: log error
+                this._view.ShowErrorDialogOk("Error saving to records");
+                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
 
                 return;
             }
 
             // it succeeded
+            // tell the user via a dialog and reset the status bar
+            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            this._view.ShowSuccessDialog("Saved to records");
+
+            // reset the UI
             CancelButtonClicked(null, null);
-            SetStatusBarTextAndColour("Saving To Records", StatusBarState.CompletedSuccessfully);
-            this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices(); // repopulate the invoice history
+
+            // repopulate the invoice history
+            this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices(); 
         }
 
         private enum StatusBarState
