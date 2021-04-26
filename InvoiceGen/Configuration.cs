@@ -31,5 +31,8 @@ namespace InvoiceGen
         internal static readonly Color SUCCESS_COLOUR = Color.FromArgb(255, 42, 255, 42);
         internal static readonly Color ERROR_COLOUR = Color.FromArgb(255, 255, 42, 42);
         internal static readonly Color WARNING_COLOUR = Color.FromArgb(255, 255, 212, 42);
+
+        // input field colours
+        internal static readonly Color INVALID_INPUT_COLOUR = Color.Salmon;
     }
 }
