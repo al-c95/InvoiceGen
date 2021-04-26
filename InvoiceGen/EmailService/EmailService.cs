@@ -5,14 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
+using System.Security;
 using System.IO;
 
-namespace InvoiceGen.EmailService
+namespace InvoiceGen
 {
     public class EmailService
     {
         private MailAddress _fromAddress;
         private MailAddress _toAddress;
+        private MailAddress _ccAddress;
+        private MailAddress _bccAddress;
         private string _fromPassword;
 
         private SmtpClient _smtpClient;
@@ -20,12 +23,52 @@ namespace InvoiceGen.EmailService
         /// <summary>
         /// Constructor. Reads from configuration.
         /// </summary>
-        public EmailService()
+        public EmailService(SecureString password, string fromAddress, string toAddress, string ccAddress, string bccAddress)
         {
-            // read from config
-            _fromAddress = new MailAddress(Configuration.SenderEmailAddress);
-            _toAddress = new MailAddress(Configuration.RecipientEmailAddress);
-            _fromPassword = Configuration.SenderPassword;
+            if (password is null)
+            {
+                throw new ArgumentNullException("Email sender password cannot be null.");
+            }
+            else
+            {
+                this._fromPassword = Utils.ConvertSecureStringToNormalString(password);
+            }
+
+            if (string.IsNullOrWhiteSpace(fromAddress))
+            {
+                throw new ArgumentNullException("Email sender address cannot be null.");
+            }
+            else
+            {
+                this._fromAddress = new MailAddress(fromAddress);
+            }
+
+            if (string.IsNullOrWhiteSpace(toAddress))
+            {
+                throw new ArgumentNullException("Email recipient address cannot be null.");
+            }
+            else
+            {
+                this._toAddress = new MailAddress(toAddress);
+            }
+
+            if (!string.IsNullOrWhiteSpace(ccAddress))
+            {
+                this._ccAddress = new MailAddress(ccAddress);
+            }
+            else
+            {
+                this._ccAddress = null;
+            }
+
+            if (!string.IsNullOrEmpty(bccAddress))
+            {
+                this._bccAddress = new MailAddress(bccAddress);
+            }
+            else
+            {
+                this._bccAddress = null;
+            }
 
             // set the parameters of the SMTP client
             _smtpClient = new SmtpClient();
@@ -48,6 +91,14 @@ namespace InvoiceGen.EmailService
             message.Sender = _fromAddress;
             message.From = _fromAddress;
             message.To.Add(_toAddress);
+            if (!(this._ccAddress is null))
+            {
+                message.CC.Add(_ccAddress);
+            }
+            if (!(this._bccAddress is null))
+            {
+                message.Bcc.Add(_bccAddress);
+            }
             message.Subject = subject;
             message.Body = body;
             message.IsBodyHtml = false;

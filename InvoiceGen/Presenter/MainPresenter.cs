@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.Net.Mail;
+using System.Windows.Forms;
+using System.Security;
 using InvoiceGen.View;
 using InvoiceGen.Model.Repository;
 using InvoiceGen.Model.ObjectModel;
-using InvoiceGen.EmailService;
 
 namespace InvoiceGen.Presenter
 {
@@ -456,28 +457,49 @@ namespace InvoiceGen.Presenter
             // disable controls the user shouldn't play with at this point
             DisableControlsWhilePerformingOperation();
 
+            // check if an invoice with this title already exists
+            // if not, grab the title
             string title = GetInvoiceTitle();
             if (this._view.CreatingNewInvoice)
             {
-                // first check if an invoice with this title already exists
                 bool exists = this._repo.InvoiceWithTitleExists(title);
                 if (exists)
                 {
                     this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
+                    ReenableControlsAfterOperationCompletedOrAborted();
 
                     return;
                 }
             }
 
-            // send email
-            SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
-            ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
-            excelWriter.AddItems(this._view.ItemsListEntries.ToList());
-            // do it on a worker thread so the UI remains responsive
-            BackgroundWorker sendEmailWorker = new BackgroundWorker();
-            sendEmailWorker.DoWork += BeginSendEmail;
-            sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to record upon successful sending of email
-            sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream() });
+            // show send email dialog
+            using (EmailWindow emailDialog = new EmailWindow(title))
+            {
+                DialogResult emailDialogResult = emailDialog.ShowDialog();
+                if (emailDialogResult == DialogResult.OK)
+                {
+                    // send email
+                    SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
+                    ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
+                    excelWriter.AddItems(this._view.ItemsListEntries.ToList());
+                    SecureString password = emailDialog.Password;
+                    string from = emailDialog.From;
+                    string to = emailDialog.To;
+                    string cc = emailDialog.Cc;
+                    string bcc = emailDialog.Bcc;
+                    // do it on a background worker thread so the UI remains responsive
+                    BackgroundWorker sendEmailWorker = new BackgroundWorker();
+                    sendEmailWorker.DoWork += BeginSendEmail;
+                    sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email
+                    sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc });
+                }
+                else
+                {
+                    ReenableControlsAfterOperationCompletedOrAborted();
+
+                    return;
+                }
+            }
         }
 
         private void BeginSendEmail(object sender, DoWorkEventArgs args)
@@ -486,10 +508,15 @@ namespace InvoiceGen.Presenter
             object[] arguments = (object[])args.Argument;
             string title = (string)arguments[0];
             MemoryStream attachment = (MemoryStream)arguments[1];
+            SecureString password = (SecureString)arguments[2];
+            string from = (string)arguments[3];
+            string to = (string)arguments[4];
+            string cc = (string)arguments[5];
+            string bcc = (string)arguments[6];
 
             // send email
-            EmailService.EmailService emailService = new EmailService.EmailService();
-            emailService.SendInvoice("Invoice: " + title, "", attachment); // TODO: default or custom email body text?
+            EmailService emailService = new EmailService(password, from, to, cc, bcc);
+            emailService.SendInvoice("Invoice: " + title, "", attachment);
         }
 
         private void EndSendEmail(object sender, RunWorkerCompletedEventArgs args)
@@ -519,6 +546,7 @@ namespace InvoiceGen.Presenter
                 if (error is SmtpException)
                 {
                     SetStatusBarTextAndColour("Sending Email", StatusBarState.Failed);
+                    ReenableControlsAfterOperationCompletedOrAborted();
                 }
                 else
                 {
@@ -607,7 +635,7 @@ namespace InvoiceGen.Presenter
                 // it failed
                 // update the status bar (and show a dialog?)
                 SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.Failed);
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                MessageBox.Show(e.Message);
 
                 return null;
             }
@@ -641,6 +669,25 @@ namespace InvoiceGen.Presenter
             this._view.SaveAndEmailButtonEnabled = false;
             this._view.SaveAndExportXLButtonEnabled = false;
             this._view.CancelButtonEnabled = false;
+        }
+
+        private void ReenableControlsAfterOperationCompletedOrAborted()
+        {
+            this._view.NewInvoiceButtonEnabled = true;
+            this._view.RadioButtonCustomEnabled = true;
+            this._view.RadioButtonMonthlyEnabled = true;
+            this._view.MonthComboboxEnabled = true;
+            this._view.CustomTitleTextBoxEnabled = true;
+            this._view.YearTextBoxEnabled = true;
+            this._view.ItemDescriptionTextBoxEnabled = true;
+            this._view.ItemAmountTextBoxEnabled = true;
+            this._view.ItemQuantityUpDownEnabled = true;
+            this._view.DuplicateItemButtonEnabled = true;
+            this._view.RemoveItemButtonEnabled = true;
+            this._view.ItemsListViewEnabled = true;
+            this._view.SaveAndEmailButtonEnabled = true;
+            this._view.SaveAndExportXLButtonEnabled = true;
+            this._view.CancelButtonEnabled = true;
         }
 
         private void SaveToRecords()
