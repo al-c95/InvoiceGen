@@ -187,18 +187,27 @@ namespace InvoiceGen.Presenter
                     this._repo.UpdatePaidStatus(invoice.Id, invoice.Paid);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                SetStatusBarTextAndColour("Updating Records", StatusBarState.Failed);
+                // it failed
+                // tell the user via a dialog
+                // TODO: log error
+                this._view.ShowErrorDialogOk("Failed to update records");
                 return;
             }
+            finally
+            {
+                // whatever happened, reset the status bar
+                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            }
 
+            // it succeeded
             // reload
             this._view.UpdateRecordsButtonEnabled = false;
             this._view.ViewSelectedInvoiceButtonEnabled = false;
             this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices();
-
-            SetStatusBarTextAndColour("Updating Records", StatusBarState.CompletedSuccessfully);
+            // tell the user via a dialog
+            this._view.ShowSuccessDialog("Updated Records");
         }
 
         public void PaidStatusChanged(object sender, EventArgs args)
