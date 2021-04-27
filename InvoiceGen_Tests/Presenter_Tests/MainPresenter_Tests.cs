@@ -486,7 +486,7 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.PaidStatusChanged(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
+            Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
         }
 
         // TODO
