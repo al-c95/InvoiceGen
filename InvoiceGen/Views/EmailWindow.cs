@@ -20,7 +20,7 @@ namespace InvoiceGen.View
         public string Cc { get; private set; }
         public string Bcc { get; private set; }
 
-        public System.Drawing.Color InvalidInputColour { get; private set; }
+        public Color InvalidInputColour { get; private set; }
 
         public EmailWindow(string title)
         {
@@ -58,7 +58,7 @@ namespace InvoiceGen.View
             // remove any highlighting first
             foreach (Control control in this.Controls)
             {
-                if (control.GetType() == typeof(System.Windows.Forms.TextBox))
+                if (control.GetType() == typeof(TextBox))
                 {
                     control.ResetBackColor();
                 }
