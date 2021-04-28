@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
-using InvoiceGen.Model.DataAccessLayer;
-using InvoiceGen.Model.Repository;
-using InvoiceGen.View;
+using InvoiceGen.Models.DataAccessLayer;
+using InvoiceGen.Models.Repository;
 using InvoiceGen.Presenter;
 
 namespace InvoiceGen
@@ -48,6 +47,7 @@ namespace InvoiceGen
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
 
+                // TODO: log the crash
                 // TODO: show an error dialog/window
             }
         }

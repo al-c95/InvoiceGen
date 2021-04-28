@@ -6,8 +6,8 @@ using NUnit.Framework;
 using FakeItEasy;
 using System.Linq;
 using System.Xml.Linq;
-using InvoiceGen.Model.DataAccessLayer;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.DataAccessLayer;
+using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tests
 {

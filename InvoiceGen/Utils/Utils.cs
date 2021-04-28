@@ -11,8 +11,11 @@ namespace InvoiceGen
 {
     public static class Utils
     {
-        internal static SecureString ConvertToSecureString(string toConvert)
+        public static SecureString ConvertToSecureString(string toConvert)
         {
+            if (toConvert is null)
+                toConvert = "";
+
             SecureString secureString = new SecureString();
             if (toConvert.Length > 0)
             {
@@ -36,28 +39,6 @@ namespace InvoiceGen
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
-        }
-
-        /// <summary>
-        /// Validates an email address as a string.
-        /// </summary>
-        /// <param name="address">Email address as string.</param>
-        /// <returns>True or false.</returns>
-        public static bool IsValidEmail(string address)
-        {
-            if (string.IsNullOrWhiteSpace(address))
-                return false;
-
-            try
-            {
-                var validatedAddress = new MailAddress(address);
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }

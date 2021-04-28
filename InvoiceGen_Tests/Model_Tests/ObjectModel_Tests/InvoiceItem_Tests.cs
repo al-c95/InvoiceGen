@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit;
 using NUnit.Framework;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen_Tests.Model_Tests.ObjectModel_Tests
 {
@@ -18,7 +18,7 @@ namespace InvoiceGen_Tests.Model_Tests.ObjectModel_Tests
             int b = 0;
 
             // act/assert
-            NUnit.Framework.Assert.Throws<InvalidOperationException>(() => a.Equals(b));
+            Assert.Throws<InvalidOperationException>(() => a.Equals(b));
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace InvoiceGen_Tests.Model_Tests.ObjectModel_Tests
             InvoiceItem b = new InvoiceItem { Description = "Item", Amount = 2.50M };
 
             // act/assert
-            NUnit.Framework.Assert.IsTrue(a.Equals(b));
+            Assert.IsTrue(a.Equals(b));
         }
 
         [TestCase("Item1", 2.50, "Item2", 3.50)]
@@ -44,7 +44,7 @@ namespace InvoiceGen_Tests.Model_Tests.ObjectModel_Tests
             InvoiceItem b = new InvoiceItem { Description = descriptionB, Amount = amountB };
 
             // act/assert
-            NUnit.Framework.Assert.IsFalse(a.Equals(b));
+            Assert.IsFalse(a.Equals(b));
         }
     }
 }
