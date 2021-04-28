@@ -10,8 +10,10 @@ using System.Net.Mail;
 using System.Windows.Forms;
 using System.Security;
 using InvoiceGen.View;
-using InvoiceGen.Model.Repository;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models;
+using InvoiceGen.Models.Repository;
+using InvoiceGen.Models.ObjectModel;
+using InvoiceGen.Presenters;
 
 namespace InvoiceGen.Presenter
 {
@@ -474,42 +476,43 @@ namespace InvoiceGen.Presenter
                 bool exists = this._repo.InvoiceWithTitleExists(title);
                 if (exists)
                 {
+                    // invoice with this title already exists
+                    // tell the user via a dialog
                     this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
 
                     ReenableControlsAfterOperationCompletedOrAborted();
-
                     return;
                 }
             }
 
             // show send email dialog
-            using (EmailWindow emailDialog = new EmailWindow(title))
+            EmailWindowPresenter emailWindowPresenter = new EmailWindowPresenter(new EmailWindow(title, Configuration.INVALID_INPUT_COLOUR, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress),
+                                                                                 new EmailModel(Configuration.INVALID_INPUT_COLOUR));
+            DialogResult emailDialogResult = emailWindowPresenter.ShowDialog();
+            // send email, or cancel
+            if (emailDialogResult == DialogResult.OK)
             {
-                DialogResult emailDialogResult = emailDialog.ShowDialog();
-                if (emailDialogResult == DialogResult.OK)
-                {
-                    // send email
-                    SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
-                    ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
-                    excelWriter.AddItems(this._view.ItemsListEntries.ToList());
-                    SecureString password = emailDialog.Password;
-                    string from = emailDialog.From;
-                    string to = emailDialog.To;
-                    string cc = emailDialog.Cc;
-                    string bcc = emailDialog.Bcc;
-                    // do it on a background worker thread so the UI remains responsive
-                    BackgroundWorker sendEmailWorker = new BackgroundWorker();
-                    sendEmailWorker.DoWork += BeginSendEmail;
-                    sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email
-                    sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc });
-                }
-                else
-                {
-                    ReenableControlsAfterOperationCompletedOrAborted();
-
-                    return;
-                }
+                SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
+                ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
+                excelWriter.AddItems(this._view.ItemsListEntries.ToList());
+                SecureString password = emailWindowPresenter.View.Password;
+                string from = emailWindowPresenter.View.From;
+                string to = emailWindowPresenter.View.To;
+                string cc = emailWindowPresenter.View.Cc;
+                string bcc = emailWindowPresenter.View.Bcc;
+                // do it on a background worker thread so the UI remains responsive
+                BackgroundWorker sendEmailWorker = new BackgroundWorker();
+                sendEmailWorker.DoWork += BeginSendEmail;
+                sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email
+                sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc });
             }
+            else
+            {
+                ReenableControlsAfterOperationCompletedOrAborted();
+                return;
+            }
+            // dispose send email dialog
+            emailWindowPresenter.DisposeDialog();
         }
 
         private void BeginSendEmail(object sender, DoWorkEventArgs args)

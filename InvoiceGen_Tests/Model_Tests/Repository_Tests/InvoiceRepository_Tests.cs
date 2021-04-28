@@ -5,9 +5,9 @@ using NUnit;
 using NUnit.Framework;
 using FakeItEasy;
 using System.Linq;
-using InvoiceGen.Model.DataAccessLayer;
-using InvoiceGen.Model.ObjectModel;
-using InvoiceGen.Model.Repository;
+using InvoiceGen.Models.DataAccessLayer;
+using InvoiceGen.Models.ObjectModel;
+using InvoiceGen.Models.Repository;
 
 namespace InvoiceGen_Tests.Model_Tests.Repository_Tests
 {
@@ -19,7 +19,7 @@ namespace InvoiceGen_Tests.Model_Tests.Repository_Tests
         {
             // arrange
             var fakeService = A.Fake<IXmlService>();
-            InvoiceGen.Model.Repository.InvoiceRepository repo = new InvoiceGen.Model.Repository.InvoiceRepository(fakeService);
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
 
             // act
             repo.GetAllInvoices();

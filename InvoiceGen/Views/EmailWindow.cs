@@ -8,43 +8,101 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security;
-using InvoiceGen;
+using static InvoiceGen.Utils;
 
 namespace InvoiceGen.View
 {
-    public partial class EmailWindow : Form
+    public partial class EmailWindow : Form, IEmailWindow
     {
-        public SecureString Password { get; private set; }
-        public string From { get; private set; }
-        public string To { get; private set; }
-        public string Cc { get; private set; }
-        public string Bcc { get; private set; }
+        #region Properties
+        public SecureString Password
+        {
+            get
+            {
+                return ConvertToSecureString(this.textBox_pwd.Text);
+            }
+            private set { }
+        }
 
-        public Color InvalidInputColour { get; private set; }
+        private string _from;
+        public string From
+        {
+            get => this._from;
+            private set => this._from = value;
+        }
 
-        public EmailWindow(string title)
+        public string To
+        { 
+            get => this.textBox_To.Text;
+            private set => this.textBox_To.Text = value;
+        }
+
+        public string Cc
+        { 
+            get
+            {
+                return this.textBox_Cc.Text;
+            }
+            private set { }
+        }
+
+        public string Bcc
+        {
+            get
+            {
+                return this.textBox_Bcc.Text;
+            }
+            private set { }
+        }
+
+        public Color PwdFieldColour
+        {
+            get => this.textBox_pwd.BackColor;
+            set => this.textBox_pwd.BackColor = value;
+        }
+
+        public Color ToFieldColour
+        {
+            get => this.textBox_To.BackColor;
+            set => this.textBox_To.BackColor = value;
+        }
+
+        public Color CcFieldColour
+        {
+            get => this.textBox_Cc.BackColor;
+            set => this.textBox_Cc.BackColor = value;
+        }
+
+        public Color BccFieldColour
+        {
+            get => this.textBox_Bcc.BackColor;
+            set => this.textBox_Bcc.BackColor = value;
+        }
+
+        public bool SaveAndSendButtonEnabled
+        {
+            get => this.button_send.Enabled;
+            set => this.button_send.Enabled = value;
+        }
+        #endregion
+
+        public EmailWindow(string title, Color invalidInputColour, string senderAddress, string recipientAddress)
         {
             InitializeComponent();
 
-            this.InvalidInputColour = Configuration.INVALID_INPUT_COLOUR;
-
             this.button_send.Enabled = false;
 
-            this.textBox_To.Text = Configuration.RecipientEmailAddress;
+            this.To = recipientAddress;
             this.textBox_subject.Text = "Invoice: " + title;
-            this.From = Configuration.SenderEmailAddress;
+            this.From = senderAddress;
+            this.PwdFieldColour = invalidInputColour;
 
             // register event handlers
             this.button_cancel.Click += (sender, args) => { this.DialogResult = DialogResult.Cancel; };
             this.button_send.Click += (sender, args) => 
             {
-                this.Password = Utils.ConvertToSecureString(this.textBox_pwd.Text);
-                this.To = textBox_To.Text;
-                this.Cc = textBox_Cc.Text;
-                this.Bcc = textBox_Bcc.Text;
-
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                // fire the external event so the subscribed presenter can react
+                this.SaveAndSendButtonClicked?.Invoke(sender, args);
             };
             this.textBox_pwd.TextChanged += TextFieldTextChanged;
             this.textBox_To.TextChanged += TextFieldTextChanged;
@@ -52,10 +110,9 @@ namespace InvoiceGen.View
             this.textBox_Bcc.TextChanged += TextFieldTextChanged;
         }
 
-        #region UI event handlers
-        private void TextFieldTextChanged(object sender, EventArgs e)
+        #region Methods
+        public void ResetInputFieldColours()
         {
-            // remove any highlighting first
             foreach (Control control in this.Controls)
             {
                 if (control.GetType() == typeof(TextBox))
@@ -63,74 +120,39 @@ namespace InvoiceGen.View
                     control.ResetBackColor();
                 }
             }
+        }
 
-            // validate inputs
-            bool isValid = true;
-            isValid = isValid && !(string.IsNullOrEmpty(this.textBox_pwd.Text));
-            isValid = isValid && Utils.IsValidEmail(this.textBox_To.Text);
-            if (!string.IsNullOrEmpty(this.textBox_Cc.Text))
-            {
-                isValid = isValid && Utils.IsValidEmail(this.textBox_Cc.Text);
-            }
-            if (!string.IsNullOrEmpty(this.textBox_Bcc.Text))
-            {
-                isValid = isValid && Utils.IsValidEmail(this.textBox_Bcc.Text);
-            }
+        public void ResetPasswordFieldColour()
+        {
+            this.textBox_pwd.ResetBackColor();
+        }
 
-            // decide whether to enable the send button
-            this.button_send.Enabled = isValid;
+        public void ResetToFieldColour()
+        {
+            this.textBox_To.ResetBackColor();
+        }
 
-            // highlight any problematic fields
+        public void ResetCcFieldColour()
+        {
+            this.textBox_Cc.ResetBackColor();
+        }
 
-            if (!Utils.IsValidEmail(this.textBox_To.Text))
-            {
-                this.textBox_To.BackColor = this.InvalidInputColour;
-            }
-            else
-            {
-                this.textBox_To.ResetBackColor();
-            }
+        public void ResetBccFieldColour()
+        {
+            this.textBox_Bcc.ResetBackColor();
+        }
+        #endregion
 
-            if (!string.IsNullOrWhiteSpace(this.textBox_Cc.Text))
-            {
-                if (!Utils.IsValidEmail(this.textBox_Cc.Text))
-                {
-                    this.textBox_Cc.BackColor = this.InvalidInputColour;
-                }
-                else
-                {
-                    this.textBox_Cc.ResetBackColor();
-                }
-            }
-            else
-            {
-                this.textBox_Cc.ResetBackColor();
-            }
+        #region Events
+        public event EventHandler InputFieldTextChanged;
+        public event EventHandler SaveAndSendButtonClicked;
+        #endregion
 
-            if (!string.IsNullOrWhiteSpace(this.textBox_Bcc.Text))
-            {
-                if (!Utils.IsValidEmail(this.textBox_Bcc.Text))
-                {
-                    this.textBox_Bcc.BackColor = this.InvalidInputColour;
-                }
-                else
-                {
-                    this.textBox_Bcc.ResetBackColor();
-                }
-            }
-            else
-            {
-                this.textBox_Bcc.ResetBackColor();
-            }
-
-            if (String.IsNullOrWhiteSpace(this.textBox_pwd.Text))
-            {
-                this.textBox_pwd.BackColor = this.InvalidInputColour;
-            }
-            else
-            {
-                this.textBox_pwd.ResetBackColor();
-            }
+        #region UI event handlers
+        private void TextFieldTextChanged(object sender, EventArgs args)
+        {
+            // fire the external event so the subscribed presenter can react
+            this.InputFieldTextChanged?.Invoke(sender, args);
         }
         #endregion
     }

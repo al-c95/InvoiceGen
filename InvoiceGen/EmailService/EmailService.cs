@@ -10,7 +10,12 @@ using System.IO;
 
 namespace InvoiceGen
 {
-    public class EmailService
+    public interface IEmailService
+    {
+        void SendInvoice(string subject, string body, MemoryStream attachment);
+    }
+
+    public class EmailService : IEmailService
     {
         private MailAddress _fromAddress;
         private MailAddress _toAddress;
@@ -21,7 +26,7 @@ namespace InvoiceGen
         private SmtpClient _smtpClient;
 
         /// <summary>
-        /// Constructor. Reads from configuration.
+        /// Constructor. Reads SMTP information from configuration.
         /// </summary>
         public EmailService(SecureString password, string fromAddress, string toAddress, string ccAddress, string bccAddress)
         {
@@ -93,11 +98,11 @@ namespace InvoiceGen
             message.To.Add(_toAddress);
             if (!(this._ccAddress is null))
             {
-                message.CC.Add(_ccAddress);
+                message.CC.Add(this._ccAddress);
             }
             if (!(this._bccAddress is null))
             {
-                message.Bcc.Add(_bccAddress);
+                message.Bcc.Add(this._bccAddress);
             }
             message.Subject = subject;
             message.Body = body;
