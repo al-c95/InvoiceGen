@@ -8,6 +8,7 @@ NOTE: dates are in dd-mm-yyyy format.
 - support for writing email subjects and bodies, passwords entered by user
 ### Fixed
 - UI not updating correctly after sending email failed
+- button labels on send email window
 
 ## [1.1.0beta] - 19-03-2021
 ### Added
