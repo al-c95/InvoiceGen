@@ -55,6 +55,18 @@ namespace InvoiceGen.View
             private set { }
         }
 
+        public string Subject
+        {
+            get => this.textBox_subject.Text;
+            set => this.textBox_subject.Text = value;
+        }
+
+        public string Body
+        {
+            get => this.textBox_body.Text;
+            set => this.textBox_body.Text = value;
+        }
+
         public Color PwdFieldColour
         {
             get => this.textBox_pwd.BackColor;
@@ -83,6 +95,18 @@ namespace InvoiceGen.View
         {
             get => this.button_send.Enabled;
             set => this.button_send.Enabled = value;
+        }
+
+        public string SendButtonText
+        {
+            get => this.button_send.Text;
+            set => this.button_send.Text = value;
+        }
+
+        public string CancelButtonText
+        {
+            get => this.button_cancel.Text;
+            set => this.button_cancel.Text = value;
         }
         #endregion
 
