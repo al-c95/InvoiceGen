@@ -69,6 +69,7 @@
     <Compile Include="Models\ObjectModel\Invoice.cs" />
     <Compile Include="Models\ObjectModel\InvoiceItem.cs" />
     <Compile Include="Models\Repository\InvoiceRepository.cs" />
+    <Compile Include="Presenters\ConfigWindowPresenter.cs" />
     <Compile Include="Presenters\EmailWindowPresenter.cs" />
     <Compile Include="Presenters\MainPresenter.cs" />
     <Compile Include="Program.cs" />
@@ -93,6 +94,7 @@
       <DependentUpon>EmailWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ExcelWriter.cs" />
+    <Compile Include="Views\IConfigWindow.cs" />
     <Compile Include="Views\IEmailWindow.cs" />
     <Compile Include="Views\IMainWindow.cs" />
     <EmbeddedResource Include="MainWindow.resx">

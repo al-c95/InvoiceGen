@@ -31,7 +31,13 @@ namespace InvoiceGen
             // subscribe to UI events
             this.exitToolStripMenuItem.Click += ((sender, args) => Application.Exit());
             this.aboutToolStripMenuItem.Click += ((sender, args) => new AboutBox().Show());
-            this.configurationToolStripMenuItem.Click += ((sender, args) => new ConfigWindow().ShowDialog());
+            this.configurationToolStripMenuItem.Click += ((sender, args) => 
+            {
+                InvoiceGen.Presenters.ConfigWindowPresenter configWindowPresenter = new Presenters.ConfigWindowPresenter(new ConfigWindow(), 
+                                                                                                                         new InvoiceGen.Models.EmailModel(Configuration.INVALID_INPUT_COLOUR));
+                configWindowPresenter.ShowDialog();
+                configWindowPresenter.DisposeDialog();
+            });
             this.button_viewSelected.Click += Button_viewSelected_Click;
             this.button_updateRecords.Click += Button_updateRecords_Click;
             this.dataGridView_invoiceHistory.SelectionChanged += DataGridView_invoiceHistory_SelectionChanged;
