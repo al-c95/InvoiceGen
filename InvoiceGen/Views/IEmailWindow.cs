@@ -15,11 +15,15 @@ namespace InvoiceGen.View
         string To { get; }
         string Cc { get; }
         string Bcc { get; }
+        string Subject { get; set; }
+        string Body { get; set; }
         Color PwdFieldColour { get; set; }
         Color ToFieldColour { get; set; }
         Color CcFieldColour { get; set; }
         Color BccFieldColour { get; set; }
         bool SaveAndSendButtonEnabled { get; set; }
+        string SendButtonText { get; set; }
+        string CancelButtonText { get; set; }
 
         void ResetInputFieldColours();
         void ResetPasswordFieldColour();

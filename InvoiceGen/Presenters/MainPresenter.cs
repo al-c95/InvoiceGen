@@ -488,6 +488,17 @@ namespace InvoiceGen.Presenter
             // show send email dialog
             EmailWindowPresenter emailWindowPresenter = new EmailWindowPresenter(new EmailWindow(title, Configuration.INVALID_INPUT_COLOUR, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress),
                                                                                  new EmailModel(Configuration.INVALID_INPUT_COLOUR));
+            emailWindowPresenter.View.Subject = "Invoice: " + title; // set default email subject
+            if (this._view.CreatingNewInvoice)
+            {
+                emailWindowPresenter.View.SendButtonText = "Save and Send";
+                emailWindowPresenter.View.CancelButtonText = "Cancel Save and Send";
+            }
+            else
+            {
+                emailWindowPresenter.View.SendButtonText = "Send";
+                emailWindowPresenter.View.CancelButtonText = "Cancel Send";
+            }
             DialogResult emailDialogResult = emailWindowPresenter.ShowDialog();
             // send email, or cancel
             if (emailDialogResult == DialogResult.OK)
@@ -500,11 +511,13 @@ namespace InvoiceGen.Presenter
                 string to = emailWindowPresenter.View.To;
                 string cc = emailWindowPresenter.View.Cc;
                 string bcc = emailWindowPresenter.View.Bcc;
+                string subject = emailWindowPresenter.View.Subject;
+                string body = emailWindowPresenter.View.Body;
                 // do it on a background worker thread so the UI remains responsive
                 BackgroundWorker sendEmailWorker = new BackgroundWorker();
                 sendEmailWorker.DoWork += BeginSendEmail;
                 sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email
-                sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc });
+                sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc, subject, body });
             }
             else
             {
@@ -526,10 +539,12 @@ namespace InvoiceGen.Presenter
             string to = (string)arguments[4];
             string cc = (string)arguments[5];
             string bcc = (string)arguments[6];
+            string subject = (string)arguments[7];
+            string body = (string)arguments[8];
 
             // send email
             EmailService emailService = new EmailService(password, from, to, cc, bcc);
-            emailService.SendInvoice("Invoice: " + title, "", attachment);
+            emailService.SendInvoice(subject, body, attachment);
         }
 
         private void EndSendEmail(object sender, RunWorkerCompletedEventArgs args)
@@ -553,6 +568,7 @@ namespace InvoiceGen.Presenter
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
+                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
                 }
             }
             else
