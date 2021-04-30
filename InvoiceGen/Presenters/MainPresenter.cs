@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -592,7 +593,19 @@ namespace InvoiceGen.Presenter
             string outputDir = this._view.ShowFolderPickerDialog();
             if (outputDir == null)
             {
-                return;
+                if (this._view.CreatingNewInvoice)
+                {
+                    return;
+                }
+                else
+                {
+                    this._view.SaveAndEmailButtonEnabled = true;
+                    this._view.SaveAndExportXLButtonEnabled = true;
+                    this._view.CancelButtonEnabled = true;
+                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+
+                    return;
+                }
             }
 
             // now save
