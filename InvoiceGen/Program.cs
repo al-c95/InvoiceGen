@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
+using InvoiceGen.Models;
 using InvoiceGen.Models.DataAccessLayer;
 using InvoiceGen.Models.Repository;
 using InvoiceGen.Presenter;
@@ -25,8 +26,10 @@ namespace InvoiceGen
             var xmlFileHandler = new XmlFileHandler(Configuration.XML_FILE_PATH);
             var xmlService = new XmlService(xmlFileHandler, Configuration.DATE_FORMAT);
             var repository = new InvoiceRepository(xmlService);
-            var mainPresenter = new MainPresenter(mainWindow, repository);
+            var newInvoiceModel = new InvoiceModel();
 
+            var mainPresenter = new MainPresenter(mainWindow, repository, newInvoiceModel);
+           
             // load the configuration data
             Configuration.SenderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
             Configuration.SenderName = ConfigurationManager.AppSettings["SenderName"];

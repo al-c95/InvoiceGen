@@ -66,6 +66,7 @@
     <Compile Include="Models\DataAccessLayer\XmlFileHandler.cs" />
     <Compile Include="Models\DataAccessLayer\XmlService.cs" />
     <Compile Include="Models\EmailModel.cs" />
+    <Compile Include="Models\InvoiceModel.cs" />
     <Compile Include="Models\ObjectModel\Invoice.cs" />
     <Compile Include="Models\ObjectModel\InvoiceItem.cs" />
     <Compile Include="Models\Repository\InvoiceRepository.cs" />

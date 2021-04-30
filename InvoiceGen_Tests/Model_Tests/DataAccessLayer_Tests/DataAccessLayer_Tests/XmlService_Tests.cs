@@ -101,7 +101,7 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
             XmlService xmlService = new XmlService(fakeXmlFileHandler, "dd/MM/yyyy hh:mm:ss tt");
 
             // act/assert
-            Assert.Throws<System.ArgumentException>(delegate { xmlService.InsertInvoiceInXml(invoice); });
+            Assert.Throws<ArgumentException>(delegate { xmlService.InsertInvoiceInXml(invoice); });
         }
 
         [Test]
