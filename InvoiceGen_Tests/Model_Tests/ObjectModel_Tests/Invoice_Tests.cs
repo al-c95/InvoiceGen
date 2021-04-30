@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit;
 using NUnit.Framework;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen_Tests.Model_Tests.ObjectModel_Tests
 {

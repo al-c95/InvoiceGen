@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InvoiceGen.Model.ObjectModel
+namespace InvoiceGen.Models.ObjectModel
 {
     public class InvoiceItem 
     {

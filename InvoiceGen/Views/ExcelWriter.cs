@@ -7,7 +7,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.IO;
 using System.Drawing;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen.View
 {
@@ -86,7 +86,7 @@ namespace InvoiceGen.View
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
 
             namedStyle = _pck.Workbook.Styles.CreateNamedStyle(EVEN_ROW_STYLE_WITH_CURRENCY);
-            namedStyle.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            namedStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             colour = Color.FromArgb(255, 239, 239, 255);
             namedStyle.Style.Fill.BackgroundColor.SetColor(colour);
             namedStyle.Style.Numberformat.Format = "$#,##0.00";
