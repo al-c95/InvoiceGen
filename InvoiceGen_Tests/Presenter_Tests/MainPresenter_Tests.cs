@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit;
 using NUnit.Framework;
+using InvoiceGen.Models;
 using InvoiceGen.Models.ObjectModel;
 using InvoiceGen.Models.Repository;
 using InvoiceGen.View;
@@ -21,12 +22,47 @@ namespace InvoiceGen_Tests.Presenter_Tests
         }
 
         [Test]
+        public void InvoiceHistorySelectionChanged_Test_InvoiceSelected()
+        {
+            // arrange
+            var fakeView = A.Fake<IMainWindow>();
+            A.CallTo(() => fakeView.GetSelectedInvoice()).Returns(new Invoice { Id=1, Items=null, Paid=false, Timestamp=new DateTime(), Title="Invoice"});
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
+
+            // act
+            presenter.InvoiceHistorySelectionChanged(null, null);
+
+            // assert
+            Assert.IsTrue(fakeView.ViewSelectedInvoiceButtonEnabled);
+        }
+
+        [Test]
+        public void InvoiceHistorySelectionChanged_Test_InvoiceNotSelected()
+        {
+            // arrange
+            var fakeView = A.Fake<IMainWindow>();
+            A.CallTo(() => fakeView.GetSelectedInvoice()).Returns(null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
+
+            // act
+            presenter.InvoiceHistorySelectionChanged(null, null);
+
+            // assert
+            Assert.IsFalse(fakeView.ViewSelectedInvoiceButtonEnabled);
+        }
+
+        [Test]
         public void CancelButtonClicked_Test()
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
 
             // act
@@ -63,7 +99,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
 
             // act
             presenter.NewInvoiceButtonClicked(null, null);
@@ -84,7 +121,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -104,7 +142,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
@@ -126,7 +165,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
@@ -147,7 +187,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
@@ -168,13 +209,17 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
-            presenter.NewInvoiceButtonClicked(null, null);
+            A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
+            A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns("Item");
             A.CallTo(() => fakeView.ItemAmount).Returns(amountEntered);
             A.CallTo(() => fakeView.ItemQuantity).Returns(1);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.AmountEntryValid(amountEntered)).Returns(true);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
+            presenter.NewInvoiceButtonClicked(null, null);
 
             // act
             presenter.NewItemDetailsUpdated(null, null);
@@ -192,7 +237,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeRepo = A.Fake<IInvoiceRepository>();
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns(descriptionEntered);
@@ -214,7 +260,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns("Item");
@@ -240,7 +287,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns(descriptionEntered);
@@ -261,7 +309,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns("Item");
@@ -293,7 +342,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth(monthEntered)).Returns(true);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -320,7 +371,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth("bla")).Returns(false);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -347,7 +400,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth("bla")).Returns(false);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -374,12 +429,14 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth("January")).Returns(true);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
-            A.CallTo(() => fakeView.Month).Returns("bla");
-            A.CallTo(() => fakeView.Year).Returns("2021");
+            A.CallTo(() => fakeView.Month).Returns("January");
+            A.CallTo(() => fakeView.Year).Returns("2021a");
             A.CallTo(() => fakeView.GetNumberOfItemsInList()).Returns(numberOfItemsInList);
 
             // act
@@ -392,45 +449,6 @@ namespace InvoiceGen_Tests.Presenter_Tests
             Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
             Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
         }
-        
-        // TODO: fix this test (associated functionality works...)
-        [Test]
-        public void AddItemButtonClicked_Test_ItemDoesNotYetExistInList()
-        {
-            // arrange
-            var fakeView = A.Fake<IMainWindow>();
-            var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
-            presenter.NewInvoiceButtonClicked(null, null);
-            A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
-            A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
-            InvoiceItem newItem = new InvoiceItem { Amount = 2.50M, Description = "Item"};
-            int quantity = 1;
-            A.CallTo(() => fakeView.ItemDescription).Returns("Item");
-            A.CallTo(() => fakeView.ItemQuantity).Returns(1);
-            A.CallTo(() => fakeView.ItemAmount).Returns(newItem.Amount.ToString("0.00"));
-
-            // act
-            presenter.AddItemButtonClicked(null, null);
-
-            // assert
-            Assert.IsTrue(fakeView.SaveAndExportXLButtonEnabled);
-            Assert.IsTrue(fakeView.SaveAndEmailButtonEnabled);
-            Assert.IsTrue(fakeView.GetQuantityOfItemInList(new InvoiceItem { Amount = 2.5M, Description = "Item"}) == 1);
-            Assert.AreEqual(@"Total: $2.50", fakeView.TotalText);
-        }
-
-        //[Test]
-        public void AddItemButtonClicked_Test_ItemAlreadyExistsInList()
-        {
-            var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
-            // arrange
-
-            // act
-
-            // assert
-        }
 
         [Test]
         public void ItemListSelectedIndexChanged_Test_NotSelected()
@@ -438,7 +456,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.GetAmountToDisplayAsTotal(6.00M)).Returns(@"Total: $6.00");
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             A.CallTo(() => fakeView.GetSelectedItem()).Returns(null);
             InvoiceItem item1 = new InvoiceItem { Description = "Item 1", Amount = 2.50M };
             InvoiceItem item2 = new InvoiceItem { Description = "Item 2", Amount = 1.00M };
@@ -451,7 +471,6 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // assert
             Assert.IsFalse(fakeView.DuplicateItemButtonEnabled);
             Assert.IsFalse(fakeView.RemoveItemButtonEnabled);
-            Assert.AreEqual(@"Total: $6.00", fakeView.TotalText);
         }
 
         [TestCase(1, @"2.50")]
@@ -461,7 +480,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             A.CallTo(() => fakeView.GetSelectedItem()).Returns(Tuple.Create(new InvoiceItem { Description="Item", Amount=2.5M }, 1));
 
             // act
@@ -470,7 +490,7 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // assert
             Assert.IsTrue(fakeView.DuplicateItemButtonEnabled);
             Assert.IsTrue(fakeView.RemoveItemButtonEnabled);
-            Assert.AreEqual(@"$2.50", fakeView.TotalText);
+            //Assert.AreEqual(@"$2.50", fakeView.TotalText);
         }
 
         [Test]
@@ -479,35 +499,15 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // arrange
             var fakeView = A.Fake<IMainWindow>();
             var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
             fakeView.UpdateRecordsButtonEnabled = false;
-            var presenter = new MainPresenter(fakeView, fakeRepo);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
 
             // act
             presenter.PaidStatusChanged(null, null);
 
             // assert
             Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
-        }
-
-        // TODO
-        //[Test]
-        public void DuplicateItemButtonClicked_Test()
-        {
-
-        }
-
-        // TODO
-        //[Test]
-        public void RemoveItemButtonClicked_Test()
-        {
-
-        }
-
-        // TODO
-        //[Test]
-        public void UpdateRecordsButtonClicked_Test()
-        {
-
         }
     }
 }

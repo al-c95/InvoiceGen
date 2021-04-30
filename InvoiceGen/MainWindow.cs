@@ -12,6 +12,9 @@ using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen
 {
+    /// <summary>
+    /// Main window.
+    /// </summary>
     public partial class mainWindow : Form, IMainWindow
     {
         public bool CreatingNewInvoice { get; set; }
@@ -25,7 +28,6 @@ namespace InvoiceGen
         {
             InitializeComponent();
 
-            // set the window title
             this.WindowTitle = windowTitle;
 
             // subscribe to UI events
@@ -573,7 +575,10 @@ namespace InvoiceGen
             // fill the Months combobox
             comboBox_Month.Items.Clear();
             foreach (string m in months)
+            {
                 comboBox_Month.Items.Add(m);
+            }
+
             // and apply autocomplete
             comboBox_Month.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBox_Month.AutoCompleteSource = AutoCompleteSource.ListItems;
