@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,33 +11,34 @@ using System.Net.Mail;
 using System.Windows.Forms;
 using System.Security;
 using InvoiceGen.View;
-using InvoiceGen.Model.Repository;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models;
+using InvoiceGen.Models.Repository;
+using InvoiceGen.Models.ObjectModel;
+using InvoiceGen.Presenters;
 
 namespace InvoiceGen.Presenter
 {
     /// <summary>
-    /// Contains most of the logic which controls the UI, and interacts with the model.
+    /// Contains most of the logic which controls the main window UI, and interacts with the model.
     /// </summary>
     public class MainPresenter
     {
         // dependency injection
         public IMainWindow _view;
         public IInvoiceRepository _repo;
-
-        public readonly string[] Months = new string[] { "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December" };
+        public IInvoiceModel _InvoiceModel;
 
         /// <summary>
         /// Constructor with View and Model dependency injection.
         /// </summary>
         /// <param name="view"></param>
         /// <param name="repository"></param>
-        public MainPresenter(IMainWindow view, IInvoiceRepository repository)
+        public MainPresenter(IMainWindow view, IInvoiceRepository repository, IInvoiceModel invoiceModel)
         {
             // dependency injection
             this._view = view;
             this._repo = repository;
+            this._InvoiceModel = invoiceModel;
 
             // subscribe to the View's events
             this._view.InvoiceTypeSelected += InvoiceTypeSelected;
@@ -77,7 +79,7 @@ namespace InvoiceGen.Presenter
             this._view.UpdateRecordsButtonEnabled = false;
 
             // populate months combo box
-            this._view.PopulateMonthsComboBox(Months);
+            this._view.PopulateMonthsComboBox(this._InvoiceModel.ValidMonths);
 
             this._view.CreatingNewInvoice = true;
 
@@ -88,6 +90,9 @@ namespace InvoiceGen.Presenter
         #region View event handlers
         public void ViewSelectedInvoiceButtonClicked(object sender, EventArgs args)
         {
+            // clear everything first
+            this.CancelButtonClicked(null,null);
+
             // switch to the create or view invoice tab
             this._view.SelectedTabIndex = 0;
             this._view.CreatingNewInvoice = false;
@@ -100,32 +105,16 @@ namespace InvoiceGen.Presenter
             // grab the title of the invoice and determine its type, then display it
             Invoice selected = this._view.GetSelectedInvoice();
             string title = selected.Title;
-            bool startsWithMonth = false;
-            foreach (var m in Months)
+
+            // determine the invoice type (monthly vs custom), and display title accordingly
+            if (this._InvoiceModel.IsMonthlyInvoice(title))
             {
-                if (title.StartsWith(m))
-                {
-                    startsWithMonth = true;
-                }
-            }
-            if (startsWithMonth)
-            {
-                // check if it ends with a space followed by a year
-                if (Regex.IsMatch(title, @"[A-Za-z]+ \d+"))
-                {
-                    // a monthly invoice
-                    // split it by the space between month and year
-                    string[] split = title.Split(' ');
-                    this._view.Month = split[0];
-                    this._view.Year = split[1];
-                    this._view.RadioButtonMonthlyChecked = true;
-                }
-                else
-                {
-                    // a custom-title invoice
-                    this._view.CustomTitleText = title;
-                    this._view.RadioButtonCustomChecked = true;
-                }
+                // a monthly invoice
+                // split it by the space between month and year
+                string[] split = title.Split(' ');
+                this._view.Month = split[0];
+                this._view.Year = split[1];
+                this._view.RadioButtonMonthlyChecked = true;
             }
             else
             {
@@ -165,7 +154,7 @@ namespace InvoiceGen.Presenter
             }
 
             // update the total
-            string toDisplay = "Total: " + GetTotalAmountFromList().ToString("C2", new System.Globalization.CultureInfo("en-AU"));
+            string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
         }
 
@@ -218,14 +207,14 @@ namespace InvoiceGen.Presenter
         public void MonthlyInvoiceMonthYearUpdated(object sender, EventArgs args)
         {
             bool valid = true;
-            valid = valid && this.Months.Contains(this._view.Month);
+            valid = valid && this._InvoiceModel.IsValidMonth(this._view.Month);
             valid = valid && Int32.TryParse(this._view.Year, out int year);
 
             this._view.ItemDescriptionTextBoxEnabled = valid && this._view.CreatingNewInvoice;
             this._view.ItemAmountTextBoxEnabled = valid && this._view.CreatingNewInvoice;
             this._view.ItemQuantityUpDownEnabled = valid && this._view.CreatingNewInvoice;
 
-            if (Months.Contains(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
+            if (this._InvoiceModel.IsValidMonth(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
             {
                 this._view.SaveAndEmailButtonEnabled = true;
                 this._view.SaveAndExportXLButtonEnabled = true;
@@ -285,7 +274,7 @@ namespace InvoiceGen.Presenter
 
                 this._view.CustomTitleTextBoxEnabled = false;
 
-                if (Months.Contains(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
+                if (this._InvoiceModel.IsValidMonth(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
                 {
                     this._view.SaveAndEmailButtonEnabled = this._view.CreatingNewInvoice;
                     this._view.SaveAndExportXLButtonEnabled = this._view.CreatingNewInvoice;
@@ -364,7 +353,7 @@ namespace InvoiceGen.Presenter
             // perform validation of entered item details
             bool valid = true;
             valid = valid && !string.IsNullOrWhiteSpace(this._view.ItemDescription);
-            valid = valid && Regex.IsMatch(this._view.ItemAmount, @"\d+\.(\d{2})");
+            valid = valid && this._InvoiceModel.AmountEntryValid(this._view.ItemAmount);
             valid = valid && this._view.ItemQuantity > 0;
 
             // enable or disable "Add Item" button and the items list
@@ -394,7 +383,7 @@ namespace InvoiceGen.Presenter
             }
 
             // update the total
-            string toDisplay = "Total: " + GetTotalAmountFromList().ToString("C2", new System.Globalization.CultureInfo("en-AU"));
+            string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
 
             EnableOrDisableSaveButtons();
@@ -409,13 +398,13 @@ namespace InvoiceGen.Presenter
             // display total or current item amount
             if (this._view.GetSelectedItem() == null)
             {
-                string toDisplay = "Total: " + GetAmountInDollarsToDisplay(GetTotalAmountFromList()); 
+                string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
                 this._view.TotalText = toDisplay;
             }
             else
             {
                 var selectedListItem = this._view.GetSelectedItem();
-                string toDisplay = GetAmountInDollarsToDisplay(selectedListItem.Item1.Amount);
+                string toDisplay = this._InvoiceModel.GetAmountToDisplay(selectedListItem.Item1.Amount);
                 this._view.TotalText = toDisplay;
             }
         }
@@ -427,7 +416,7 @@ namespace InvoiceGen.Presenter
             this._view.UpdateQuantityInItemsList(selectedListItem.Item1, selectedListItem.Item2*2);
 
             // update the total
-            string toDisplay = "Total: " + GetAmountInDollarsToDisplay(GetTotalAmountFromList());
+            string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
 
             EnableOrDisableSaveButtons();
@@ -440,7 +429,7 @@ namespace InvoiceGen.Presenter
             this._view.RemoveItemFromList(selectedListItem.Item1);
 
             // update the total
-            string toDisplay = "Total: " + GetAmountInDollarsToDisplay(GetTotalAmountFromList());
+            string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
 
             EnableOrDisableSaveButtons();
@@ -474,42 +463,56 @@ namespace InvoiceGen.Presenter
                 bool exists = this._repo.InvoiceWithTitleExists(title);
                 if (exists)
                 {
+                    // invoice with this title already exists
+                    // tell the user via a dialog
                     this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
 
                     ReenableControlsAfterOperationCompletedOrAborted();
-
                     return;
                 }
             }
 
             // show send email dialog
-            using (EmailWindow emailDialog = new EmailWindow(title))
+            EmailWindowPresenter emailWindowPresenter = new EmailWindowPresenter(new EmailWindow(title, Configuration.INVALID_INPUT_COLOUR, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress),
+                                                                                 new EmailModel(Configuration.INVALID_INPUT_COLOUR));
+            emailWindowPresenter.View.Subject = "Invoice: " + title; // set default email subject
+            if (this._view.CreatingNewInvoice)
             {
-                DialogResult emailDialogResult = emailDialog.ShowDialog();
-                if (emailDialogResult == DialogResult.OK)
-                {
-                    // send email
-                    SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
-                    ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
-                    excelWriter.AddItems(this._view.ItemsListEntries.ToList());
-                    SecureString password = emailDialog.Password;
-                    string from = emailDialog.From;
-                    string to = emailDialog.To;
-                    string cc = emailDialog.Cc;
-                    string bcc = emailDialog.Bcc;
-                    // do it on a background worker thread so the UI remains responsive
-                    BackgroundWorker sendEmailWorker = new BackgroundWorker();
-                    sendEmailWorker.DoWork += BeginSendEmail;
-                    sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email
-                    sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc });
-                }
-                else
-                {
-                    ReenableControlsAfterOperationCompletedOrAborted();
-
-                    return;
-                }
+                emailWindowPresenter.View.SendButtonText = "Save and Send";
+                emailWindowPresenter.View.CancelButtonText = "Cancel Save and Send";
             }
+            else
+            {
+                emailWindowPresenter.View.SendButtonText = "Send";
+                emailWindowPresenter.View.CancelButtonText = "Cancel Send";
+            }
+            DialogResult emailDialogResult = emailWindowPresenter.ShowDialog();
+            // send email, or cancel
+            if (emailDialogResult == DialogResult.OK)
+            {
+                SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
+                ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
+                excelWriter.AddItems(this._view.ItemsListEntries.ToList());
+                SecureString password = emailWindowPresenter.View.Password;
+                string from = emailWindowPresenter.View.From;
+                string to = emailWindowPresenter.View.To;
+                string cc = emailWindowPresenter.View.Cc;
+                string bcc = emailWindowPresenter.View.Bcc;
+                string subject = emailWindowPresenter.View.Subject;
+                string body = emailWindowPresenter.View.Body;
+                // do it on a background worker thread so the UI remains responsive
+                BackgroundWorker sendEmailWorker = new BackgroundWorker();
+                sendEmailWorker.DoWork += BeginSendEmail;
+                sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email
+                sendEmailWorker.RunWorkerAsync(new object[] { title, excelWriter.CloseAndGetMemoryStream(), password, from, to, cc, bcc, subject, body });
+            }
+            else
+            {
+                ReenableControlsAfterOperationCompletedOrAborted();
+                return;
+            }
+            // dispose send email dialog
+            emailWindowPresenter.DisposeDialog();
         }
 
         private void BeginSendEmail(object sender, DoWorkEventArgs args)
@@ -523,10 +526,12 @@ namespace InvoiceGen.Presenter
             string to = (string)arguments[4];
             string cc = (string)arguments[5];
             string bcc = (string)arguments[6];
+            string subject = (string)arguments[7];
+            string body = (string)arguments[8];
 
             // send email
             EmailService emailService = new EmailService(password, from, to, cc, bcc);
-            emailService.SendInvoice("Invoice: " + title, "", attachment);
+            emailService.SendInvoice(subject, body, attachment);
         }
 
         private void EndSendEmail(object sender, RunWorkerCompletedEventArgs args)
@@ -550,19 +555,20 @@ namespace InvoiceGen.Presenter
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
+                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
                 }
             }
             else
             {
-                // it failed
-                // tell the user via a dialog and reset the status bar
-                this._view.ShowErrorDialogOk("Error sending email");
-                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
-                
-                ReenableControlsAfterOperationCompletedOrAborted();
+                if (error is SmtpException)
+                {
+                    // it failed
+                    // tell the user via a dialog and reset the status bar
+                    this._view.ShowErrorDialogOk("Error sending email");
+                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
 
-                if (!(error is SmtpException))
-                    throw error;
+                    ReenableControlsAfterOperationCompletedOrAborted();
+                }
             }
         }
 
@@ -587,7 +593,19 @@ namespace InvoiceGen.Presenter
             string outputDir = this._view.ShowFolderPickerDialog();
             if (outputDir == null)
             {
-                return;
+                if (this._view.CreatingNewInvoice)
+                {
+                    return;
+                }
+                else
+                {
+                    this._view.SaveAndEmailButtonEnabled = true;
+                    this._view.SaveAndExportXLButtonEnabled = true;
+                    this._view.CancelButtonEnabled = true;
+                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+
+                    return;
+                }
             }
 
             // now save
@@ -604,19 +622,6 @@ namespace InvoiceGen.Presenter
             }
         }
         #endregion
-
-        private decimal GetTotalAmountFromList()
-        {
-            decimal total = 0;
-            foreach (var listItem in this._view.ItemsListEntries)
-            {
-                total += listItem.Item1.Amount * listItem.Item2;
-            }
-
-            return total;
-        }
-
-        private string GetAmountInDollarsToDisplay(decimal amount) => amount.ToString("C2", new System.Globalization.CultureInfo("en-AU"));
 
         private void EnableOrDisableSaveButtons()
         {

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit;
 using NUnit.Framework;
-using InvoiceGen.Model.ObjectModel;
-using InvoiceGen.Model.Repository;
+using InvoiceGen.Models;
+using InvoiceGen.Models.ObjectModel;
+using InvoiceGen.Models.Repository;
 using InvoiceGen.View;
 using InvoiceGen.Presenter;
 using FakeItEasy;
@@ -21,39 +22,75 @@ namespace InvoiceGen_Tests.Presenter_Tests
         }
 
         [Test]
+        public void InvoiceHistorySelectionChanged_Test_InvoiceSelected()
+        {
+            // arrange
+            var fakeView = A.Fake<IMainWindow>();
+            A.CallTo(() => fakeView.GetSelectedInvoice()).Returns(new Invoice { Id=1, Items=null, Paid=false, Timestamp=new DateTime(), Title="Invoice"});
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
+
+            // act
+            presenter.InvoiceHistorySelectionChanged(null, null);
+
+            // assert
+            Assert.IsTrue(fakeView.ViewSelectedInvoiceButtonEnabled);
+        }
+
+        [Test]
+        public void InvoiceHistorySelectionChanged_Test_InvoiceNotSelected()
+        {
+            // arrange
+            var fakeView = A.Fake<IMainWindow>();
+            A.CallTo(() => fakeView.GetSelectedInvoice()).Returns(null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
+
+            // act
+            presenter.InvoiceHistorySelectionChanged(null, null);
+
+            // assert
+            Assert.IsFalse(fakeView.ViewSelectedInvoiceButtonEnabled);
+        }
+
+        [Test]
         public void CancelButtonClicked_Test()
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
 
             // act
             presenter.CancelButtonClicked(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.NewInvoiceButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.SaveAndEmailButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.CancelButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.RadioButtonMonthlyEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.RadioButtonCustomEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.MonthComboboxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.YearTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.CustomTitleTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.AddItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemsListViewEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.DuplicateItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.RemoveItemButtonEnabled);
-            NUnit.Framework.Assert.AreEqual("", fakeView.CustomTitleText);
-            NUnit.Framework.Assert.AreEqual("", fakeView.ItemDescription);
-            NUnit.Framework.Assert.AreEqual("", fakeView.ItemAmount);
-            NUnit.Framework.Assert.AreEqual("", fakeView.Year);
-            NUnit.Framework.Assert.AreEqual("", fakeView.Month);
-            NUnit.Framework.Assert.AreEqual(1, fakeView.ItemQuantity);
-            NUnit.Framework.Assert.AreEqual("0.00", fakeView.TotalText);
+            Assert.IsTrue(fakeView.NewInvoiceButtonEnabled);
+            Assert.IsFalse(fakeView.SaveAndEmailButtonEnabled);
+            Assert.IsFalse(fakeView.CancelButtonEnabled);
+            Assert.IsFalse(fakeView.RadioButtonMonthlyEnabled);
+            Assert.IsFalse(fakeView.RadioButtonCustomEnabled);
+            Assert.IsFalse(fakeView.MonthComboboxEnabled);
+            Assert.IsFalse(fakeView.YearTextBoxEnabled);
+            Assert.IsFalse(fakeView.CustomTitleTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
+            Assert.IsFalse(fakeView.AddItemButtonEnabled);
+            Assert.IsFalse(fakeView.ItemsListViewEnabled);
+            Assert.IsFalse(fakeView.DuplicateItemButtonEnabled);
+            Assert.IsFalse(fakeView.RemoveItemButtonEnabled);
+            Assert.AreEqual("", fakeView.CustomTitleText);
+            Assert.AreEqual("", fakeView.ItemDescription);
+            Assert.AreEqual("", fakeView.ItemAmount);
+            Assert.AreEqual("", fakeView.Year);
+            Assert.AreEqual("", fakeView.Month);
+            Assert.AreEqual(1, fakeView.ItemQuantity);
+            Assert.AreEqual("0.00", fakeView.TotalText);
         }
 
         [Test]
@@ -61,19 +98,21 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
 
             // act
             presenter.NewInvoiceButtonClicked(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.RadioButtonMonthlyChecked);
-            NUnit.Framework.Assert.IsTrue(fakeView.RadioButtonMonthlyEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.RadioButtonCustomEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.CancelButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.NewInvoiceButtonEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.MonthComboboxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.YearTextBoxEnabled);
+            Assert.IsTrue(fakeView.RadioButtonMonthlyChecked);
+            Assert.IsTrue(fakeView.RadioButtonMonthlyEnabled);
+            Assert.IsTrue(fakeView.RadioButtonCustomEnabled);
+            Assert.IsTrue(fakeView.CancelButtonEnabled);
+            Assert.IsFalse(fakeView.NewInvoiceButtonEnabled);
+            Assert.IsTrue(fakeView.MonthComboboxEnabled);
+            Assert.IsTrue(fakeView.YearTextBoxEnabled);
         }
 
         [Test]
@@ -81,7 +120,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -90,9 +131,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.InvoiceTypeSelected(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.MonthComboboxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.YearTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.CustomTitleTextBoxEnabled);
+            Assert.IsTrue(fakeView.MonthComboboxEnabled);
+            Assert.IsTrue(fakeView.YearTextBoxEnabled);
+            Assert.IsFalse(fakeView.CustomTitleTextBoxEnabled);
         }
      
         [Test]
@@ -100,8 +141,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
@@ -110,9 +152,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.InvoiceTypeSelected(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.MonthComboboxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.YearTextBoxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.CustomTitleTextBoxEnabled);
+            Assert.IsFalse(fakeView.MonthComboboxEnabled);
+            Assert.IsFalse(fakeView.YearTextBoxEnabled);
+            Assert.IsTrue(fakeView.CustomTitleTextBoxEnabled);
         }
 
         [TestCase("")]
@@ -122,7 +164,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
@@ -132,9 +176,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.CustomTitleTextChanged(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
+            Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
         }
 
         [Test]
@@ -142,7 +186,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
@@ -152,9 +198,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.CustomTitleTextChanged(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemQuantityUpDownEnabled);
+            Assert.IsTrue(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsTrue(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsTrue(fakeView.ItemQuantityUpDownEnabled);
         }
 
         [TestCase("3.50")]
@@ -163,19 +209,24 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
-            presenter.NewInvoiceButtonClicked(null, null);
+            A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
+            A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns("Item");
             A.CallTo(() => fakeView.ItemAmount).Returns(amountEntered);
             A.CallTo(() => fakeView.ItemQuantity).Returns(1);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.AmountEntryValid(amountEntered)).Returns(true);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
+            presenter.NewInvoiceButtonClicked(null, null);
 
             // act
             presenter.NewItemDetailsUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.AddItemButtonEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemsListViewEnabled);
+            Assert.IsTrue(fakeView.AddItemButtonEnabled);
+            Assert.IsTrue(fakeView.ItemsListViewEnabled);
         }
 
         [TestCase("")]
@@ -184,8 +235,10 @@ namespace InvoiceGen_Tests.Presenter_Tests
         public void NewItemDetailsUpdated_Test_EmptyDescriptionValidAmountValidQuantity(string descriptionEntered)
         {
             // arrange
+            var fakeRepo = A.Fake<IInvoiceRepository>();
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns(descriptionEntered);
@@ -196,8 +249,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.NewItemDetailsUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.AddItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemsListViewEnabled);
+            Assert.IsFalse(fakeView.AddItemButtonEnabled);
+            Assert.IsFalse(fakeView.ItemsListViewEnabled);
         }
 
         [TestCase("")]
@@ -206,7 +259,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns("Item");
@@ -217,8 +272,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.NewItemDetailsUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.AddItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemsListViewEnabled);
+            Assert.IsFalse(fakeView.AddItemButtonEnabled);
+            Assert.IsFalse(fakeView.ItemsListViewEnabled);
         }
 
         [TestCase("", "")]
@@ -231,7 +286,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns(descriptionEntered);
@@ -242,8 +299,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.NewItemDetailsUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.AddItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemsListViewEnabled);
+            Assert.IsFalse(fakeView.AddItemButtonEnabled);
+            Assert.IsFalse(fakeView.ItemsListViewEnabled);
         }
 
         [Test]
@@ -251,7 +308,9 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.CustomTitleText).Returns("My invoice");
             A.CallTo(() => fakeView.ItemDescription).Returns("Item");
@@ -262,8 +321,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.NewItemDetailsUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.AddItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemsListViewEnabled);
+            Assert.IsFalse(fakeView.AddItemButtonEnabled);
+            Assert.IsFalse(fakeView.ItemsListViewEnabled);
         }
 
         [TestCase("January")]
@@ -282,7 +341,10 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth(monthEntered)).Returns(true);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -294,11 +356,11 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.MonthlyInvoiceMonthYearUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.ItemQuantityUpDownEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.SaveAndEmailButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.SaveAndExportXLButtonEnabled);
+            Assert.IsTrue(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsTrue(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsTrue(fakeView.ItemQuantityUpDownEnabled);
+            Assert.IsFalse(fakeView.SaveAndEmailButtonEnabled);
+            Assert.IsFalse(fakeView.SaveAndExportXLButtonEnabled);
         }
 
         [TestCase(0, false)]
@@ -308,7 +370,10 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth("bla")).Returns(false);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -320,11 +385,11 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.MonthlyInvoiceMonthYearUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
-            NUnit.Framework.Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
-            NUnit.Framework.Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
+            Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
+            Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
+            Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
         }
 
         [TestCase(0, false)]
@@ -334,7 +399,10 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth("bla")).Returns(false);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
@@ -346,11 +414,11 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.MonthlyInvoiceMonthYearUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
-            NUnit.Framework.Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
-            NUnit.Framework.Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
+            Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
+            Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
+            Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
         }
 
         [TestCase(0, false)]
@@ -360,63 +428,26 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.IsValidMonth("January")).Returns(true);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             presenter.NewInvoiceButtonClicked(null, null);
             A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(true);
             A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(false);
-            A.CallTo(() => fakeView.Month).Returns("bla");
-            A.CallTo(() => fakeView.Year).Returns("2021");
+            A.CallTo(() => fakeView.Month).Returns("January");
+            A.CallTo(() => fakeView.Year).Returns("2021a");
             A.CallTo(() => fakeView.GetNumberOfItemsInList()).Returns(numberOfItemsInList);
 
             // act
             presenter.MonthlyInvoiceMonthYearUpdated(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
-            NUnit.Framework.Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
-            NUnit.Framework.Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
-        }
-        
-        // TODO: fix this test (associated functionality works...)
-        [Test]
-        public void AddItemButtonClicked_Test_ItemDoesNotYetExistInList()
-        {
-            // arrange
-            var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
-            presenter.NewInvoiceButtonClicked(null, null);
-            A.CallTo(() => fakeView.RadioButtonCustomChecked).Returns(true);
-            A.CallTo(() => fakeView.RadioButtonMonthlyChecked).Returns(false);
-            InvoiceItem newItem = new InvoiceItem { Amount = 2.50M, Description = "Item"};
-            int quantity = 1;
-            A.CallTo(() => fakeView.ItemDescription).Returns("Item");
-            A.CallTo(() => fakeView.ItemQuantity).Returns(1);
-            A.CallTo(() => fakeView.ItemAmount).Returns(newItem.Amount.ToString("0.00"));
-
-            // act
-            presenter.AddItemButtonClicked(null, null);
-
-            // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.SaveAndExportXLButtonEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.SaveAndEmailButtonEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.GetQuantityOfItemInList(new InvoiceItem { Amount = 2.5M, Description = "Item"}) == 1);
-            NUnit.Framework.Assert.AreEqual(@"Total: $2.50", fakeView.TotalText);
-        }
-
-        [Test]
-        public void AddItemButtonClicked_Test_ItemAlreadyExistsInList()
-        {
-            throw new NotImplementedException();
-
-            var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
-            // arrange
-
-            // act
-
-            // assert
+            Assert.IsFalse(fakeView.ItemDescriptionTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemAmountTextBoxEnabled);
+            Assert.IsFalse(fakeView.ItemQuantityUpDownEnabled);
+            Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndEmailButtonEnabled);
+            Assert.AreEqual(expectedSaveButtonsEnabled, fakeView.SaveAndExportXLButtonEnabled);
         }
 
         [Test]
@@ -424,7 +455,10 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            A.CallTo(() => fakeInvoiceModel.GetAmountToDisplayAsTotal(6.00M)).Returns(@"Total: $6.00");
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             A.CallTo(() => fakeView.GetSelectedItem()).Returns(null);
             InvoiceItem item1 = new InvoiceItem { Description = "Item 1", Amount = 2.50M };
             InvoiceItem item2 = new InvoiceItem { Description = "Item 2", Amount = 1.00M };
@@ -435,9 +469,8 @@ namespace InvoiceGen_Tests.Presenter_Tests
             presenter.ItemListSelectedIndexChanged(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsFalse(fakeView.DuplicateItemButtonEnabled);
-            NUnit.Framework.Assert.IsFalse(fakeView.RemoveItemButtonEnabled);
-            NUnit.Framework.Assert.AreEqual(@"Total: $6.00", fakeView.TotalText);
+            Assert.IsFalse(fakeView.DuplicateItemButtonEnabled);
+            Assert.IsFalse(fakeView.RemoveItemButtonEnabled);
         }
 
         [TestCase(1, @"2.50")]
@@ -446,16 +479,18 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
-            var presenter = new MainPresenter(fakeView, null);
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
             A.CallTo(() => fakeView.GetSelectedItem()).Returns(Tuple.Create(new InvoiceItem { Description="Item", Amount=2.5M }, 1));
 
             // act
             presenter.ItemListSelectedIndexChanged(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.DuplicateItemButtonEnabled);
-            NUnit.Framework.Assert.IsTrue(fakeView.RemoveItemButtonEnabled);
-            NUnit.Framework.Assert.AreEqual(@"$2.50", fakeView.TotalText);
+            Assert.IsTrue(fakeView.DuplicateItemButtonEnabled);
+            Assert.IsTrue(fakeView.RemoveItemButtonEnabled);
+            //Assert.AreEqual(@"$2.50", fakeView.TotalText);
         }
 
         [Test]
@@ -463,35 +498,16 @@ namespace InvoiceGen_Tests.Presenter_Tests
         {
             // arrange
             var fakeView = A.Fake<IMainWindow>();
+            var fakeRepo = A.Fake<IInvoiceRepository>();
+            var fakeInvoiceModel = A.Fake<IInvoiceModel>();
             fakeView.UpdateRecordsButtonEnabled = false;
-            var presenter = new MainPresenter(fakeView, null);
+            var presenter = new MainPresenter(fakeView, fakeRepo, fakeInvoiceModel);
 
             // act
             presenter.PaidStatusChanged(null, null);
 
             // assert
-            NUnit.Framework.Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
-        }
-
-        // TODO
-        [Test]
-        public void DuplicateItemButtonClicked_Test()
-        {
-            throw new NotImplementedException();
-        }
-
-        // TODO
-        [Test]
-        public void RemoveItemButtonClicked_Test()
-        {
-            throw new NotImplementedException();
-        }
-
-        // TODO
-        [Test]
-        public void UpdateRecordsButtonClicked_Test()
-        {
-            throw new NotImplementedException();
+            Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Data;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen.View
 {

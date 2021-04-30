@@ -8,10 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using InvoiceGen.View;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen
 {
+    /// <summary>
+    /// Main window.
+    /// </summary>
     public partial class mainWindow : Form, IMainWindow
     {
         public bool CreatingNewInvoice { get; set; }
@@ -25,13 +28,18 @@ namespace InvoiceGen
         {
             InitializeComponent();
 
-            // set the window title
             this.WindowTitle = windowTitle;
 
             // subscribe to UI events
             this.exitToolStripMenuItem.Click += ((sender, args) => Application.Exit());
             this.aboutToolStripMenuItem.Click += ((sender, args) => new AboutBox().Show());
-            this.configurationToolStripMenuItem.Click += ((sender, args) => new ConfigWindow().ShowDialog());
+            this.configurationToolStripMenuItem.Click += ((sender, args) => 
+            {
+                InvoiceGen.Presenters.ConfigWindowPresenter configWindowPresenter = new Presenters.ConfigWindowPresenter(new ConfigWindow(), 
+                                                                                                                         new InvoiceGen.Models.EmailModel(Configuration.INVALID_INPUT_COLOUR));
+                configWindowPresenter.ShowDialog();
+                configWindowPresenter.DisposeDialog();
+            });
             this.button_viewSelected.Click += Button_viewSelected_Click;
             this.button_updateRecords.Click += Button_updateRecords_Click;
             this.dataGridView_invoiceHistory.SelectionChanged += DataGridView_invoiceHistory_SelectionChanged;
@@ -567,7 +575,10 @@ namespace InvoiceGen
             // fill the Months combobox
             comboBox_Month.Items.Clear();
             foreach (string m in months)
+            {
                 comboBox_Month.Items.Add(m);
+            }
+
             // and apply autocomplete
             comboBox_Month.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBox_Month.AutoCompleteSource = AutoCompleteSource.ListItems;

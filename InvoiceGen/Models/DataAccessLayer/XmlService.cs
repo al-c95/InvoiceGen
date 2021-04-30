@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.ObjectModel;
 
-namespace InvoiceGen.Model.DataAccessLayer
+namespace InvoiceGen.Models.DataAccessLayer
 {
     public interface IXmlService
     {

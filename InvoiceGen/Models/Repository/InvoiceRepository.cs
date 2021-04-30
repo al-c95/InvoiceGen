@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using InvoiceGen.Model.DataAccessLayer;
-using InvoiceGen.Model.ObjectModel;
+using InvoiceGen.Models.DataAccessLayer;
+using InvoiceGen.Models.ObjectModel;
 
-namespace InvoiceGen.Model.Repository
+namespace InvoiceGen.Models.Repository
 {
     public interface IInvoiceRepository
     {

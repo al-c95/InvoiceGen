@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace InvoiceGen.Model.DataAccessLayer
+namespace InvoiceGen.Models.DataAccessLayer
 {
     public interface IXmlFileHandler
     {

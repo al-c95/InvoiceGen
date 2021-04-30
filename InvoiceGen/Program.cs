@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
-using InvoiceGen.Model.DataAccessLayer;
-using InvoiceGen.Model.Repository;
-using InvoiceGen.View;
+using InvoiceGen.Models;
+using InvoiceGen.Models.DataAccessLayer;
+using InvoiceGen.Models.Repository;
 using InvoiceGen.Presenter;
 
 namespace InvoiceGen
@@ -26,8 +26,10 @@ namespace InvoiceGen
             var xmlFileHandler = new XmlFileHandler(Configuration.XML_FILE_PATH);
             var xmlService = new XmlService(xmlFileHandler, Configuration.DATE_FORMAT);
             var repository = new InvoiceRepository(xmlService);
-            var mainPresenter = new MainPresenter(mainWindow, repository);
+            var newInvoiceModel = new InvoiceModel();
 
+            var mainPresenter = new MainPresenter(mainWindow, repository, newInvoiceModel);
+           
             // load the configuration data
             Configuration.SenderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
             Configuration.SenderName = ConfigurationManager.AppSettings["SenderName"];
@@ -48,6 +50,7 @@ namespace InvoiceGen
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
 
+                // TODO: log the crash
                 // TODO: show an error dialog/window
             }
         }
