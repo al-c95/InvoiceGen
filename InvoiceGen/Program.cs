@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text;
 using System.Windows.Forms;
 using System.Configuration;
+using System.IO;
 using InvoiceGen.Models;
 using InvoiceGen.Models.DataAccessLayer;
 using InvoiceGen.Models.Repository;
@@ -29,7 +31,7 @@ namespace InvoiceGen
             var newInvoiceModel = new InvoiceModel();
 
             var mainPresenter = new MainPresenter(mainWindow, repository, newInvoiceModel);
-           
+
             // load the configuration data
             Configuration.SenderEmailAddress = ConfigurationManager.AppSettings["senderEmail"];
             Configuration.SenderName = ConfigurationManager.AppSettings["SenderName"];
@@ -46,12 +48,23 @@ namespace InvoiceGen
             }
             catch (Exception ex)
             {
-                // useful for debugging
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
 
-                // TODO: log the crash
-                // TODO: show an error dialog/window
+                // show an error dialog and create crashlog
+                string crashlogFilePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\crash.log";
+                if (File.Exists(crashlogFilePath))
+                {
+                    File.Delete(crashlogFilePath);
+                }
+                using (FileStream fs = File.Create(crashlogFilePath))
+                {
+                    byte[] message = new UTF8Encoding(true).GetBytes(ex.Message);
+                    fs.Write(message, 0, message.Length);
+                    byte[] author = new UTF8Encoding(true).GetBytes(ex.StackTrace);
+                    fs.Write(author, 0, author.Length);
+                }
+                MessageBox.Show("An unexpected error occurred: \r\r" + ex.Message + "\r\n" + ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
