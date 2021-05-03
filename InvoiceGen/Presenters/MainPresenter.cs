@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -127,16 +126,7 @@ namespace InvoiceGen.Presenter
             this._view.SaveAndEmailButtonText = "Email";
             this._view.SaveAndExportXLSXButtonText = "Export XLSX";
 
-            // enable or disable appropriate controls
-            this._view.RadioButtonCustomEnabled = false;
-            this._view.RadioButtonMonthlyEnabled = false;
-            this._view.MonthComboboxEnabled = false;
-            this._view.YearTextBoxEnabled = false;
-            this._view.CustomTitleTextBoxEnabled = false;
-            this._view.NewInvoiceButtonEnabled = false;
-            this._view.CancelButtonEnabled = true;
-            this._view.SaveAndEmailButtonEnabled = true;
-            this._view.SaveAndExportXLButtonEnabled = true;
+            SetControlsForViewingInvoice();
 
             // display items
             foreach (var item in selected.Items)
@@ -156,6 +146,20 @@ namespace InvoiceGen.Presenter
             // update the total
             string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
+        }
+
+        private void SetControlsForViewingInvoice()
+        {
+            // enable or disable appropriate controls
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.NewInvoiceButtonEnabled = false;
+            this._view.CancelButtonEnabled = true;
+            this._view.SaveAndEmailButtonEnabled = true;
+            this._view.SaveAndExportXLButtonEnabled = true;
         }
 
         public void InvoiceHistorySelectionChanged(object sender, EventArgs args)
@@ -508,8 +512,17 @@ namespace InvoiceGen.Presenter
             }
             else
             {
-                ReenableControlsAfterOperationCompletedOrAborted();
-                return;
+                if (this._view.CreatingNewInvoice)
+                {
+                    ReenableControlsAfterOperationCompletedOrAborted();
+                }
+                else
+                {
+                    this._view.SaveAndEmailButtonEnabled = true;
+                    this._view.SaveAndExportXLButtonEnabled = true;
+                    this._view.CancelButtonEnabled = true;
+                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                }
             }
             // dispose send email dialog
             emailWindowPresenter.DisposeDialog();
@@ -546,12 +559,14 @@ namespace InvoiceGen.Presenter
 
                 if (this._view.CreatingNewInvoice)
                 {
+                    // new invoice
                     // fire the event to save the invoice to the records
                     SendEmailFinished += OnSendEmailFinished;
                     SendEmailFinished?.Invoke(null, null);
                 }
                 else
                 {
+                    // invoice already in records
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
@@ -595,6 +610,7 @@ namespace InvoiceGen.Presenter
             {
                 if (this._view.CreatingNewInvoice)
                 {
+                    ReenableControlsAfterOperationCompletedOrAborted();
                     return;
                 }
                 else
