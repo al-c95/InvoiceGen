@@ -10,22 +10,22 @@ There is an email configuration window for specifying the sender's and recipient
 This and other design-related documents will be updated as requirements change.
 
 ## Requirements
-### R-1
+### R1
 The application should allow the user to generate invoices by manually entering items, while the running total is displayed.
 
-### R-2
+### R2
 The application should allow invoices to be issued as spreadsheets, which can be sent via email or saved to disk.
 
-### R-3
+### R3
 The application should maintain a history of invoices.
 
-### R-4
+### R4
 The application should allow invoices maintained in the history to be re-issued as spreadsheets.
 
-### R-5
+### R5
 The application should allow the user to update the status of each invoice.
 
-### R-6
+### R6
 The application should allow the user to configure email settings for the sender and recipient.
 
 ## Architecture

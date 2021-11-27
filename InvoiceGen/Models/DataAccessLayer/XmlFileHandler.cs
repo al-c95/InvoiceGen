@@ -8,12 +8,6 @@ using System.Xml.Linq;
 
 namespace InvoiceGen.Models.DataAccessLayer
 {
-    public interface IXmlFileHandler
-    {
-        string GetXML();
-        void SaveXMLFile(XDocument doc);
-    }
-
     /// <summary>
     /// Loads and saves the XML file.
     /// </summary>
@@ -60,6 +54,6 @@ namespace InvoiceGen.Models.DataAccessLayer
         private void Load()
         {
             this._doc = XDocument.Load(_fileName);
-        }
-    }
+        }//Load
+    }//class
 }

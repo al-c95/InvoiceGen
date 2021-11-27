@@ -10,7 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C40EBD01-1374-463C-BC66-9A51E02B5A17}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
+		docs\design\concept_design.md = docs\design\concept_design.md
 		README.md = README.md
+		docs\design\test_cases.md = docs\design\test_cases.md
+		docs\design\use_cases.md = docs\design\use_cases.md
 	EndProjectSection
 EndProject
 Global

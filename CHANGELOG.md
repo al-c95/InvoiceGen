@@ -3,7 +3,7 @@ All notable changes to this project are documented in this file.
 
 NOTE: dates are in dd-mm-yyyy format.
 
-## [Unreleased]
+## [1.1.1] - unreleased
 ### Added
 - support for writing email subjects and bodies, passwords entered by user
 ### Fixed

@@ -170,7 +170,7 @@ namespace InvoiceGen.Presenter
 
         public void UpdateRecordsButtonClicked(object sender, EventArgs args)
         {
-            SetStatusBarTextAndColour("Updating Records", StatusBarState.InProgress);
+            SetStatusBar("Updating Records", StatusBarState.InProgress);
 
             // update records
             try
@@ -186,12 +186,13 @@ namespace InvoiceGen.Presenter
                 // tell the user via a dialog
                 // TODO: log error
                 this._view.ShowErrorDialogOk("Failed to update records");
+
                 return;
             }
             finally
             {
                 // whatever happened, reset the status bar
-                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                SetStatusBar("Ready", StatusBarState.Ready);
             }
 
             // it succeeded
@@ -218,7 +219,9 @@ namespace InvoiceGen.Presenter
             this._view.ItemAmountTextBoxEnabled = valid && this._view.CreatingNewInvoice;
             this._view.ItemQuantityUpDownEnabled = valid && this._view.CreatingNewInvoice;
 
-            if (this._InvoiceModel.IsValidMonth(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
+            if (this._InvoiceModel.IsValidMonth(this._view.Month) && 
+                Int32.TryParse(this._view.Year, out int result) && 
+                this._view.GetNumberOfItemsInList() > 0)
             {
                 this._view.SaveAndEmailButtonEnabled = true;
                 this._view.SaveAndExportXLButtonEnabled = true;
@@ -266,7 +269,7 @@ namespace InvoiceGen.Presenter
             this._view.SaveAndExportXLSXButtonText = "Save and Export XLSX";
 
             // reset the status bar
-            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            SetStatusBar("Ready", StatusBarState.Ready);
         }
 
         public void InvoiceTypeSelected(object sender, EventArgs args)
@@ -322,7 +325,7 @@ namespace InvoiceGen.Presenter
             this._view.YearTextBoxEnabled = true;
 
             // reset the status bar
-            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            SetStatusBar("Ready", StatusBarState.Ready);
         }
 
         public void CustomTitleTextChanged(object sender, EventArgs args)
@@ -390,7 +393,7 @@ namespace InvoiceGen.Presenter
             string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
 
-            EnableOrDisableSaveButtons();
+            SetSaveButtonsEnabled();
         }
 
         public void ItemListSelectedIndexChanged(object sender, EventArgs args)
@@ -423,7 +426,7 @@ namespace InvoiceGen.Presenter
             string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
 
-            EnableOrDisableSaveButtons();
+            SetSaveButtonsEnabled();
         }
 
         public void RemoveItemButtonClicked(object sender, EventArgs args)
@@ -436,7 +439,7 @@ namespace InvoiceGen.Presenter
             string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
 
-            EnableOrDisableSaveButtons();
+            SetSaveButtonsEnabled();
         }
 
         private string GetInvoiceTitle()
@@ -457,7 +460,7 @@ namespace InvoiceGen.Presenter
         public void SaveAndEmailButtonClicked(object sender, EventArgs args)
         {
             // disable controls the user shouldn't play with at this point
-            DisableControlsWhilePerformingOperation();
+            DisableControlsDuringOperation();
 
             // check if an invoice with this title already exists
             // if not, grab the title
@@ -471,7 +474,7 @@ namespace InvoiceGen.Presenter
                     // tell the user via a dialog
                     this._view.ShowErrorDialogOk("Invoice with title: " + title + " already exists. Please choose a different title.");
 
-                    ReenableControlsAfterOperationCompletedOrAborted();
+                    EnableControlsAfterOperation();
                     return;
                 }
             }
@@ -494,7 +497,7 @@ namespace InvoiceGen.Presenter
             // send email, or cancel
             if (emailDialogResult == DialogResult.OK)
             {
-                SetStatusBarTextAndColour("Sending Email", StatusBarState.InProgress);
+                SetStatusBar("Sending Email", StatusBarState.InProgress);
                 ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
                 excelWriter.AddItems(this._view.ItemsListEntries.ToList());
                 SecureString password = emailWindowPresenter.View.Password;
@@ -514,14 +517,14 @@ namespace InvoiceGen.Presenter
             {
                 if (this._view.CreatingNewInvoice)
                 {
-                    ReenableControlsAfterOperationCompletedOrAborted();
+                    EnableControlsAfterOperation();
                 }
                 else
                 {
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
-                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                    SetStatusBar("Ready", StatusBarState.Ready);
                 }
             }
             // dispose send email dialog
@@ -555,7 +558,7 @@ namespace InvoiceGen.Presenter
                 // success
                 // tell the user via a dialog and reset the status bar
                 this._view.ShowSuccessDialog("Sent email");
-                SetStatusBarTextAndColour("Sending Email", StatusBarState.CompletedSuccessfully);
+                SetStatusBar("Sending Email", StatusBarState.CompletedSuccessfully);
 
                 if (this._view.CreatingNewInvoice)
                 {
@@ -570,7 +573,7 @@ namespace InvoiceGen.Presenter
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
-                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                    SetStatusBar("Ready", StatusBarState.Ready);
                 }
             }
             else
@@ -580,9 +583,9 @@ namespace InvoiceGen.Presenter
                     // it failed
                     // tell the user via a dialog and reset the status bar
                     this._view.ShowErrorDialogOk("Error sending email");
-                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                    SetStatusBar("Ready", StatusBarState.Ready);
 
-                    ReenableControlsAfterOperationCompletedOrAborted();
+                    EnableControlsAfterOperation();
                 }
             }
         }
@@ -602,7 +605,7 @@ namespace InvoiceGen.Presenter
             }
 
             // disable controls the user shouldn't play with at this point
-            DisableControlsWhilePerformingOperation();
+            DisableControlsDuringOperation();
 
             // ask the user for the export directory
             string outputDir = this._view.ShowFolderPickerDialog();
@@ -610,7 +613,8 @@ namespace InvoiceGen.Presenter
             {
                 if (this._view.CreatingNewInvoice)
                 {
-                    ReenableControlsAfterOperationCompletedOrAborted();
+                    EnableControlsAfterOperation();
+
                     return;
                 }
                 else
@@ -618,7 +622,7 @@ namespace InvoiceGen.Presenter
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
-                    SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                    SetStatusBar("Ready", StatusBarState.Ready);
 
                     return;
                 }
@@ -639,7 +643,7 @@ namespace InvoiceGen.Presenter
         }
         #endregion
 
-        private void EnableOrDisableSaveButtons()
+        private void SetSaveButtonsEnabled()
         {
             this._view.SaveAndEmailButtonEnabled = (this._view.GetNumberOfItemsInList() > 0);
             this._view.SaveAndExportXLButtonEnabled = (this._view.GetNumberOfItemsInList() > 0);
@@ -651,7 +655,7 @@ namespace InvoiceGen.Presenter
             string title = GetInvoiceTitle();
 
             // finally, write the data and save the spreadsheet
-            SetStatusBarTextAndColour("Exporting Spreadsheet", StatusBarState.InProgress);
+            SetStatusBar("Exporting Spreadsheet", StatusBarState.InProgress);
             MemoryStream ms = null;
             try
             {
@@ -673,14 +677,14 @@ namespace InvoiceGen.Presenter
                 // tell the user via a dialog and reset the status bar
                 // TODO: log error
                 this._view.ShowErrorDialogOk("Error exporting spreadsheet");
-                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                SetStatusBar("Ready", StatusBarState.Ready);
                 return null;
             }
 
             // it succeeded
             // tell the user via a dialog and reset the status bar
             this._view.ShowSuccessDialog("Exported spreadsheet");
-            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            SetStatusBar("Ready", StatusBarState.Ready);
 
             return ms;
         }
@@ -691,7 +695,7 @@ namespace InvoiceGen.Presenter
             SaveToRecords();
         }
 
-        private void DisableControlsWhilePerformingOperation()
+        private void DisableControlsDuringOperation()
         {
             this._view.NewInvoiceButtonEnabled = false;
             this._view.RadioButtonCustomEnabled = false;
@@ -710,7 +714,7 @@ namespace InvoiceGen.Presenter
             this._view.CancelButtonEnabled = false;
         }
 
-        private void ReenableControlsAfterOperationCompletedOrAborted()
+        private void EnableControlsAfterOperation()
         {
             this._view.NewInvoiceButtonEnabled = true;
             this._view.RadioButtonCustomEnabled = true;
@@ -731,7 +735,7 @@ namespace InvoiceGen.Presenter
 
         private void SaveToRecords()
         {
-            SetStatusBarTextAndColour("Saving To Records", StatusBarState.InProgress);
+            SetStatusBar("Saving To Records", StatusBarState.InProgress);
 
             try
             {
@@ -761,14 +765,14 @@ namespace InvoiceGen.Presenter
                 // tell the user via a dialog and reset the status bar
                 // TODO: log error
                 this._view.ShowErrorDialogOk("Error saving to records");
-                SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+                SetStatusBar("Ready", StatusBarState.Ready);
 
                 return;
             }
 
             // it succeeded
             // tell the user via a dialog and reset the status bar
-            SetStatusBarTextAndColour("Ready", StatusBarState.Ready);
+            SetStatusBar("Ready", StatusBarState.Ready);
             this._view.ShowSuccessDialog("Saved to records");
 
             // reset the UI
@@ -786,7 +790,7 @@ namespace InvoiceGen.Presenter
             Failed
         }
 
-        private void SetStatusBarTextAndColour(string task, StatusBarState state)
+        private void SetStatusBar(string task, StatusBarState state)
         {
             switch (state)
             {
@@ -807,6 +811,6 @@ namespace InvoiceGen.Presenter
                     this._view.StatusBarText = task + " Failed";
                     break;
             }
-        }
-    }
+        }//SetStatusBar
+    }//class
 }

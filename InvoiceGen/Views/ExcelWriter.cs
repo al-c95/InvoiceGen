@@ -196,6 +196,6 @@ namespace InvoiceGen.View
             _pck.Dispose();
 
             return ms;
-        }
-    }
+        }//CloseAndGetMemoryStream
+    }//class
 }

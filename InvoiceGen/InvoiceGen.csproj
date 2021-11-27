@@ -63,12 +63,17 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\DataAccessLayer\IXmlFileHandler.cs" />
+    <Compile Include="Models\DataAccessLayer\IXmlService.cs" />
     <Compile Include="Models\DataAccessLayer\XmlFileHandler.cs" />
     <Compile Include="Models\DataAccessLayer\XmlService.cs" />
     <Compile Include="Models\EmailModel.cs" />
+    <Compile Include="Models\IEmailModel.cs" />
+    <Compile Include="Models\IInvoiceModel.cs" />
     <Compile Include="Models\InvoiceModel.cs" />
     <Compile Include="Models\ObjectModel\Invoice.cs" />
     <Compile Include="Models\ObjectModel\InvoiceItem.cs" />
+    <Compile Include="Models\Repository\IInvoiceRepository.cs" />
     <Compile Include="Models\Repository\InvoiceRepository.cs" />
     <Compile Include="Presenters\ConfigWindowPresenter.cs" />
     <Compile Include="Presenters\EmailWindowPresenter.cs" />

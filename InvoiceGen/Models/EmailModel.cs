@@ -9,12 +9,6 @@ using InvoiceGen;
 
 namespace InvoiceGen.Models
 {
-    public interface IEmailModel
-    {
-        Color InvalidInputColour { get; }
-        bool IsValidEmail(string address);
-    }
-
     public class EmailModel : IEmailModel
     {
         public Color InvalidInputColour { get; private set; }
@@ -48,6 +42,6 @@ namespace InvoiceGen.Models
             }
 
             return true;
-        }
-    }
+        }//IsValidEmail
+    }//class
 }

@@ -8,18 +8,6 @@ using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen.Models
 {
-    public interface IInvoiceModel
-    {
-        string[] ValidMonths { get; }
-        bool IsValidMonth(string month);
-        bool IsMonthlyInvoice(string title);
-
-        string GetAmountToDisplay(decimal amount);
-        string GetAmountToDisplayAsTotal(decimal amount);
-        bool AmountEntryValid(string amount);
-        decimal GetTotalAmountFromList(IEnumerable<Tuple<InvoiceItem,int>> listEntries);
-    }
-
     /// <summary>
     /// Contains logic for creating and displaying invoices.
     /// </summary>
@@ -124,6 +112,6 @@ namespace InvoiceGen.Models
             }
 
             return total;
-        }
-    }
+        }//GetTotalAmountFromList
+    }//class
 }

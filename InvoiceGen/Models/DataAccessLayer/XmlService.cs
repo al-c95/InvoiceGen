@@ -9,14 +9,6 @@ using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen.Models.DataAccessLayer
 {
-    public interface IXmlService
-    {
-        void InsertInvoiceInXml(Invoice invoice);
-        void UpdatePaidStatusInXml(int id, bool paid);
-        void DeleteInvoiceInXml(int id);
-        IEnumerable<Invoice> ReadXml();
-    }
-
     /// <summary>
     /// Manipulates the XML with the data.
     /// </summary>
