@@ -281,7 +281,9 @@ namespace InvoiceGen.Presenter
 
                 this._view.CustomTitleTextBoxEnabled = false;
 
-                if (this._InvoiceModel.IsValidMonth(this._view.Month) && Int32.TryParse(this._view.Year, out int result) && this._view.GetNumberOfItemsInList() > 0)
+                if (this._InvoiceModel.IsValidMonth(this._view.Month) && 
+                    Int32.TryParse(this._view.Year, out int result) && 
+                    this._view.GetNumberOfItemsInList() > 0)
                 {
                     this._view.SaveAndEmailButtonEnabled = this._view.CreatingNewInvoice;
                     this._view.SaveAndExportXLButtonEnabled = this._view.CreatingNewInvoice;
@@ -299,7 +301,8 @@ namespace InvoiceGen.Presenter
 
                 this._view.CustomTitleTextBoxEnabled = this._view.CreatingNewInvoice;
 
-                if (!string.IsNullOrWhiteSpace(this._view.CustomTitleText) && this._view.GetNumberOfItemsInList() > 0)
+                if (!string.IsNullOrWhiteSpace(this._view.CustomTitleText) && 
+                    this._view.GetNumberOfItemsInList() > 0)
                 {
                     this._view.SaveAndEmailButtonEnabled = this._view.CreatingNewInvoice;
                     this._view.SaveAndExportXLButtonEnabled = this._view.CreatingNewInvoice;
@@ -507,7 +510,8 @@ namespace InvoiceGen.Presenter
                 string bcc = emailWindowPresenter.View.Bcc;
                 string subject = emailWindowPresenter.View.Subject;
                 string body = emailWindowPresenter.View.Body;
-                // do it on a background worker thread so the UI remains responsive
+
+                // do it on a background thread to avoid blocking the UI
                 BackgroundWorker sendEmailWorker = new BackgroundWorker();
                 sendEmailWorker.DoWork += BeginSendEmail;
                 sendEmailWorker.RunWorkerCompleted += EndSendEmail; // new invoice will be saved to records upon successful sending of email

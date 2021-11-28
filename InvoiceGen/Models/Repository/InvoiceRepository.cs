@@ -46,7 +46,7 @@ namespace InvoiceGen.Models.Repository
             // make sure that we don't add more than one with the same title
             // should have been prevented by this point with data validation, but still check it
             if (InvoiceWithTitleExists(invoice.Title))
-                return; // TODO: throw an exception here
+                throw new ApplicationException("Invoice: " + invoice.Title + " already exists."); // this shouldn't happen
 
             // now add it to the records
             service.InsertInvoiceInXml(invoice);
@@ -88,7 +88,7 @@ namespace InvoiceGen.Models.Repository
         }
 
         /// <summary>
-        /// Does what it says.
+        /// Update paid status of a single invoice by id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="paid"></param>
@@ -98,12 +98,12 @@ namespace InvoiceGen.Models.Repository
         }
 
         /// <summary>
-        /// Does what it says.
+        /// Delete a single invoice by id.
         /// </summary>
         /// <param name="id"></param>
         public void DeleteInvoice(int id)
         {
             this.service.DeleteInvoiceInXml(id);
-        }
-    }
+        }//DeleteInvoice
+    }//class
 }

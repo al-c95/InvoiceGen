@@ -13,10 +13,6 @@ namespace InvoiceGen.Models
     {
         public Color InvalidInputColour { get; private set; }
 
-        /// <summary>
-        /// Production constructor.
-        /// </summary>
-        /// <param name="invalidInputColour"></param>
         public EmailModel(Color invalidInputColour)
         {
             this.InvalidInputColour = invalidInputColour;
