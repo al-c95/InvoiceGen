@@ -15,6 +15,22 @@ This repository is based around a Microsoft Visual Studio solution. The director
 
 All notable changes to this document are documented in `CHANGELOG.md`.
 
+```
+root
+|
++--docs
+|
+|
++--InvoiceGen // source
+|
++--InvoiceGen_Tests // unit tests
+|
++--packages
++--InvoiceGen.sln // VS solution
++--CHANGELOG.md
++--README.md
+```
+
 ## Installation and Setup
 No installation process is required. Simply place the `\InvoiceGen\bin\Release` folder somewhere on disk, and execute `InvoiceGen.exe` to run the application. The `invoices.xml` file mentioned above contains some example invoice records.
 
