@@ -52,7 +52,7 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
             expectedXmlBuilder.AppendLine(" </invoice>");
             expectedXmlBuilder.AppendLine(" <invoice id=\"3\" title=\"Oct 2020\" timestamp=\"16/10/2020 09:01:29 AM\" paid=\"false\">");
             expectedXmlBuilder.AppendLine("     <items>");
-            expectedXmlBuilder.AppendLine("         <item desc=\"item 1\" amount=\"5.5\"/>");
+            expectedXmlBuilder.AppendLine("         <item desc=\"item 1\" amount=\"5.55\"/>");
             expectedXmlBuilder.AppendLine("         <item desc=\"item 2\" amount=\"6.25\"/>");
             expectedXmlBuilder.AppendLine("     </items>");
             expectedXmlBuilder.AppendLine(" </invoice>");
@@ -68,7 +68,7 @@ namespace InvoiceGen_Tests.Model_Tests.DataAccessLayer_Tests.DataAccessLayer_Tes
             // data
             InvoiceItem item1 = new InvoiceItem();
             item1.Description = "item 1";
-            item1.Amount = (decimal)5.50;
+            item1.Amount = (decimal)5.55;
 
             InvoiceItem item2 = new InvoiceItem();
             item2.Description = "item 2";

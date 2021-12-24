@@ -49,7 +49,6 @@ namespace InvoiceGen.Presenters
             this.View.ResetInputFieldColours();
 
             // validate inputs
-
             bool isValid = true;
             isValid = isValid && !string.IsNullOrWhiteSpace(this.View.SenderName);
             isValid = isValid && !string.IsNullOrWhiteSpace(this.View.RecipientName);
@@ -62,7 +61,6 @@ namespace InvoiceGen.Presenters
             {
                 isValid = false;
             }
-
             if (!string.IsNullOrWhiteSpace(this.View.RecipientAddress))
             {
                 isValid = isValid && (this._model.IsValidEmail(this.View.RecipientAddress));
@@ -76,7 +74,6 @@ namespace InvoiceGen.Presenters
             this.View.SaveButtonEnabled = isValid;
 
             // highlight any fields with invalid input
-
             if (!this._model.IsValidEmail(this.View.SenderAddress))
             {
                 this.View.SenderAddressFieldColour = this._model.InvalidInputColour;
@@ -85,7 +82,6 @@ namespace InvoiceGen.Presenters
             {
                 this.View.ResetSenderAddressFieldColour();
             }
-
             if (string.IsNullOrWhiteSpace(this.View.SenderName))
             {
                 this.View.SenderNameFieldColour = this._model.InvalidInputColour;
@@ -94,7 +90,6 @@ namespace InvoiceGen.Presenters
             {
                 this.View.ResetSenderNameFieldColour();
             }
-
             if (string.IsNullOrWhiteSpace(this.View.Host))
             {
                 this.View.HostFieldColour = this._model.InvalidInputColour;
@@ -103,7 +98,6 @@ namespace InvoiceGen.Presenters
             {
                 this.View.ResetHostFieldColour();
             }
-
             if (!this._model.IsValidEmail(this.View.RecipientAddress))
             {
                 this.View.RecipientAddressFieldColour = this._model.InvalidInputColour;
@@ -112,7 +106,6 @@ namespace InvoiceGen.Presenters
             {
                 this.View.ResetRecipientAddressFieldColour();
             }
-
             if (string.IsNullOrWhiteSpace(this.View.RecipientName))
             {
                 this.View.RecipientNameFieldColour = this._model.InvalidInputColour;
@@ -148,5 +141,5 @@ namespace InvoiceGen.Presenters
             ((System.Windows.Forms.Form)(this.View)).Close();
         }
         #endregion
-    }
+    }//class
 }

@@ -29,12 +29,7 @@ namespace InvoiceGen.Models.Repository
         /// <returns>boolean</returns>
         public bool InvoiceWithTitleExists(string title)
         {
-            //return getAllInvoices().Any(i => i.title == title);
-            foreach (Invoice i in GetAllInvoices())
-                if (i.Title == title)
-                    return true;
-
-            return false;
+            return GetAllInvoices().Any(i => i.Title == title);
         }
 
         /// <summary>

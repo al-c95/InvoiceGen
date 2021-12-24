@@ -120,5 +120,21 @@ namespace InvoiceGen_Tests.Model_Tests.Repository_Tests
             // assert
             A.CallTo(() => fakeService.DeleteInvoiceInXml(id)).MustHaveHappened();
         }
-    }
+
+        [TestCase("invoice 1", true)]
+        [TestCase("invoice 3", false)]
+        public void InvoiceWithTitleExists_Test(string title, bool expectedResult)
+        {
+            // arrange
+            var fakeService = A.Fake<IXmlService>();
+            A.CallTo(() => fakeService.ReadXml()).Returns(new List<Invoice> { new Invoice { Id = 1, Title = "invoice 1" }, new Invoice { Id = 2, Title = "invoice 2" } });
+            InvoiceRepository repo = new InvoiceRepository(fakeService);
+
+            // act
+            bool actualResult = repo.InvoiceWithTitleExists(title);
+
+            // assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+    }//class
 }
