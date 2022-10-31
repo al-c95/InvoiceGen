@@ -36,6 +36,13 @@ namespace InvoiceGen.View
             this.button_save.Click += Button_save_Click;
         }
 
+        private void SetValue(string key, string value)
+        {
+            System.Configuration.Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+            config.AppSettings.Settings[key].Value = value;
+            config.Save();
+        }
+
         #region Properties
         public string SenderAddress
         {
@@ -148,8 +155,6 @@ namespace InvoiceGen.View
 
         #region Events
         public event EventHandler InputFieldChanged;
-        public event EventHandler SaveButtonClicked;
-        public event EventHandler CancelButtonClicked;
         #endregion
 
         #region Event handlers
@@ -158,16 +163,30 @@ namespace InvoiceGen.View
             // fire the external event so the subscribed presenter can react
             this.InputFieldChanged?.Invoke(sender, args);
         }
+
         private void Button_save_Click(object sender, EventArgs args)
         {
-            // fire the external event so the subscribed presenter can react
-            this.SaveButtonClicked?.Invoke(sender, args);
+            SetValue("senderEmail", this.SenderAddress);
+            SetValue("SenderName", this.SenderName);
+            SetValue("Host", this.Host);
+            SetValue("port", this.Port.ToString());
+            SetValue("recipientEmail", this.RecipientAddress);
+            SetValue("recipientName", this.RecipientName);
+
+            Configuration.SenderEmailAddress = this.SenderAddress;
+            Configuration.SenderName = this.SenderName;
+            Configuration.Host = this.Host;
+            Configuration.port = this.Port;
+            Configuration.RecipientName = this.RecipientName;
+            Configuration.RecipientEmailAddress = this.RecipientAddress;
+
+            this.DialogResult = DialogResult.OK;
         }
 
         private void Button_cancel_Click(object sender, EventArgs args)
         {
-            // fire the external event so the subscribed presenter can react
-            this.CancelButtonClicked?.Invoke(sender, args);
+            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.Close();
         }
         #endregion
     }

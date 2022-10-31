@@ -26,5 +26,5 @@ namespace InvoiceGen.Models.ObjectModel
         {
             return Tuple.Create(this.Description, this.Amount).GetHashCode();
         }
-    }
+    }//class
 }

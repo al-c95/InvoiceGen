@@ -40,5 +40,5 @@ namespace InvoiceGen.Models.ObjectModel
 
             return total;
         }
-    }
+    }//class
 }

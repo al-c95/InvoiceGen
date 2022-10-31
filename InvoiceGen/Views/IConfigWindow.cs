@@ -30,7 +30,5 @@ namespace InvoiceGen.Views
         void ResetRecipientNameFieldColour();
 
         event EventHandler InputFieldChanged;
-        event EventHandler SaveButtonClicked;
-        event EventHandler CancelButtonClicked;
     }
 }

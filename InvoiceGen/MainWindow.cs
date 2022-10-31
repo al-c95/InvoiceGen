@@ -35,10 +35,11 @@ namespace InvoiceGen
             this.aboutToolStripMenuItem.Click += ((sender, args) => new AboutBox().Show());
             this.configurationToolStripMenuItem.Click += ((sender, args) => 
             {
-                InvoiceGen.Presenters.ConfigWindowPresenter configWindowPresenter = new Presenters.ConfigWindowPresenter(new ConfigWindow(), 
+                ConfigWindow dialog = new ConfigWindow();
+                InvoiceGen.Presenters.ConfigWindowPresenter configWindowPresenter = new Presenters.ConfigWindowPresenter(dialog, 
                                                                                                                          new InvoiceGen.Models.EmailModel(Configuration.INVALID_INPUT_COLOUR));
-                configWindowPresenter.ShowDialog();
-                configWindowPresenter.DisposeDialog();
+                dialog.ShowDialog();
+                dialog.Dispose();
             });
             this.button_viewSelected.Click += Button_viewSelected_Click;
             this.button_updateRecords.Click += Button_updateRecords_Click;

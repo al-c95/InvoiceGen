@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.Net.Mail;
 using System.Windows.Forms;
@@ -122,13 +118,11 @@ namespace InvoiceGen.Presenter
                 this._view.RadioButtonCustomChecked = true;
             }
 
-            // change the text of the save buttons
             this._view.SaveAndEmailButtonText = "Email";
             this._view.SaveAndExportXLSXButtonText = "Export XLSX";
 
             SetControlsForViewingInvoice();
 
-            // display items
             foreach (var item in selected.Items)
             {
                 bool exists = this._view.ItemsListEntries.Any(i => i.Item1.Description.Equals(item.Description) && i.Item1.Amount.Equals(item.Amount));
@@ -143,14 +137,12 @@ namespace InvoiceGen.Presenter
                 }
             }
 
-            // update the total
             string toDisplay = this._InvoiceModel.GetAmountToDisplayAsTotal(this._InvoiceModel.GetTotalAmountFromList(this._view.ItemsListEntries));
             this._view.TotalText = toDisplay;
         }
 
         private void SetControlsForViewingInvoice()
         {
-            // enable or disable appropriate controls
             this._view.RadioButtonCustomEnabled = false;
             this._view.RadioButtonMonthlyEnabled = false;
             this._view.MonthComboboxEnabled = false;

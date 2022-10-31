@@ -10,7 +10,6 @@ namespace InvoiceGen.Models.Repository
 {
     public class InvoiceRepository : IInvoiceRepository
     {
-        // service dependency injection
         public IXmlService service { get; private set; }
 
         /// <summary>
@@ -34,16 +33,14 @@ namespace InvoiceGen.Models.Repository
 
         /// <summary>
         /// Create a new invoice record.
+        /// Make sure that we don't add more than one with the same title.
         /// </summary>
         /// <param name="invoice"></param>
         public void AddInvoice(Invoice invoice)
         {
-            // make sure that we don't add more than one with the same title
-            // should have been prevented by this point with data validation, but still check it
             if (InvoiceWithTitleExists(invoice.Title))
-                throw new ApplicationException("Invoice: " + invoice.Title + " already exists."); // this shouldn't happen
+                throw new ApplicationException("Invoice: " + invoice.Title + " already exists.");
 
-            // now add it to the records
             service.InsertInvoiceInXml(invoice);
         }
 
