@@ -32,6 +32,5 @@ namespace InvoiceGen.View
         void ResetBccFieldColour();
 
         event EventHandler InputFieldTextChanged;
-        event EventHandler SaveAndSendButtonClicked;
     }
 }

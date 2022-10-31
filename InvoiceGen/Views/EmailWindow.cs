@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security;
 using static InvoiceGen.Utils;
@@ -122,11 +116,13 @@ namespace InvoiceGen.View
             this.PwdFieldColour = invalidInputColour;
 
             // register event handlers
-            this.button_cancel.Click += (sender, args) => { this.DialogResult = DialogResult.Cancel; };
+            this.button_cancel.Click += (sender, args) => 
+            { 
+                this.DialogResult = DialogResult.Cancel; 
+            };
             this.button_send.Click += (sender, args) => 
             {
-                // fire the external event so the subscribed presenter can react
-                this.SaveAndSendButtonClicked?.Invoke(sender, args);
+                this.DialogResult = DialogResult.OK;
             };
             this.textBox_pwd.TextChanged += TextFieldTextChanged;
             this.textBox_To.TextChanged += TextFieldTextChanged;
@@ -169,7 +165,7 @@ namespace InvoiceGen.View
 
         #region Events
         public event EventHandler InputFieldTextChanged;
-        public event EventHandler SaveAndSendButtonClicked;
+        //public event EventHandler SaveAndSendButtonClicked;
         #endregion
 
         #region UI event handlers

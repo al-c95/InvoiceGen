@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using InvoiceGen.View;
 using InvoiceGen.Models;
 using static InvoiceGen.Utils;
@@ -11,107 +7,97 @@ namespace InvoiceGen.Presenters
 {
     public class EmailWindowPresenter
     {
-        public IEmailWindow View { get; private set; }
+        public IEmailWindow _view { get; private set; }
         private IEmailModel _model;
 
         public EmailWindowPresenter(IEmailWindow view, IEmailModel model)
         {
-            this.View = view;
+            this._view = view;
             this._model = model;
 
             // subscribe to the view's events
-            this.View.SaveAndSendButtonClicked += SaveAndSendButtonClicked;
-            this.View.InputFieldTextChanged += InputFieldTextChanged;
+            this._view.InputFieldTextChanged += InputFieldTextChanged;
         }
 
         public System.Windows.Forms.DialogResult ShowDialog()
         {
-            return ((System.Windows.Forms.Form)(this.View)).ShowDialog();
+            return ((System.Windows.Forms.Form)(this._view)).ShowDialog();
         }
 
         public void DisposeDialog()
         {
-            ((System.Windows.Forms.Form)(this.View)).Dispose();
+            ((System.Windows.Forms.Form)(this._view)).Dispose();
         }
 
         #region event handlers
         public void InputFieldTextChanged(object sender, EventArgs e)
         {
             // remove any highlighting first
-            this.View.ResetInputFieldColours();
+            this._view.ResetInputFieldColours();
 
             // validate inputs
             bool isValid = true;
-            isValid = isValid && !(string.IsNullOrEmpty(ConvertSecureStringToNormalString(this.View.Password)));
-            isValid = isValid && this._model.IsValidEmail(this.View.To);
-            if (!string.IsNullOrEmpty(this.View.Cc))
+            isValid = isValid && !(string.IsNullOrEmpty(ConvertSecureStringToNormalString(this._view.Password)));
+            isValid = isValid && this._model.IsValidEmail(this._view.To);
+            if (!string.IsNullOrEmpty(this._view.Cc))
             {
-                isValid = isValid && this._model.IsValidEmail(this.View.Cc);
+                isValid = isValid && this._model.IsValidEmail(this._view.Cc);
             }
-            if (!string.IsNullOrEmpty(this.View.Bcc))
+            if (!string.IsNullOrEmpty(this._view.Bcc))
             {
-                isValid = isValid && this._model.IsValidEmail(this.View.Bcc);
+                isValid = isValid && this._model.IsValidEmail(this._view.Bcc);
             }
+            this._view.SaveAndSendButtonEnabled = isValid;
 
-            // decide whether to enable the send button
-            this.View.SaveAndSendButtonEnabled = isValid;
-
-            // highlight any fields with invalid input
-
-            if (!this._model.IsValidEmail(this.View.To))
+            if (!this._model.IsValidEmail(this._view.To))
             {
-                this.View.ToFieldColour = this._model.InvalidInputColour;
+                this._view.ToFieldColour = this._model.InvalidInputColour;
             }
             else
             {
-                this.View.ResetToFieldColour();
+                this._view.ResetToFieldColour();
             }
 
-            if (!string.IsNullOrWhiteSpace(this.View.Cc))
+            if (!string.IsNullOrWhiteSpace(this._view.Cc))
             {
-                if (!this._model.IsValidEmail(this.View.Cc))
+                if (!this._model.IsValidEmail(this._view.Cc))
                 {
-                    this.View.CcFieldColour = this._model.InvalidInputColour;
+                    this._view.CcFieldColour = this._model.InvalidInputColour;
                 }
                 else
                 {
-                    this.View.ResetCcFieldColour();
+                    this._view.ResetCcFieldColour();
                 }
             }
             else
             {
-                this.View.ResetCcFieldColour();
+                this._view.ResetCcFieldColour();
             }
 
-            if (!string.IsNullOrWhiteSpace(this.View.Bcc))
+            if (!string.IsNullOrWhiteSpace(this._view.Bcc))
             {
-                if (!this._model.IsValidEmail(this.View.Bcc))
+                if (!this._model.IsValidEmail(this._view.Bcc))
                 {
-                    this.View.BccFieldColour = this._model.InvalidInputColour;
+                    this._view.BccFieldColour = this._model.InvalidInputColour;
                 }
                 else
                 {
-                    this.View.ResetBccFieldColour();
+                    this._view.ResetBccFieldColour();
                 }
             }
             else
             {
-                this.View.ResetBccFieldColour();
+                this._view.ResetBccFieldColour();
             }
 
-            if (String.IsNullOrWhiteSpace(ConvertSecureStringToNormalString(this.View.Password)))
+            if (String.IsNullOrWhiteSpace(ConvertSecureStringToNormalString(this._view.Password)))
             {
-                this.View.PwdFieldColour = this._model.InvalidInputColour;
+                this._view.PwdFieldColour = this._model.InvalidInputColour;
             }
             else
             {
-                this.View.ResetPasswordFieldColour();
+                this._view.ResetPasswordFieldColour();
             }
-        }
-
-        public void SaveAndSendButtonClicked(object sender, EventArgs e)
-        {
-            ((System.Windows.Forms.Form)(this.View)).DialogResult = System.Windows.Forms.DialogResult.OK;
         }
         #endregion
     }

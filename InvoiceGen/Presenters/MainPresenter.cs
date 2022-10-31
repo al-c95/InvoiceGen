@@ -475,33 +475,34 @@ namespace InvoiceGen.Presenter
             }
 
             // show send email dialog
-            EmailWindowPresenter emailWindowPresenter = new EmailWindowPresenter(new EmailWindow(title, Configuration.INVALID_INPUT_COLOUR, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress),
+            EmailWindow dialog = new EmailWindow(title, Configuration.INVALID_INPUT_COLOUR, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
+            EmailWindowPresenter emailWindowPresenter = new EmailWindowPresenter(dialog,
                                                                                  new EmailModel(Configuration.INVALID_INPUT_COLOUR));
-            emailWindowPresenter.View.Subject = "Invoice: " + title; // set default email subject
+            emailWindowPresenter._view.Subject = "Invoice: " + title; // set default email subject
             if (this._view.CreatingNewInvoice)
             {
-                emailWindowPresenter.View.SendButtonText = "Save and Send";
-                emailWindowPresenter.View.CancelButtonText = "Cancel Save and Send";
+                emailWindowPresenter._view.SendButtonText = "Save and Send";
+                emailWindowPresenter._view.CancelButtonText = "Cancel Save and Send";
             }
             else
             {
-                emailWindowPresenter.View.SendButtonText = "Send";
-                emailWindowPresenter.View.CancelButtonText = "Cancel Send";
+                emailWindowPresenter._view.SendButtonText = "Send";
+                emailWindowPresenter._view.CancelButtonText = "Cancel Send";
             }
-            DialogResult emailDialogResult = emailWindowPresenter.ShowDialog();
+            DialogResult emailDialogResult = dialog.ShowDialog();
             // send email, or cancel
             if (emailDialogResult == DialogResult.OK)
             {
                 SetStatusBar("Sending Email", StatusBarState.InProgress);
                 ExcelWriter excelWriter = new ExcelWriter(null, "Invoice: " + title, Configuration.SenderEmailAddress, Configuration.RecipientEmailAddress);
                 excelWriter.AddItems(this._view.ItemsListEntries.ToList());
-                SecureString password = emailWindowPresenter.View.Password;
-                string from = emailWindowPresenter.View.From;
-                string to = emailWindowPresenter.View.To;
-                string cc = emailWindowPresenter.View.Cc;
-                string bcc = emailWindowPresenter.View.Bcc;
-                string subject = emailWindowPresenter.View.Subject;
-                string body = emailWindowPresenter.View.Body;
+                SecureString password = emailWindowPresenter._view.Password;
+                string from = emailWindowPresenter._view.From;
+                string to = emailWindowPresenter._view.To;
+                string cc = emailWindowPresenter._view.Cc;
+                string bcc = emailWindowPresenter._view.Bcc;
+                string subject = emailWindowPresenter._view.Subject;
+                string body = emailWindowPresenter._view.Body;
 
                 // do it on a background thread to avoid blocking the UI
                 BackgroundWorker sendEmailWorker = new BackgroundWorker();
@@ -523,8 +524,8 @@ namespace InvoiceGen.Presenter
                     SetStatusBar("Ready", StatusBarState.Ready);
                 }
             }
-            // dispose send email dialog
-            emailWindowPresenter.DisposeDialog();
+
+            dialog.Dispose();
         }
 
         private void BeginSendEmail(object sender, DoWorkEventArgs args)
