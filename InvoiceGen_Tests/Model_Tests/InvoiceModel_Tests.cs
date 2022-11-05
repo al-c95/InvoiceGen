@@ -27,8 +27,12 @@ namespace InvoiceGen_Tests.Model_Tests
         [TestCase("October 0000", true)]
         [TestCase("November 0000", true)]
         [TestCase("December 0000", true)]
+        [TestCase("December! 0000", false)]
         [TestCase("Jan 0000", false)]
-        [TestCase("test invoice", false)]
+        [TestCase("bogus invoice", false)]
+        [TestCase("January  0000", false)]
+        [TestCase(" January 0000", false)]
+        [TestCase("January 0000!", false)]
         public void IsMonthlyInvoice_Test(string title, bool shouldBeMonthly)
         {
             // arrange
@@ -73,7 +77,7 @@ namespace InvoiceGen_Tests.Model_Tests
 
         [TestCase("0.50", true)]
         [TestCase("0.5", false)]
-        [TestCase("0.501", true)]
+        [TestCase("0.501", false)]
         [TestCase("test", false)]
         public void AmountEntryValid_Test(string entry, bool shouldBeValid)
         {

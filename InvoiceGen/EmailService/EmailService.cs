@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
 using System.Security;
@@ -10,11 +6,6 @@ using System.IO;
 
 namespace InvoiceGen
 {
-    public interface IEmailService
-    {
-        void SendInvoice(string subject, string body, MemoryStream attachment);
-    }
-
     public class EmailService : IEmailService
     {
         private MailAddress _fromAddress;

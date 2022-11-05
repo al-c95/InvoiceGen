@@ -165,7 +165,6 @@ namespace InvoiceGen.View
 
         #region Events
         public event EventHandler InputFieldTextChanged;
-        //public event EventHandler SaveAndSendButtonClicked;
         #endregion
 
         #region UI event handlers

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using InvoiceGen.Models.ObjectModel;
@@ -14,8 +12,7 @@ namespace InvoiceGen.Models.DataAccessLayer
     /// </summary>
     public class XmlService : IXmlService
     {
-        // dependency injection    
-        private IXmlFileHandler _fileHandler; // of external interface (XML file) class
+        private IXmlFileHandler _fileHandler; // external interface (XML file)
         private string _dateFormat;
 
         /// <summary>
@@ -37,10 +34,8 @@ namespace InvoiceGen.Models.DataAccessLayer
             if (invoice.Items.Count == 0)
                 throw new ArgumentException("No items in invoice.");
 
-            // retrieve the XML
+            // retrieve the XML and find the new invoice ID
             string xml = this._fileHandler.GetXML();
-
-            // figure out the new invoice ID
             int maxID = 0;
             foreach (Invoice i in ReadXml())
                 if (i.Id > maxID)

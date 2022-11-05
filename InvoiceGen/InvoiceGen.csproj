@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="EmailService\EmailService.cs" />
+    <Compile Include="EmailService\IEmailService.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

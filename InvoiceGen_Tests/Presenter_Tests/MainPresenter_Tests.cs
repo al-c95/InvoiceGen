@@ -509,5 +509,5 @@ namespace InvoiceGen_Tests.Presenter_Tests
             // assert
             Assert.IsTrue(fakeView.UpdateRecordsButtonEnabled);
         }
-    }
+    }//class
 }

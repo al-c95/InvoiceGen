@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using InvoiceGen.View;
 using InvoiceGen.Models.ObjectModel;
@@ -573,14 +569,12 @@ namespace InvoiceGen
 
         public void PopulateMonthsComboBox(string[] months)
         {
-            // fill the Months combobox
             comboBox_Month.Items.Clear();
             foreach (string m in months)
             {
                 comboBox_Month.Items.Add(m);
             }
 
-            // and apply autocomplete
             comboBox_Month.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBox_Month.AutoCompleteSource = AutoCompleteSource.ListItems;
         }

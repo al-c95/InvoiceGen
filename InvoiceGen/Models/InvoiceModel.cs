@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using InvoiceGen.Models.ObjectModel;
 
 namespace InvoiceGen.Models
@@ -13,6 +11,8 @@ namespace InvoiceGen.Models
     /// </summary>
     public class InvoiceModel : IInvoiceModel
     {
+        public static readonly string AMOUNT_PATTERN = @"^\d+\.(\d{2})$";
+
         public string[] ValidMonths
         {
             get => new string[] { "January", "February", "March", "April", "May", "June",
@@ -31,34 +31,25 @@ namespace InvoiceGen.Models
 
         /// <summary>
         /// Check if a title follows the pattern of a monthly invoice.
+        /// Must be in the form "{month} {year}".
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
         public bool IsMonthlyInvoice(string title)
         {
-            bool startsWithMonth = false;
             foreach (var m in ValidMonths)
             {
-                if (title.StartsWith(m))
-                    startsWithMonth = true;
-            }
-
-            if (startsWithMonth)
-            {
-                // check if it ends with a space followed by a year
-                if (Regex.IsMatch(title, @"[A-Za-z]+ \d+"))
+                string pattern = "^" + m + @" \d+$";
+                if (Regex.IsMatch(title, pattern))
                 {
                     return true;
                 }
                 else
                 {
-                    return false;
+                    continue;
                 }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
@@ -88,7 +79,7 @@ namespace InvoiceGen.Models
         /// <returns></returns>
         public bool AmountEntryValid(string amount)
         {
-            if (Regex.IsMatch(amount, @"\d+\.(\d{2})"))
+            if (Regex.IsMatch(amount, AMOUNT_PATTERN))
             {
                 return true;
             }

@@ -18,7 +18,6 @@ namespace InvoiceGen.Presenter
     /// </summary>
     public class MainPresenter
     {
-        // dependency injection
         public IMainWindow _view;
         public IInvoiceRepository _repo;
         public IInvoiceModel _InvoiceModel;
@@ -30,7 +29,6 @@ namespace InvoiceGen.Presenter
         /// <param name="repository"></param>
         public MainPresenter(IMainWindow view, IInvoiceRepository repository, IInvoiceModel invoiceModel)
         {
-            // dependency injection
             this._view = view;
             this._repo = repository;
             this._InvoiceModel = invoiceModel;
@@ -73,39 +71,31 @@ namespace InvoiceGen.Presenter
             this._view.ViewSelectedInvoiceButtonEnabled = false;
             this._view.UpdateRecordsButtonEnabled = false;
 
-            // populate months combo box
             this._view.PopulateMonthsComboBox(this._InvoiceModel.ValidMonths);
 
             this._view.CreatingNewInvoice = true;
 
-            // populate invoice history data grid
             this._view.InvoiceHistoryEntries = this._repo.GetAllInvoices();
         }
 
         #region View event handlers
         public void ViewSelectedInvoiceButtonClicked(object sender, EventArgs args)
         {
-            // clear everything first
             this.CancelButtonClicked(null,null);
 
-            // switch to the create or view invoice tab
             this._view.SelectedTabIndex = 0;
             this._view.CreatingNewInvoice = false;
 
-            // clear titles
             this._view.Month = string.Empty;
             this._view.Year = string.Empty;
             this._view.CustomTitleText = string.Empty;
 
-            // grab the title of the invoice and determine its type, then display it
             Invoice selected = this._view.GetSelectedInvoice();
             string title = selected.Title;
 
-            // determine the invoice type (monthly vs custom), and display title accordingly
             if (this._InvoiceModel.IsMonthlyInvoice(title))
             {
-                // a monthly invoice
-                // split it by the space between month and year
+                // monthly invoice - split it by the space between month and year
                 string[] split = title.Split(' ');
                 this._view.Month = split[0];
                 this._view.Year = split[1];
@@ -113,7 +103,6 @@ namespace InvoiceGen.Presenter
             }
             else
             {
-                // a custom-title invoice
                 this._view.CustomTitleText = title;
                 this._view.RadioButtonCustomChecked = true;
             }
@@ -141,19 +130,6 @@ namespace InvoiceGen.Presenter
             this._view.TotalText = toDisplay;
         }
 
-        private void SetControlsForViewingInvoice()
-        {
-            this._view.RadioButtonCustomEnabled = false;
-            this._view.RadioButtonMonthlyEnabled = false;
-            this._view.MonthComboboxEnabled = false;
-            this._view.YearTextBoxEnabled = false;
-            this._view.CustomTitleTextBoxEnabled = false;
-            this._view.NewInvoiceButtonEnabled = false;
-            this._view.CancelButtonEnabled = true;
-            this._view.SaveAndEmailButtonEnabled = true;
-            this._view.SaveAndExportXLButtonEnabled = true;
-        }
-
         public void InvoiceHistorySelectionChanged(object sender, EventArgs args)
         {
             Invoice selected = this._view.GetSelectedInvoice();
@@ -164,7 +140,6 @@ namespace InvoiceGen.Presenter
         {
             SetStatusBar("Updating Records", StatusBarState.InProgress);
 
-            // update records
             try
             {
                 foreach (var invoice in this._view.InvoiceHistoryEntries)
@@ -174,8 +149,6 @@ namespace InvoiceGen.Presenter
             }
             catch (Exception)
             {
-                // it failed
-                // tell the user via a dialog
                 // TODO: log error
                 this._view.ShowErrorDialogOk("Failed to update records");
 
@@ -183,7 +156,6 @@ namespace InvoiceGen.Presenter
             }
             finally
             {
-                // whatever happened, reset the status bar
                 SetStatusBar("Ready", StatusBarState.Ready);
             }
 
@@ -321,6 +293,19 @@ namespace InvoiceGen.Presenter
 
             // reset the status bar
             SetStatusBar("Ready", StatusBarState.Ready);
+        }
+
+        private void SetControlsForViewingInvoice()
+        {
+            this._view.RadioButtonCustomEnabled = false;
+            this._view.RadioButtonMonthlyEnabled = false;
+            this._view.MonthComboboxEnabled = false;
+            this._view.YearTextBoxEnabled = false;
+            this._view.CustomTitleTextBoxEnabled = false;
+            this._view.NewInvoiceButtonEnabled = false;
+            this._view.CancelButtonEnabled = true;
+            this._view.SaveAndEmailButtonEnabled = true;
+            this._view.SaveAndExportXLButtonEnabled = true;
         }
 
         public void CustomTitleTextChanged(object sender, EventArgs args)
@@ -559,14 +544,12 @@ namespace InvoiceGen.Presenter
 
                 if (this._view.CreatingNewInvoice)
                 {
-                    // new invoice
                     // fire the event to save the invoice to the records
                     SendEmailFinished += OnSendEmailFinished;
                     SendEmailFinished?.Invoke(null, null);
                 }
                 else
                 {
-                    // invoice already in records
                     this._view.SaveAndEmailButtonEnabled = true;
                     this._view.SaveAndExportXLButtonEnabled = true;
                     this._view.CancelButtonEnabled = true;
@@ -625,7 +608,6 @@ namespace InvoiceGen.Presenter
                 }
             }
 
-            // now save
             SaveToExcel(outputDir, false);
             if (this._view.CreatingNewInvoice)
             {
@@ -648,10 +630,8 @@ namespace InvoiceGen.Presenter
 
         private MemoryStream SaveToExcel(string outputDir, bool getMemoryStream)
         {
-            // grab the invoice title
             string title = GetInvoiceTitle();
 
-            // finally, write the data and save the spreadsheet
             SetStatusBar("Exporting Spreadsheet", StatusBarState.InProgress);
             MemoryStream ms = null;
             try
@@ -736,13 +716,11 @@ namespace InvoiceGen.Presenter
 
             try
             {
-                // grab the title, and create the new invoice
                 string title = GetInvoiceTitle();
                 Invoice newInvoice = new Invoice();
                 newInvoice.Title = title;
                 newInvoice.Timestamp = DateTime.Now;
 
-                // add items to the new invoice
                 foreach (var listItem in this._view.ItemsListEntries)
                 {
                     InvoiceItem invoiceItem = listItem.Item1;
@@ -753,7 +731,6 @@ namespace InvoiceGen.Presenter
                     }
                 }
 
-                // finally, save it to the records
                 this._repo.AddInvoice(newInvoice);
             }
             catch (Exception)
