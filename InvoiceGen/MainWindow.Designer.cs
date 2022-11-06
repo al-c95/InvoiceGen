@@ -158,7 +158,6 @@
             this.button_newInvoice.TabIndex = 1;
             this.button_newInvoice.Text = "New Invoice";
             this.button_newInvoice.UseVisualStyleBackColor = true;
-            this.button_newInvoice.Click += new System.EventHandler(this.button_newInvoice_Click_1);
             // 
             // tabControl
             // 
@@ -480,7 +479,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(1059, 703);
+            this.tabPage2.Size = new System.Drawing.Size(1059, 705);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "History";
             this.tabPage2.UseVisualStyleBackColor = true;

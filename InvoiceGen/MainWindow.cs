@@ -32,141 +32,88 @@ namespace InvoiceGen
             this.configurationToolStripMenuItem.Click += ((sender, args) => 
             {
                 ConfigWindow dialog = new ConfigWindow();
-                InvoiceGen.Presenters.ConfigWindowPresenter configWindowPresenter = new Presenters.ConfigWindowPresenter(dialog, 
-                                                                                                                         new InvoiceGen.Models.EmailModel(Configuration.INVALID_INPUT_COLOUR));
+                Presenters.ConfigWindowPresenter configWindowPresenter = new Presenters.ConfigWindowPresenter(dialog, new Models.EmailModel(Configuration.INVALID_INPUT_COLOUR));
                 dialog.ShowDialog();
                 dialog.Dispose();
             });
-            this.button_viewSelected.Click += Button_viewSelected_Click;
-            this.button_updateRecords.Click += Button_updateRecords_Click;
-            this.dataGridView_invoiceHistory.SelectionChanged += DataGridView_invoiceHistory_SelectionChanged;
-            this.button_addItem.Click += Button_addItem_Click;
-            this.radioButton_titleCustom.CheckedChanged += RadioButton_titleCustom_CheckedChanged;
-            this.radioButton_titleMonthly.CheckedChanged += RadioButton_titleMonthly_CheckedChanged;
-            this.comboBox_Month.TextChanged += ComboBox_Month_TextChanged;
-            this.textBox_Year.TextChanged += TextBox_Year_TextChanged;
-            this.textBox_newEntryDesc.TextChanged += TextBox_newEntryDesc_TextChanged;
-            this.textBox_newEntryAmt.TextChanged += TextBox_newEntryAmt_TextChanged;
-            this.listView_items.SelectedIndexChanged += ListView_items_SelectedIndexChanged;
-            this.button_removeItem.Click += MainWindow_removeSelectedItemButtonClicked;
-            this.button_duplicateItem.Click += MainWindow_duplicateSelectedItemButtonClicked;
-            this.textBox_customTitle.TextChanged += TextBox_customTitle_TextChanged;
-            this.button_saveExportXL.Click += MainWindow_SaveAndExportXLSXButtonClicked;
-            this.button_saveEmail.Click += Button_saveEmail_Click;
-            this.button_cancel.Click += Button_cancel_Click;
+            // fire the public event so the subscribed presenter can react
+            this.button_viewSelected.Click += ((sender, args) =>
+            {
+                this.ViewSelectedInvoiceButtonClicked?.Invoke(sender, args);
+            });
+            this.button_updateRecords.Click += ((sender, args) =>
+            {
+                this.UpdateRecordsButtonClicked?.Invoke(sender, args);
+            });
+            this.button_newInvoice.Click += ((sender, args) =>
+            {
+                this.NewInvoiceButtonClicked?.Invoke(sender, args);
+            });
+            this.dataGridView_invoiceHistory.SelectionChanged += ((sender, args) =>
+            {
+                this.InvoiceHistoryDataGridViewSelectionChanged?.Invoke(sender, args);
+            });
+            this.button_addItem.Click += ((sender, args) =>
+            {
+                this.AddItemButtonClicked?.Invoke(sender, args);
+            });
+            this.radioButton_titleCustom.CheckedChanged += ((sender, args) =>
+            {
+                this.InvoiceTypeSelected?.Invoke(sender,args);
+            });
+            this.radioButton_titleMonthly.CheckedChanged += ((sender, args) =>
+            {
+                this.InvoiceTypeSelected?.Invoke(sender, args);
+            });
+            this.comboBox_Month.TextChanged += ((sender, args) =>
+            {
+                this.MonthlyInvoiceMonthYearUpdated?.Invoke(sender, args);
+            });
+            this.textBox_Year.TextChanged += ((sender, args) =>
+            {
+                this.MonthlyInvoiceMonthYearUpdated?.Invoke(sender, args);
+            });
+            this.textBox_newEntryDesc.TextChanged += ((sender, args) =>
+            {
+                this.NewItemDetailsUpdated?.Invoke(sender, args);
+            });
+            this.textBox_newEntryAmt.TextChanged += ((sender, args) =>
+            {
+                this.NewItemDetailsUpdated?.Invoke(sender, args);
+            });
+            this.listView_items.SelectedIndexChanged += ((sender, args) =>
+            {
+                this.ItemListSelectedIndexChanged?.Invoke(sender, args);
+            });
+            this.button_removeItem.Click += ((sender, args) =>
+            {
+                this.RemoveItemButtonClicked?.Invoke(sender, args);
+            });
+            this.button_duplicateItem.Click += ((sender, args) =>
+            {
+                this.DuplicateItemButtonClicked?.Invoke(sender, args);
+            });
+            this.textBox_customTitle.TextChanged += ((sender, args) =>
+            {
+                this.CustomTitleTextBoxTextChanged?.Invoke(sender, args);
+            });
+            this.button_saveExportXL.Click += ((sender, args) =>
+            {
+                this.SaveAndExportXLSXButtonClicked(sender, args);
+            });
+            this.button_saveEmail.Click += ((sender, args) =>
+            {
+                this.SaveAndEmailButtonClicked?.Invoke(sender, args);
+            });
+            this.button_cancel.Click += ((sender, args) =>
+            {
+                this.CancelClicked?.Invoke(sender, args);
+            });
 
             this.dataGridView_invoiceHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         #region UI event handlers
-        private void button_newInvoice_Click_1(object sender, EventArgs args)
-        {
-            // fire the external event so the subscribed presenter can react
-            NewInvoiceButtonClicked?.Invoke(sender, args);
-        }
-
-        private void TextBox_customTitle_TextChanged(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            CustomTitleTextBoxTextChanged?.Invoke(this, e);
-        }
-
-        private void DataGridView_invoiceHistory_SelectionChanged(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            InvoiceHistoryDataGridViewSelectionChanged?.Invoke(this, e);
-        }
-
-        private void Button_updateRecords_Click(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            UpdateRecordsButtonClicked?.Invoke(this, e);
-        }
-
-        private void Button_viewSelected_Click(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            ViewSelectedInvoiceButtonClicked?.Invoke(this, e);
-        }
-
-        private void Button_cancel_Click(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            CancelClicked?.Invoke(this, e);
-        }
-
-        private void Button_saveEmail_Click(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            SaveAndEmailButtonClicked?.Invoke(this, e);
-        }
-
-        private void MainWindow_SaveAndExportXLSXButtonClicked(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            SaveAndExportXLSXButtonClicked?.Invoke(this, e);
-        }
-
-        private void MainWindow_duplicateSelectedItemButtonClicked(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            DuplicateItemButtonClicked?.Invoke(this, e);
-        }
-
-        private void MainWindow_removeSelectedItemButtonClicked(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            RemoveItemButtonClicked?.Invoke(this, e);
-        }
-
-        private void ListView_items_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            ItemListSelectedIndexChanged?.Invoke(this, e);
-        }
-
-        private void TextBox_newEntryAmt_TextChanged(object sender, EventArgs args)
-        {
-            // fire the external event so the subscribed presenter can react;
-            NewItemDetailsUpdated?.Invoke(sender, args);
-        }
-
-        private void TextBox_newEntryDesc_TextChanged(object sender, EventArgs args)
-        {
-            // fire the external event so the subscribed presenter can react
-            NewItemDetailsUpdated?.Invoke(sender, args);
-        }
-
-        private void TextBox_Year_TextChanged(object sender, EventArgs args)
-        {
-            // fire the external event so the subscribed presenter can react
-            MonthlyInvoiceMonthYearUpdated?.Invoke(sender, args);
-        }
-
-        private void ComboBox_Month_TextChanged(object sender, EventArgs args)
-        {
-            // fire the external event so the subscribed presenter can react
-            MonthlyInvoiceMonthYearUpdated?.Invoke(sender, args);
-        }
-
-        private void RadioButton_titleMonthly_CheckedChanged(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            InvoiceTypeSelected?.Invoke(this, e);
-        }
-
-        private void RadioButton_titleCustom_CheckedChanged(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            InvoiceTypeSelected?.Invoke(this, e);
-        }
-
-        private void Button_addItem_Click(object sender, EventArgs e)
-        {
-            // fire the external event so the subscribed presenter can react
-            AddItemButtonClicked?.Invoke(this, e);
-        }
-
         private void dataGridView_invoiceHistory_CellContentClick(object sender, DataGridViewCellEventArgs args)
         {
             this.dataGridView_invoiceHistory.CommitEdit(DataGridViewDataErrorContexts.Commit);
