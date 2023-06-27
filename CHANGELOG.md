@@ -3,6 +3,8 @@ All notable changes to this project are documented in this file.
 
 NOTE: dates are in dd-mm-yyyy format.
 
+# [1.2.0] - unreleased
+
 ## [1.1.1] - 03-05-2021
 ### Added
 - support for writing email subjects and bodies, passwords entered by user

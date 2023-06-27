@@ -232,7 +232,6 @@ namespace InvoiceGen.Presenter
             this._view.SaveAndEmailButtonText = "Save and Email";
             this._view.SaveAndExportXLSXButtonText = "Save and Export XLSX";
 
-            // reset the status bar
             SetStatusBar("Ready", StatusBarState.Ready);
         }
 
@@ -291,7 +290,6 @@ namespace InvoiceGen.Presenter
             this._view.MonthComboboxEnabled = true;
             this._view.YearTextBoxEnabled = true;
 
-            // reset the status bar
             SetStatusBar("Ready", StatusBarState.Ready);
         }
 
